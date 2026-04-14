@@ -2922,24 +2922,34 @@
       transition: background 0.25s, color 0.25s, box-shadow 0.25s;
       font-size: 16px;
     }
+
     .live-mode-btn.live-active {
       background: linear-gradient(135deg, #00ff88, #00d4aa);
       color: #0a0e1a;
-      box-shadow: 0 0 14px rgba(0,255,136,0.55), var(--shadow);
+      box-shadow: 0 0 14px rgba(0, 255, 136, 0.55), var(--shadow);
       animation: livePulseBtn 2s ease-in-out infinite;
     }
+
     @keyframes livePulseBtn {
-      0%,100% { box-shadow: 0 0 14px rgba(0,255,136,0.55), var(--shadow); }
-      50%      { box-shadow: 0 0 22px rgba(0,255,136,0.85), var(--shadow); }
+
+      0%,
+      100% {
+        box-shadow: 0 0 14px rgba(0, 255, 136, 0.55), var(--shadow);
+      }
+
+      50% {
+        box-shadow: 0 0 22px rgba(0, 255, 136, 0.85), var(--shadow);
+      }
     }
+
     /* ══ Live Mode Status Bar ══ */
     #liveModeIndicator {
       display: none;
       align-items: center;
       gap: 8px;
       padding: 5px 14px;
-      background: rgba(0,255,136,0.10);
-      border: 1px solid rgba(0,255,136,0.28);
+      background: rgba(0, 255, 136, 0.10);
+      border: 1px solid rgba(0, 255, 136, 0.28);
       border-radius: 999px;
       font-size: 11px;
       font-weight: 700;
@@ -2948,27 +2958,48 @@
       user-select: none;
       white-space: nowrap;
     }
+
     #livePulseDot {
-      width: 7px; height: 7px;
+      width: 7px;
+      height: 7px;
       border-radius: 50%;
       background: #00ff88;
       flex-shrink: 0;
     }
+
     #livePulseDot.live-pulse {
       animation: liveDotFlash 0.3s ease-out forwards;
     }
+
     @keyframes liveDotFlash {
-      0%   { background:#00ff88; box-shadow:0 0 0 rgba(0,255,136,0); transform:scale(1); }
-      40%  { background:#ffffff; box-shadow:0 0 8px rgba(0,255,136,0.9); transform:scale(1.6); }
-      100% { background:#00ff88; box-shadow:0 0 0 rgba(0,255,136,0); transform:scale(1); }
+      0% {
+        background: #00ff88;
+        box-shadow: 0 0 0 rgba(0, 255, 136, 0);
+        transform: scale(1);
+      }
+
+      40% {
+        background: #ffffff;
+        box-shadow: 0 0 8px rgba(0, 255, 136, 0.9);
+        transform: scale(1.6);
+      }
+
+      100% {
+        background: #00ff88;
+        box-shadow: 0 0 0 rgba(0, 255, 136, 0);
+        transform: scale(1);
+      }
     }
+
     #liveLedDot {
-      width: 10px; height: 10px;
+      width: 10px;
+      height: 10px;
       border-radius: 50%;
       background: #374151;
       transition: background 0.2s, box-shadow 0.2s;
       flex-shrink: 0;
     }
+
     /* ══ Live Mode Toast ══ */
     .live-toast {
       position: fixed;
@@ -2988,82 +3019,244 @@
       transition: opacity 0.22s, transform 0.22s;
       white-space: nowrap;
     }
-    .live-toast.live-toast-show  { opacity:1; transform:translateX(-50%) translateY(0); }
-    .live-toast.live-toast-warn  { border-color:#fbbf24; color:#fbbf24; }
-    .live-toast.live-toast-error { border-color:#f87171; color:#f87171; }
-    .live-toast.live-toast-info  { border-color:#34d399; color:#34d399; }
+
+    .live-toast.live-toast-show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+
+    .live-toast.live-toast-warn {
+      border-color: #fbbf24;
+      color: #fbbf24;
+    }
+
+    .live-toast.live-toast-error {
+      border-color: #f87171;
+      color: #f87171;
+    }
+
+    .live-toast.live-toast-info {
+      border-color: #34d399;
+      color: #34d399;
+    }
 
     /* ══ Live Terminal Panel ══════════════════════════════════════ */
     #liveTerminal {
       position: absolute;
-      bottom: 0; left: 0; right: 0;
+      bottom: 0;
+      left: 0;
+      right: 0;
       height: 0;
       background: #0a0e1a;
       border-top: 2px solid transparent;
-      transition: height 0.32s cubic-bezier(.4,0,.2,1), border-color 0.3s;
+      transition: height 0.32s cubic-bezier(.4, 0, .2, 1), border-color 0.3s;
       overflow: hidden;
       z-index: 10;
       display: flex;
       flex-direction: column;
       font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
     }
-    #liveTerminal.lt-active { height: 230px; border-color: #00ff88; }
+
+    #liveTerminal.lt-active {
+      height: 230px;
+      border-color: #00ff88;
+    }
+
     .lt-header {
-      display: flex; align-items: center; justify-content: space-between;
-      padding: 5px 14px; background: #111827;
-      border-bottom: 1px solid #1a2235; flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 5px 14px;
+      background: #111827;
+      border-bottom: 1px solid #1a2235;
+      flex-shrink: 0;
     }
-    .lt-title { font-size: 10px; font-weight: 700; color: #00ff88; letter-spacing: 1.2px; }
-    .lt-hcontrols { display: flex; align-items: center; gap: 6px; }
+
+    .lt-title {
+      font-size: 10px;
+      font-weight: 700;
+      color: #00ff88;
+      letter-spacing: 1.2px;
+    }
+
+    .lt-hcontrols {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
     .lt-hcontrols select {
-      background: #1a2235; border: 1px solid #243049; border-radius: 5px;
-      color: #94a3b8; font-size: 10px; padding: 2px 5px; cursor: pointer;
+      background: #1a2235;
+      border: 1px solid #243049;
+      border-radius: 5px;
+      color: #94a3b8;
+      font-size: 10px;
+      padding: 2px 5px;
+      cursor: pointer;
     }
+
     .lt-hbtn {
-      background: #1a2235; border: 1px solid #243049; border-radius: 5px;
-      color: #64748b; font-size: 10px; padding: 2px 8px; cursor: pointer;
+      background: #1a2235;
+      border: 1px solid #243049;
+      border-radius: 5px;
+      color: #64748b;
+      font-size: 10px;
+      padding: 2px 8px;
+      cursor: pointer;
       transition: color .15s, border-color .15s;
     }
-    .lt-hbtn:hover { color: #e2e8f0; border-color: #00ff88; }
-    #ltBody {
-      flex: 1; overflow-y: auto; padding: 2px 0;
+
+    .lt-hbtn:hover {
+      color: #e2e8f0;
+      border-color: #00ff88;
     }
-    #ltBody::-webkit-scrollbar { width: 3px; }
-    #ltBody::-webkit-scrollbar-thumb { background: #1a2235; border-radius: 2px; }
+
+    #ltBody {
+      flex: 1;
+      overflow-y: auto;
+      padding: 2px 0;
+    }
+
+    #ltBody::-webkit-scrollbar {
+      width: 3px;
+    }
+
+    #ltBody::-webkit-scrollbar-thumb {
+      background: #1a2235;
+      border-radius: 2px;
+    }
+
     .lt-row {
       display: grid;
       grid-template-columns: 68px 16px 80px 1fr;
-      gap: 8px; padding: 3px 14px; align-items: center;
-      border-bottom: 1px solid rgba(255,255,255,0.025);
+      gap: 8px;
+      padding: 3px 14px;
+      align-items: center;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.025);
       transition: background .1s;
     }
-    .lt-row:hover { background: rgba(255,255,255,0.04); }
-    .lt-ts { color: #374151; font-size: 10px; }
-    .lt-dir { font-weight: 700; font-size: 12px; text-align: center; }
-    .lt-out .lt-dir { color: #00d4aa; }
-    .lt-in  .lt-dir { color: #00ff88; }
-    .lt-board .lt-dir { color: #475569; }
-    .lt-badge {
-      display: inline-block; padding: 1px 5px; border-radius: 3px;
-      font-size: 9px; font-weight: 700; letter-spacing: .5px;
-      text-transform: uppercase; width: 100%; text-align: center;
+
+    .lt-row:hover {
+      background: rgba(255, 255, 255, 0.04);
     }
-    .lb-servo  { background:#0a2030; color:#00d4ff; }
-    .lb-motor  { background:#0a200a; color:#4ade80; }
-    .lb-led    { background:#1a1a00; color:#fde047; }
-    .lb-rgb    { background:#180a28; color:#c084fc; }
-    .lb-ultra  { background:#041828; color:#38bdf8; }
-    .lb-temp   { background:#200808; color:#f87171; }
-    .lb-ir     { background:#0c0c20; color:#818cf8; }
-    .lb-button { background:#0a180a; color:#86efac; }
-    .lb-board  { background:#111; color:#475569; }
-    .lb-relay  { background:#201000; color:#fb923c; }
-    .lb-digital{ background:#001020; color:#67e8f9; }
-    .lt-val { color: #cbd5e1; font-size: 11px; }
-    .lt-num { color: #fbbf24; font-weight: 700; }
-    .lt-unit { color: #475569; margin-left: 2px; font-size: 10px; }
-    .lt-pin { color: #64748b; font-size: 10px; }
-    .lt-empty { color: #1e293b; font-size: 11px; padding: 20px 14px; text-align: center; }
+
+    .lt-ts {
+      color: #374151;
+      font-size: 10px;
+    }
+
+    .lt-dir {
+      font-weight: 700;
+      font-size: 12px;
+      text-align: center;
+    }
+
+    .lt-out .lt-dir {
+      color: #00d4aa;
+    }
+
+    .lt-in .lt-dir {
+      color: #00ff88;
+    }
+
+    .lt-board .lt-dir {
+      color: #475569;
+    }
+
+    .lt-badge {
+      display: inline-block;
+      padding: 1px 5px;
+      border-radius: 3px;
+      font-size: 9px;
+      font-weight: 700;
+      letter-spacing: .5px;
+      text-transform: uppercase;
+      width: 100%;
+      text-align: center;
+    }
+
+    .lb-servo {
+      background: #0a2030;
+      color: #00d4ff;
+    }
+
+    .lb-motor {
+      background: #0a200a;
+      color: #4ade80;
+    }
+
+    .lb-led {
+      background: #1a1a00;
+      color: #fde047;
+    }
+
+    .lb-rgb {
+      background: #180a28;
+      color: #c084fc;
+    }
+
+    .lb-ultra {
+      background: #041828;
+      color: #38bdf8;
+    }
+
+    .lb-temp {
+      background: #200808;
+      color: #f87171;
+    }
+
+    .lb-ir {
+      background: #0c0c20;
+      color: #818cf8;
+    }
+
+    .lb-button {
+      background: #0a180a;
+      color: #86efac;
+    }
+
+    .lb-board {
+      background: #111;
+      color: #475569;
+    }
+
+    .lb-relay {
+      background: #201000;
+      color: #fb923c;
+    }
+
+    .lb-digital {
+      background: #001020;
+      color: #67e8f9;
+    }
+
+    .lt-val {
+      color: #cbd5e1;
+      font-size: 11px;
+    }
+
+    .lt-num {
+      color: #fbbf24;
+      font-weight: 700;
+    }
+
+    .lt-unit {
+      color: #475569;
+      margin-left: 2px;
+      font-size: 10px;
+    }
+
+    .lt-pin {
+      color: #64748b;
+      font-size: 10px;
+    }
+
+    .lt-empty {
+      color: #1e293b;
+      font-size: 11px;
+      padding: 20px 14px;
+      text-align: center;
+    }
   </style>
 </head>
 
@@ -3168,7 +3361,8 @@
         <button class="btn-circle undo" id="btnUndo" title="Undo"><i class="fa-solid fa-rotate-left"></i></button>
         <button class="btn-circle redo" id="btnRedo" title="Redo"><i class="fa-solid fa-rotate-right"></i></button>
         <button class="btn-circle output" id="showCode" title="expand"><i class="fa-solid fa-code"></i></button>
-        <button class="btn-circle live-mode-btn" id="btnLiveMode" title="Live Mode OFF" aria-label="Toggle Live Mode">&#x26A1;</button>
+        <button class="btn-circle live-mode-btn" id="btnLiveMode" title="Live Mode OFF"
+          aria-label="Toggle Live Mode">&#x26A1;</button>
       </div>
     </div>
 
@@ -3215,7 +3409,9 @@
               <button class="lt-hbtn" onclick="LiveModeEngine.Terminal.clear()">✕ Clear</button>
             </div>
           </div>
-          <div id="ltBody"><div class="lt-empty">Enable Live Mode (⚡) to see real-time data here</div></div>
+          <div id="ltBody">
+            <div class="lt-empty">Enable Live Mode (⚡) to see real-time data here</div>
+          </div>
         </div>
       </div>
       <div id="codePanel" class="code">
@@ -3237,253 +3433,333 @@
     window.toolboxConfig = {
       kind: 'categoryToolbox',
       contents: [
-        // ── ⭐ Recently Used (dynamic — last 8 block types placed) ─────────
+        // ── ⭐ Recently Used ──────────────────────────────────────────────
         { kind: 'category', name: '⭐ Recent', custom: 'RECENT_BLOCKS', colour: '#F1C40F', id: 'cat_recent' },
-        // ── ❤️ Favorites (dynamic — right-click any block → Add to Favorites)
+        // ── ❤️ Favorites ──────────────────────────────────────────────────
         { kind: 'category', name: '❤️ Favorites', custom: 'FAVORITE_BLOCKS', colour: '#E91E63', id: 'cat_favorites' },
         // ── 🔍 Search ─────────────────────────────────────────────────────
         { kind: 'category', name: '🔍 Search', custom: 'SEARCH_CATEGORY', colour: '#526271', id: 'cat_search' },
         { kind: 'sep' },
-        // ══════════════ HARDWARE ══════════════
+
+        // ── DIGITAL ──────────────────────────────────────────────────────
         {
-          kind: 'category', name: '📡 Sensors', colour: '#E67E22', id: 'cat_sensors', contents: [
+          kind: 'category', name: 'Digital', colour: '#FFD46B', id: 'cat_digital', contents: [
+            { kind: 'block', type: 'din_sound' },
+            { kind: 'block', type: 'din_tilt' },
+            { kind: 'block', type: 'din_door' },
+            { kind: 'block', type: 'din_button' },
+            { kind: 'block', type: 'din_motion' },
+            { kind: 'block', type: 'din_proximity' },
+            { kind: 'block', type: 'din_ir' },
+            { kind: 'block', type: 'din_flame' },
+            { kind: 'block', type: 'load_cell' },
+            { kind: 'block', type: 'steper' },
+            { kind: 'block', type: 'waterpump' },
+            { kind: 'block', type: 'solinoid' },
+            { kind: 'block', type: 'animo' },
+            { kind: 'block', type: 'relay' },
+            { kind: 'block', type: 'buzzer' },
+            { kind: 'block', type: 'minifan' },
+            { kind: 'block', type: 'buzzer_component' },
+            { kind: 'block', type: 'joystick_move' },
+            { kind: 'block', type: 'ir_sen' },
+            { kind: 'block', type: 'touch_sensor' },
+          ]
+        },
+
+        // ── ANALOG ───────────────────────────────────────────────────────
+        {
+          kind: 'category', name: 'Analog', colour: '#781692', id: 'cat_analog', contents: [
+            { kind: 'block', type: 'tep_ana' },
+            { kind: 'block', type: 'heart_beat' },
+            { kind: 'block', type: 'soil_moisture' },
+            { kind: 'block', type: 'dust' },
+            { kind: 'block', type: 'vibration-switch-sensor' },
+            { kind: 'block', type: 'Current-sensor' },
+            { kind: 'block', type: 'IR-Temp' },
+            { kind: 'block', type: 'temp2-sensor' },
+            { kind: 'block', type: 'ecg' },
+            { kind: 'block', type: 'ana_temp' },
+            { kind: 'block', type: 'water-turbidity-sensor' },
+            { kind: 'block', type: 'shock_sensor' },
+            { kind: 'block', type: 'flex-sensor' },
+            { kind: 'block', type: 'Air_quality_sensor' },
+            { kind: 'block', type: 'flexi_force_sensor' },
+            { kind: 'block', type: 'TDS_Water_sensor' },
+            { kind: 'block', type: 'din_flame' },
+            { kind: 'block', type: 'din_temp' },
+            { kind: 'block', type: 'water_sensor' },
+            { kind: 'block', type: 'din_ultra' },
+            { kind: 'block', type: 'voltage_sensor' },
+            { kind: 'block', type: 'humidity' },
+            { kind: 'block', type: 'ldr' },
+            { kind: 'block', type: 'piezo_sensor' },
+          ]
+        },
+
+        // ── I2C ──────────────────────────────────────────────────────────
+        {
+          kind: 'category', name: 'I2c', colour: '#A020F0', id: 'cat_i2c', contents: [
+            { kind: 'block', type: 'magnetic_sensor' },
+            { kind: 'block', type: 'colour_sen' },
+            { kind: 'block', type: 'accelerometer_sensor' },
+            { kind: 'block', type: 'rtc_sensor' },
+            { kind: 'block', type: 'ambient-sen' },
+            { kind: 'block', type: 'LCD' },
+            { kind: 'block', type: 'pressure' },
+            { kind: 'block', type: 'compass' },
+            { kind: 'block', type: 'ceprom' },
+            { kind: 'block', type: 'gusture' },
+            { kind: 'block', type: 'ir_temp' },
+            { kind: 'block', type: 'motor_driver' },
+            { kind: 'block', type: 'nfc_reader' },
+            { kind: 'block', type: 'mag_encoder' },
+            { kind: 'block', type: 'rfc' },
+            { kind: 'block', type: 'text_speech' },
+            { kind: 'block', type: 'touch_sensor' },
+            { kind: 'block', type: 'uv_sensor' },
+            { kind: 'block', type: 'temp_sensor' },
+            { kind: 'block', type: 'accelerometer' },
+            { kind: 'block', type: 'max' },
+          ]
+        },
+
+        // ── PWM ──────────────────────────────────────────────────────────
+        {
+          kind: 'category', name: 'PWM', colour: '#781692', id: 'cat_pwm', contents: [
+            { kind: 'block', type: 'do_dc_motor' },
+            { kind: 'block', type: 'do_servo' },
+            { kind: 'block', type: 'do_dc_motor2' },
+          ]
+        },
+
+        // ── LEDS ─────────────────────────────────────────────────────────
+        {
+          kind: 'category', name: 'LEDs', colour: '#FFB56A', id: 'cat_leds', contents: [
+            { kind: 'block', type: 'do_led_param' },
+            { kind: 'block', type: 'do_led' },
+            { kind: 'block', type: 'red_led' },
+            { kind: 'block', type: 'yellow_led' },
+            { kind: 'block', type: 'light_freq' },
+            { kind: 'block', type: 'green_led' },
+            { kind: 'block', type: 'rgb_display' },
+            { kind: 'block', type: 'rgb_led_display' },
+            { kind: 'block', type: 'rgb_component' },
+            { kind: 'block', type: 'LCD_print' },
+          ]
+        },
+
+        // ── TX-RX ─────────────────────────────────────────────────────────
+        {
+          kind: 'category', name: 'Tx-Rx', colour: '#C0603E', id: 'cat_txrx', contents: [
+            { kind: 'block', type: 'finger_print_enroll' },
+            { kind: 'block', type: 'finger_print_match' },
+            { kind: 'block', type: 'keypad' },
+            { kind: 'block', type: 'mini_motor' },
+            { kind: 'block', type: 'remote_motor' },
+            { kind: 'block', type: 'water_motor' },
+            { kind: 'block', type: 'tank_motor' },
+            { kind: 'block', type: 'port_on' },
+            { kind: 'block', type: 'port_off' },
+            { kind: 'block', type: 'sen_ultrasonic' },
+            { kind: 'block', type: 'sen_temp' },
+          ]
+        },
+
+        // ── SPI ──────────────────────────────────────────────────────────
+        {
+          kind: 'category', name: 'SPI', colour: '#2EB061', id: 'cat_spi', contents: [
+            { kind: 'block', type: 'rfid' },
+            { kind: 'block', type: 'sensor' },
+            { kind: 'block', type: 'tem_sensor' },
+            { kind: 'block', type: 'xray_sensor' },
+            { kind: 'block', type: 'rc_sensor' },
+            { kind: 'block', type: 'do_onoff' },
+            { kind: 'block', type: 'bt_send' },
+            { kind: 'block', type: 'loop_end' },
+          ]
+        },
+
+        // ── LOOP ─────────────────────────────────────────────────────────
+        {
+          kind: 'category', name: 'Loop', colour: '#FF6347', id: 'cat_loop', contents: [
+            { kind: 'block', type: 'lp_while' },
+            { kind: 'block', type: 'lp_break' },
+            { kind: 'block', type: 'lp_start' },
+            { kind: 'block', type: 'lp_repeat_count' },
+            { kind: 'block', type: 'lp_label' },
+            { kind: 'block', type: 'compare' },
             {
-              kind: 'category', name: '🌡️ Environmental', colour: '#E59866', id: 'cat_environmental', contents: [
-                { kind: 'block', type: 'tep_ana' }, { kind: 'block', type: 'ana_temp' },
-                { kind: 'block', type: 'din_temp' }, { kind: 'block', type: 'temp_sensor' },
-                { kind: 'block', type: 'sen_temp' }, { kind: 'block', type: 'IR-Temp' },
-                { kind: 'block', type: 'ir_temp' }, { kind: 'block', type: 'temp2-sensor' },
-                { kind: 'block', type: 'humidity' }, { kind: 'block', type: 'soil_moisture' },
-                { kind: 'block', type: 'dust' }, { kind: 'block', type: 'Air_quality_sensor' },
-                { kind: 'block', type: 'water_sensor' }, { kind: 'block', type: 'water-turbidity-sensor' },
-                { kind: 'block', type: 'TDS_Water_sensor' }, { kind: 'block', type: 'pressure' },
-              ]
+              kind: 'block', type: 'controls_repeat_ext', inputs: {
+                TIMES: { shadow: { type: 'math_number', fields: { NUM: '5' } } }
+              }
             },
             {
-              kind: 'category', name: '🏃 Motion & Position', colour: '#DC7633', id: 'cat_motion', contents: [
-                { kind: 'block', type: 'din_motion' }, { kind: 'block', type: 'din_proximity' },
-                { kind: 'block', type: 'din_tilt' }, { kind: 'block', type: 'din_ultra' },
-                { kind: 'block', type: 'sen_ultrasonic' }, { kind: 'block', type: 'accelerometer_sensor' },
-                { kind: 'block', type: 'accelerometer' }, { kind: 'block', type: 'compass' },
-                { kind: 'block', type: 'mag_encoder' }, { kind: 'block', type: 'gusture' },
-                { kind: 'block', type: 'flex-sensor' }, { kind: 'block', type: 'shock_sensor' },
-                { kind: 'block', type: 'vibration-switch-sensor' }, { kind: 'block', type: 'joystick_move' },
-              ]
-            },
-            {
-              kind: 'category', name: '💡 Light & Color', colour: '#F39C12', id: 'cat_light', contents: [
-                { kind: 'block', type: 'ldr' }, { kind: 'block', type: 'din_ir' },
-                { kind: 'block', type: 'ir_sen' }, { kind: 'block', type: 'colour_sen' },
-                { kind: 'block', type: 'ambient-sen' }, { kind: 'block', type: 'uv_sensor' },
-                { kind: 'block', type: 'light_freq' }, { kind: 'block', type: 'magnetic_sensor' },
-              ]
-            },
-            {
-              kind: 'category', name: '❤️ Biometric & Safety', colour: '#E74C3C', id: 'cat_biometric', contents: [
-                { kind: 'block', type: 'heart_beat' }, { kind: 'block', type: 'ecg' },
-                { kind: 'block', type: 'max' }, { kind: 'block', type: 'din_flame' },
-                { kind: 'block', type: 'din_door' }, { kind: 'block', type: 'din_sound' },
-                { kind: 'block', type: 'din_button' }, { kind: 'block', type: 'touch_sensor' },
-                { kind: 'block', type: 'finger_print_enroll' }, { kind: 'block', type: 'finger_print_match' },
-              ]
-            },
-            {
-              kind: 'category', name: '⚡ Electrical', colour: '#D35400', id: 'cat_electrical', contents: [
-                { kind: 'block', type: 'Current-sensor' }, { kind: 'block', type: 'voltage_sensor' },
-                { kind: 'block', type: 'load_cell' }, { kind: 'block', type: 'flexi_force_sensor' },
-                { kind: 'block', type: 'piezo_sensor' },
-              ]
-            },
-            {
-              kind: 'category', name: '🔬 Specialised', colour: '#BA4A00', id: 'cat_specialised', contents: [
-                { kind: 'block', type: 'rtc_sensor' }, { kind: 'block', type: 'rfid' },
-                { kind: 'block', type: 'nfc_reader' }, { kind: 'block', type: 'rc_sensor' },
-                { kind: 'block', type: 'xray_sensor' }, { kind: 'block', type: 'tem_sensor' },
-                { kind: 'block', type: 'sensor' }, { kind: 'block', type: 'ceprom' },
-              ]
+              kind: 'block', type: 'controls_for', fields: { VAR: 'i' }, inputs: {
+                FROM: { shadow: { type: 'math_number', fields: { NUM: '0' } } },
+                TO: { shadow: { type: 'math_number', fields: { NUM: '10' } } }
+              }
             },
           ]
         },
+
+        // ── DELAY ────────────────────────────────────────────────────────
         {
-          kind: 'category', name: '⚙️ Actuators', colour: '#2E86C1', id: 'cat_actuators', contents: [
-            {
-              kind: 'category', name: '🔄 Motors', colour: '#2874A6', id: 'cat_motors', contents: [
-                { kind: 'block', type: 'do_dc_motor' }, { kind: 'block', type: 'do_dc_motor2' },
-                { kind: 'block', type: 'steper' }, { kind: 'block', type: 'mini_motor' },
-                { kind: 'block', type: 'remote_motor' }, { kind: 'block', type: 'water_motor' },
-                { kind: 'block', type: 'tank_motor' }, { kind: 'block', type: 'motor_driver' },
-                { kind: 'block', type: 'waterpump' }, { kind: 'block', type: 'minifan' },
-              ]
-            },
-            {
-              kind: 'category', name: '🦾 Servo', colour: '#1A5276', id: 'cat_servo', contents: [
-                { kind: 'block', type: 'do_servo' },
-              ]
-            },
-            {
-              kind: 'category', name: '🔌 Relay & Switch', colour: '#154360', id: 'cat_relay', contents: [
-                { kind: 'block', type: 'relay' }, { kind: 'block', type: 'solinoid' },
-                { kind: 'block', type: 'animo' }, { kind: 'block', type: 'port_on' },
-                { kind: 'block', type: 'port_off' }, { kind: 'block', type: 'do_onoff' },
-              ]
-            },
+          kind: 'category', name: 'Delay', colour: '#FFB56A', id: 'cat_delay', contents: [
+            { kind: 'block', type: 'ctl_delay' },
           ]
         },
-        {
-          kind: 'category', name: '💡 Display & Lights', colour: '#F39C12', id: 'cat_display', contents: [
-            {
-              kind: 'category', name: '🔦 LEDs', colour: '#F8C471', id: 'cat_leds', contents: [
-                { kind: 'block', type: 'do_led' }, { kind: 'block', type: 'do_led_param' },
-                { kind: 'block', type: 'red_led' }, { kind: 'block', type: 'yellow_led' },
-                { kind: 'block', type: 'green_led' },
-              ]
-            },
-            {
-              kind: 'category', name: '🌈 RGB', colour: '#E59866', id: 'cat_rgb', contents: [
-                { kind: 'block', type: 'rgb_display' }, { kind: 'block', type: 'rgb_led_display' },
-                { kind: 'block', type: 'rgb_component' },
-              ]
-            },
-            {
-              kind: 'category', name: '🖥️ Screen', colour: '#D4AC0D', id: 'cat_screen', contents: [
-                { kind: 'block', type: 'LCD' }, { kind: 'block', type: 'LCD_print' },
-                { kind: 'block', type: 'text_speech' },
-              ]
-            },
-          ]
-        },
-        {
-          kind: 'category', name: '🔊 Input Devices', colour: '#27AE60', id: 'cat_input', contents: [
-            { kind: 'block', type: 'din_button' }, { kind: 'block', type: 'keypad' },
-            { kind: 'block', type: 'touch_sensor' }, { kind: 'block', type: 'joystick_move' },
-            { kind: 'block', type: 'buzzer' }, { kind: 'block', type: 'buzzer_component' },
-          ]
-        },
-        {
-          kind: 'category', name: '📶 Communication', colour: '#8E44AD', id: 'cat_comm', contents: [
-            {
-              kind: 'category', name: '📡 Wireless', colour: '#7D3C98', id: 'cat_wireless', contents: [
-                { kind: 'block', type: 'bt_send' },
-              ]
-            },
-            {
-              kind: 'category', name: '🪪 Identification', colour: '#6C3483', id: 'cat_identification', contents: [
-                { kind: 'block', type: 'rfid' }, { kind: 'block', type: 'nfc_reader' },
-                { kind: 'block', type: 'rfc' }, { kind: 'block', type: 'finger_print_enroll' },
-                { kind: 'block', type: 'finger_print_match' },
-              ]
-            },
-          ]
-        },
+
         { kind: 'sep' },
-        // ══════════════ PROGRAMMING ══════════════
+
+        // ── LOGIC ────────────────────────────────────────────────────────
         {
-          kind: 'category', name: '🔁 Control Flow', colour: '#E74C3C', id: 'cat_control', contents: [
+          kind: 'category', name: 'Logic', colour: '#4C97FF', id: 'cat_logic', contents: [
+            { kind: 'block', type: 'start' },
+            { kind: 'block', type: 'din_if_else' },
+            { kind: 'block', type: 'logic_operation', fields: { OP: 'AND' } },
+            { kind: 'block', type: 'logic_boolean', fields: { BOOL: 'TRUE' } },
+            { kind: 'block', type: 'logical_comparison' },
+            { kind: 'block', type: 'any_input_block' },
+            { kind: 'block', type: 'custom_if_then' },
+            { kind: 'block', type: 'system_status' },
             {
-              kind: 'category', name: '🧠 Logic', colour: '#C0392B', id: 'cat_logic', contents: [
-                { kind: 'block', type: 'din_if_else' }, { kind: 'block', type: 'custom_if_then' },
-                { kind: 'block', type: 'any_input_block' }, { kind: 'block', type: 'system_status' },
-                { kind: 'block', type: 'logic_boolean', fields: { BOOL: 'TRUE' } },
-                { kind: 'block', type: 'logic_operation', fields: { OP: 'AND' } },
-                { kind: 'block', type: 'logical_comparison' }, { kind: 'block', type: 'compare' },
-                {
-                  kind: 'block', type: 'logic_compare', fields: { OP: 'EQ' }, inputs: {
-                    A: { shadow: { type: 'math_number', fields: { NUM: '10' } } },
-                    B: { shadow: { type: 'math_number', fields: { NUM: '5' } } }
-                  }
-                },
-                {
-                  kind: 'block', type: 'controls_if', inputs: {
-                    IF0: { shadow: { type: 'logic_boolean', fields: { BOOL: 'TRUE' } } }
-                  }
-                },
-              ]
+              kind: 'block', type: 'logic_compare', fields: { OP: 'EQ' }, inputs: {
+                A: { shadow: { type: 'math_number', fields: { NUM: '10' } } },
+                B: { shadow: { type: 'math_number', fields: { NUM: '5' } } }
+              }
             },
             {
-              kind: 'category', name: '🔄 Loops', colour: '#E74C3C', id: 'cat_loops', contents: [
-                { kind: 'block', type: 'lp_while' }, { kind: 'block', type: 'lp_start' },
-                { kind: 'block', type: 'lp_repeat_count' }, { kind: 'block', type: 'lp_label' },
-                { kind: 'block', type: 'lp_break' }, { kind: 'block', type: 'loop_end' },
-                {
-                  kind: 'block', type: 'controls_repeat_ext', inputs: {
-                    TIMES: { shadow: { type: 'math_number', fields: { NUM: '5' } } }
-                  }
-                },
-                {
-                  kind: 'block', type: 'controls_for', fields: { VAR: 'i' }, inputs: {
-                    FROM: { shadow: { type: 'math_number', fields: { NUM: '0' } } },
-                    TO: { shadow: { type: 'math_number', fields: { NUM: '10' } } }
-                  }
-                },
-              ]
-            },
-            {
-              kind: 'category', name: '⏱️ Delay & Timing', colour: '#C0392B', id: 'cat_delay', contents: [
-                { kind: 'block', type: 'ctl_delay' },
-              ]
+              kind: 'block', type: 'controls_if', inputs: {
+                IF0: { shadow: { type: 'logic_boolean', fields: { BOOL: 'TRUE' } } }
+              }
             },
           ]
         },
+
+        // ── MATHS ────────────────────────────────────────────────────────
         {
-          kind: 'category', name: '📊 Data', colour: '#1ABC9C', id: 'cat_data', contents: [
+          kind: 'category', name: 'Maths', colour: '#9ACD32', id: 'cat_maths', contents: [
+            { kind: 'block', type: 'math_number', fields: { NUM: '1' } },
+            { kind: 'block', type: 'text' },
+            { kind: 'block', type: 'text_join' },
             {
-              kind: 'category', name: '🔢 Math', colour: '#17A589', id: 'cat_math', contents: [
-                { kind: 'block', type: 'math_number', fields: { NUM: '0' } },
-                {
-                  kind: 'block', type: 'math_arithmetic', fields: { OP: 'ADD' }, inputs: {
-                    A: { shadow: { type: 'math_number', fields: { NUM: '1' } } },
-                    B: { shadow: { type: 'math_number', fields: { NUM: '2' } } }
-                  }
-                },
-                {
-                  kind: 'block', type: 'math_random_int', inputs: {
-                    FROM: { shadow: { type: 'math_number', fields: { NUM: '1' } } },
-                    TO: { shadow: { type: 'math_number', fields: { NUM: '100' } } }
-                  }
-                },
-              ]
+              kind: 'block', type: 'math_arithmetic', fields: { OP: 'ADD' }, inputs: {
+                A: { shadow: { type: 'math_number', fields: { NUM: '1' } } },
+                B: { shadow: { type: 'math_number', fields: { NUM: '2' } } }
+              }
             },
             {
-              kind: 'category', name: '🔤 Text', colour: '#148F77', id: 'cat_text', contents: [
-                { kind: 'block', type: 'text', fields: { TEXT: 'Hello' } },
-                {
-                  kind: 'block', type: 'text_join', inputs: {
-                    ADD0: { shadow: { type: 'text', fields: { TEXT: 'Hello' } } },
-                    ADD1: { shadow: { type: 'text', fields: { TEXT: 'World' } } }
-                  }
-                },
-                {
-                  kind: 'block', type: 'text_length', inputs: {
-                    VALUE: { shadow: { type: 'text', fields: { TEXT: 'Blockly' } } }
-                  }
-                },
-              ]
+              kind: 'block', type: 'math_random_int', inputs: {
+                FROM: { shadow: { type: 'math_number', fields: { NUM: '1' } } },
+                TO: { shadow: { type: 'math_number', fields: { NUM: '100' } } }
+              }
             },
-            { kind: 'category', name: '📦 Variables', custom: 'VARIABLE', colour: '#0E6655', id: 'cat_variables' },
-            { kind: 'category', name: '📋 Lists', custom: 'LIST', colour: '#0A3D62', id: 'cat_lists' },
           ]
         },
-        { kind: 'category', name: '🔧 Functions', custom: 'PROCEDURE', colour: '#FF1493', id: 'cat_functions' },
+
+        // ── FUNCTION / VARIABLE / LIST ────────────────────────────────────
+        { kind: 'category', name: 'Function', custom: 'PROCEDURE', colour: '#FF1493', id: 'cat_functions' },
+        { kind: 'category', name: 'Variable', custom: 'VARIABLE', colour: '#0000FF', id: 'cat_variables' },
+        { kind: 'category', name: 'List', custom: 'LIST', colour: '#FF6680', id: 'cat_lists' },
+
         { kind: 'sep' },
-        // ══════════════ VISUALISATION ══════════════
+
+        // ── DISPLAY-3.js ─────────────────────────────────────────────────
         {
-          kind: 'category', name: '🎨 Animations', colour: '#6366F1', id: 'cat_animations', contents: [
-            { kind: 'block', type: 'lottie_anim' }, { kind: 'block', type: 'lottie_rocket' },
-            { kind: 'block', type: 'lottie_heartbeat' }, { kind: 'block', type: 'lottie_weather' },
-            { kind: 'block', type: 'lottie_loading' }, { kind: 'block', type: 'lottie_robot' },
-            { kind: 'block', type: 'lottie_starburst' }, { kind: 'block', type: 'lottie_water' },
-            { kind: 'block', type: 'lottie_fire' }, { kind: 'block', type: 'lottie_lightning' },
+          kind: 'category', name: 'Display-3.js', colour: '#6366F1', id: 'cat_3d', contents: [
+            { kind: 'block', type: 'three_d_model' },
+            { kind: 'block', type: 'speedo_3d' },
+            { kind: 'block', type: 'sim_solar' },
+            { kind: 'block', type: 'sim_pendulum' },
+            { kind: 'block', type: 'sim_particles' },
+            { kind: 'block', type: 'sim_dna' },
+            { kind: 'block', type: 'sim_gears' },
+            { kind: 'block', type: 'sim_wave' },
+            { kind: 'block', type: 'sim_bouncing' },
+            { kind: 'block', type: 'sim_windmill' },
+            { kind: 'block', type: 'sim_atom' },
+            { kind: 'block', type: 'sim_globe' },
+          ]
+        },
+
+        // ── DISPLAY-LOTTIE ───────────────────────────────────────────────
+        {
+          kind: 'category', name: 'Display-lotte', colour: '#6366F1', id: 'cat_animations', contents: [
+            { kind: 'block', type: 'lottie_anim' },
+            { kind: 'block', type: 'lottie_rocket' },
+            { kind: 'block', type: 'lottie_heartbeat' },
+            { kind: 'block', type: 'lottie_weather' },
+            { kind: 'block', type: 'lottie_loading' },
+            { kind: 'block', type: 'lottie_robot' },
+            { kind: 'block', type: 'lottie_starburst' },
+            { kind: 'block', type: 'lottie_water' },
+            { kind: 'block', type: 'lottie_fire' },
+            { kind: 'block', type: 'lottie_lightning' },
             { kind: 'block', type: 'lottie_gearspin' },
           ]
         },
+
+        { kind: 'sep' },
+
+        // ── DEFAULT BLOCK ────────────────────────────────────────────────
         {
-          kind: 'category', name: '🌐 3D Simulations', colour: '#4F46E5', id: 'cat_3d', contents: [
-            { kind: 'block', type: 'three_d_model' }, { kind: 'block', type: 'speedo_3d' },
-            { kind: 'block', type: 'sim_solar' }, { kind: 'block', type: 'sim_pendulum' },
-            { kind: 'block', type: 'sim_particles' }, { kind: 'block', type: 'sim_dna' },
-            { kind: 'block', type: 'sim_gears' }, { kind: 'block', type: 'sim_wave' },
-            { kind: 'block', type: 'sim_bouncing' }, { kind: 'block', type: 'sim_windmill' },
-            { kind: 'block', type: 'sim_atom' }, { kind: 'block', type: 'sim_globe' },
+          kind: 'category', name: 'default block', colour: '#9ACD32', id: 'cat_default', contents: [
+            { kind: 'block', type: 'math_number', fields: { NUM: '0' } },
+            {
+              kind: 'block', type: 'math_arithmetic', fields: { OP: 'ADD' }, inputs: {
+                A: { shadow: { type: 'math_number', fields: { NUM: '1' } } },
+                B: { shadow: { type: 'math_number', fields: { NUM: '2' } } }
+              }
+            },
+            {
+              kind: 'block', type: 'math_random_int', inputs: {
+                FROM: { shadow: { type: 'math_number', fields: { NUM: '1' } } },
+                TO: { shadow: { type: 'math_number', fields: { NUM: '100' } } }
+              }
+            },
+            { kind: 'block', type: 'text', fields: { TEXT: 'Hello' } },
+            {
+              kind: 'block', type: 'text_join', inputs: {
+                ADD0: { shadow: { type: 'text', fields: { TEXT: 'Hello' } } },
+                ADD1: { shadow: { type: 'text', fields: { TEXT: 'World' } } }
+              }
+            },
+            {
+              kind: 'block', type: 'text_length', inputs: {
+                VALUE: { shadow: { type: 'text', fields: { TEXT: 'Blockly' } } }
+              }
+            },
+            {
+              kind: 'block', type: 'variables_set', fields: { VAR: 'item' }, inputs: {
+                VALUE: { shadow: { type: 'math_number', fields: { NUM: '10' } } }
+              }
+            },
+            { kind: 'block', type: 'variables_get', fields: { VAR: 'item' } },
+            {
+              kind: 'block', type: 'controls_if', inputs: {
+                IF0: { shadow: { type: 'logic_boolean', fields: { BOOL: 'TRUE' } } }
+              }
+            },
+            {
+              kind: 'block', type: 'controls_repeat_ext', inputs: {
+                TIMES: { shadow: { type: 'math_number', fields: { NUM: '5' } } }
+              }
+            },
+            {
+              kind: 'block', type: 'controls_for', fields: { VAR: 'i' }, inputs: {
+                FROM: { shadow: { type: 'math_number', fields: { NUM: '0' } } },
+                TO: { shadow: { type: 'math_number', fields: { NUM: '10' } } }
+              }
+            },
+            { kind: 'block', type: 'logic_boolean', fields: { BOOL: 'TRUE' } },
+            {
+              kind: 'block', type: 'logic_compare', fields: { OP: 'EQ' }, inputs: {
+                A: { shadow: { type: 'math_number', fields: { NUM: '10' } } },
+                B: { shadow: { type: 'math_number', fields: { NUM: '5' } } }
+              }
+            },
+            { kind: 'block', type: 'logic_operation', fields: { OP: 'AND' } },
           ]
         },
       ]
@@ -3491,154 +3767,310 @@
   </script>
 
   <!-- Toolbox XML kept as data source for search index -->
+  <!-- Toolbox XML kept as data source for search index -->
   <xml id="toolbox" style="display:none">
     <category name="Search" custom="SEARCH_CATEGORY" colour="#526271" id="cat_search"></category>
-    <category name="Digital" colour="#FFD46B">
-      <block type="din_sound"></block>
-      <block type="din_tilt"></block>
-      <block type="din_door"></block>
+
+    <!-- ══ SENSORS ══ -->
+    <category name="📡 Sensors" colour="#E67E22" id="cat_sensors">
+      <category name="🌡️ Environmental" colour="#E59866" id="cat_environmental">
+        <block type="tep_ana"></block>
+        <block type="ana_temp"></block>
+        <block type="din_temp"></block>
+        <block type="temp_sensor"></block>
+        <block type="sen_temp"></block>
+        <block type="IR-Temp"></block>
+        <block type="ir_temp"></block>
+        <block type="temp2-sensor"></block>
+        <block type="humidity"></block>
+        <block type="soil_moisture"></block>
+        <block type="dust"></block>
+        <block type="Air_quality_sensor"></block>
+        <block type="water_sensor"></block>
+        <block type="water-turbidity-sensor"></block>
+        <block type="TDS_Water_sensor"></block>
+        <block type="pressure"></block>
+      </category>
+      <category name="🏃 Motion &amp; Position" colour="#DC7633" id="cat_motion">
+        <block type="din_motion"></block>
+        <block type="din_proximity"></block>
+        <block type="din_tilt"></block>
+        <block type="din_ultra"></block>
+        <block type="sen_ultrasonic"></block>
+        <block type="accelerometer_sensor"></block>
+        <block type="accelerometer"></block>
+        <block type="compass"></block>
+        <block type="mag_encoder"></block>
+        <block type="gusture"></block>
+        <block type="flex-sensor"></block>
+        <block type="shock_sensor"></block>
+        <block type="vibration-switch-sensor"></block>
+        <block type="joystick_move"></block>
+      </category>
+      <category name="💡 Light &amp; Color" colour="#F39C12" id="cat_light">
+        <block type="ldr"></block>
+        <block type="din_ir"></block>
+        <block type="ir_sen"></block>
+        <block type="colour_sen"></block>
+        <block type="ambient-sen"></block>
+        <block type="uv_sensor"></block>
+        <block type="light_freq"></block>
+        <block type="magnetic_sensor"></block>
+      </category>
+      <category name="❤️ Biometric &amp; Safety" colour="#E74C3C" id="cat_biometric">
+        <block type="heart_beat"></block>
+        <block type="ecg"></block>
+        <block type="max"></block>
+        <block type="din_flame"></block>
+        <block type="din_door"></block>
+        <block type="din_sound"></block>
+        <block type="din_button"></block>
+        <block type="touch_sensor"></block>
+        <block type="finger_print_enroll"></block>
+        <block type="finger_print_match"></block>
+      </category>
+      <category name="⚡ Electrical" colour="#D35400" id="cat_electrical">
+        <block type="Current-sensor"></block>
+        <block type="voltage_sensor"></block>
+        <block type="load_cell"></block>
+        <block type="flexi_force_sensor"></block>
+        <block type="piezo_sensor"></block>
+      </category>
+      <category name="🔬 Specialised" colour="#BA4A00" id="cat_specialised">
+        <block type="rtc_sensor"></block>
+        <block type="rfid"></block>
+        <block type="nfc_reader"></block>
+        <block type="rc_sensor"></block>
+        <block type="xray_sensor"></block>
+        <block type="tem_sensor"></block>
+        <block type="sensor"></block>
+        <block type="ceprom"></block>
+      </category>
+    </category>
+
+    <!-- ══ ACTUATORS ══ -->
+    <category name="⚙️ Actuators" colour="#2E86C1" id="cat_actuators">
+      <category name="🔄 Motors" colour="#2874A6" id="cat_motors">
+        <block type="do_dc_motor"></block>
+        <block type="do_dc_motor2"></block>
+        <block type="steper"></block>
+        <block type="mini_motor"></block>
+        <block type="remote_motor"></block>
+        <block type="water_motor"></block>
+        <block type="tank_motor"></block>
+        <block type="motor_driver"></block>
+        <block type="waterpump"></block>
+        <block type="minifan"></block>
+      </category>
+      <category name="🦾 Servo" colour="#1A5276" id="cat_servo">
+        <block type="do_servo"></block>
+      </category>
+      <category name="🔌 Relay &amp; Switch" colour="#154360" id="cat_relay">
+        <block type="relay"></block>
+        <block type="solinoid"></block>
+        <block type="animo"></block>
+        <block type="port_on"></block>
+        <block type="port_off"></block>
+        <block type="do_onoff"></block>
+      </category>
+    </category>
+
+    <!-- ══ DISPLAY & LIGHTS ══ -->
+    <category name="💡 Display &amp; Lights" colour="#F39C12" id="cat_display">
+      <category name="🔦 LEDs" colour="#F8C471" id="cat_leds">
+        <block type="do_led"></block>
+        <block type="do_led_param"></block>
+        <block type="red_led"></block>
+        <block type="yellow_led"></block>
+        <block type="green_led"></block>
+      </category>
+      <category name="🌈 RGB" colour="#E59866" id="cat_rgb">
+        <block type="rgb_display"></block>
+        <block type="rgb_led_display"></block>
+        <block type="rgb_component"></block>
+      </category>
+      <category name="🖥️ Screen" colour="#D4AC0D" id="cat_screen">
+        <block type="LCD"></block>
+        <block type="LCD_print"></block>
+        <block type="text_speech"></block>
+      </category>
+    </category>
+
+    <!-- ══ INPUT DEVICES ══ -->
+    <category name="🔊 Input Devices" colour="#27AE60" id="cat_input">
       <block type="din_button"></block>
-      <block type="din_motion"></block>
-      <block type="din_proximity"></block>
-      <block type="din_ir"></block>
-      <block type="din_flame"></block>
-      <block type="load_cell"></block>
-      <block type="steper"></block>
-      <block type="waterpump"></block>
-      <block type="solinoid"></block>
-      <block type="animo"></block>
-      <block type="relay"></block>
-      <block type="buzzer"></block>
-      <block type="minifan"></block>
-      <block type="buzzer_component"></block>
-      <block type="joystick_move"></block>
-      <block type="ir_sen"></block>
-      <block type="touch_sensor"></block>
-    </category>
-    <category name="Analog" colour="#781692">
-      <block type="tep_ana"></block>
-      <block type="heart_beat"></block>
-      <block type="soil_moisture"></block>
-      <block type="dust"></block>
-      <block type="vibration-switch-sensor"></block>
-      <block type="Current-sensor"></block>
-      <block type="IR-Temp"></block>
-      <block type="temp2-sensor"></block>
-      <block type="ecg"></block>
-      <block type="ana_temp"></block>
-      <block type="water-turbidity-sensor"></block>
-      <block type="shock_sensor"></block>
-      <block type="flex-sensor"></block>
-      <block type="Air_quality_sensor"></block>
-      <block type="flexi_force_sensor"></block>
-      <block type="TDS_Water_sensor"></block>
-      <block type="din_flame"></block>
-      <block type="din_temp"></block>
-      <block type="water_sensor"></block>
-      <block type="din_ultra"></block>
-      <block type="voltage_sensor"></block>
-      <block type="humidity"></block>
-      <block type="ldr"></block>
-      <block type="piezo_sensor"></block>
-    </category>
-    <category name="I2c" colour="#A020F0">
-      <block type="magnetic_sensor"></block>
-      <block type="colour_sen"></block>
-      <block type="accelerometer_sensor"></block>
-      <block type="rtc_sensor"></block>
-      <block type="ambient-sen"></block>
-      <block type="LCD"></block>
-      <block type="pressure"></block>
-      <block type="compass"></block>
-      <block type="ceprom"></block>
-      <block type="gusture"></block>
-      <block type="ir_temp"></block>
-      <block type="motor_driver"></block>
-      <block type="nfc_reader"></block>
-      <block type="mag_encoder"></block>
-      <block type="rfc"></block>
-      <block type="text_speech"></block>
-      <block type="touch_sensor"></block>
-      <block type="uv_sensor"></block>
-      <block type="temp_sensor"></block>
-      <block type="accelerometer"></block>
-      <block type="max"></block>
-    </category>
-    <category name="PWM" colour="#781692">
-      <block type="do_dc_motor"></block>
-      <block type="do_servo"></block>
-      <block type="do_dc_motor2"></block>
-    </category>
-    <category name="LEDs" colour="#FFB56A">
-      <block type="do_led_param"></block>
-      <block type="do_led"></block>
-      <block type="red_led"></block>
-      <block type="yellow_led"></block>
-      <block type="light_freq"></block>
-      <block type="green_led"></block>
-      <block type="rgb_display"></block>
-      <block type="rgb_led_display"></block>
-      <block type="rgb_component"></block>
-      <block type="LCD_print"></block>
-    </category>
-    <category name="Tx-Rx" colour="#C0603E">
-      <block type="finger_print_enroll"></block>
-      <block type="finger_print_match"></block>
       <block type="keypad"></block>
-      <block type="mini_motor"></block>
-      <block type="remote_motor"></block>
-      <block type="water_motor"></block>
-      <block type="tank_motor"></block>
-      <block type="port_on"></block>
-      <block type="port_off"></block>
-      <block type="sen_ultrasonic"></block>
-      <block type="sen_temp"></block>
+      <block type="touch_sensor"></block>
+      <block type="joystick_move"></block>
+      <block type="buzzer"></block>
+      <block type="buzzer_component"></block>
     </category>
 
+    <!-- ══ COMMUNICATION ══ -->
+    <category name="📶 Communication" colour="#8E44AD" id="cat_comm">
+      <category name="📡 Wireless" colour="#7D3C98" id="cat_wireless">
+        <block type="bt_send"></block>
+      </category>
+      <category name="🪪 Identification" colour="#6C3483" id="cat_identification">
+        <block type="rfid"></block>
+        <block type="nfc_reader"></block>
+        <block type="rfc"></block>
+        <block type="finger_print_enroll"></block>
+        <block type="finger_print_match"></block>
+      </category>
+    </category>
 
-    <category name="SPI" colour="#2EB061">
-      <block type="rfid"></block>
-      <block type="sensor"></block>
-      <block type="tem_sensor"></block>
-      <block type="xray_sensor"></block>
-      <block type="rc_sensor"></block>
-      <block type="do_onoff"></block>
-      <block type="bt_send"></block>
-      <block type="loop_end"></block>
-    </category>
-    <category name="Loop" colour="#FF6347">
-      <block type="lp_while"></block>
-      <block type="lp_break"></block>
-      <block type="lp_start"></block>
-      <block type="lp_repeat_count"></block>
-      <block type="lp_label"></block>
-      <block type="compare"></block>
-    </category>
-    <category name="Delay" colour="#FFB56A">
-      <block type="ctl_delay"></block>
-    </category>
     <sep></sep>
-    <category name="Logic" colour="#4C97FF">
-      <block type="din_if_else"></block>
-      <block type="logic_operation"></block>
-      <block type="logic_boolean"></block>
-      <block type="logical_comparison"></block>
-      <block type="any_input_block"></block>
-      <block type="custom_if_then"></block>
-      <block type="system_status"></block>
+
+    <!-- ══ CONTROL FLOW ══ -->
+    <category name="🔁 Control Flow" colour="#E74C3C" id="cat_control">
+      <category name="🧠 Logic" colour="#C0392B" id="cat_logic">
+        <block type="start"></block>
+        <block type="din_if_else"></block>
+        <block type="custom_if_then"></block>
+        <block type="any_input_block"></block>
+        <block type="system_status"></block>
+        <block type="logic_boolean">
+          <field name="BOOL">TRUE</field>
+        </block>
+        <block type="logic_operation">
+          <field name="OP">AND</field>
+        </block>
+        <block type="logical_comparison"></block>
+        <block type="compare"></block>
+        <block type="logic_compare">
+          <field name="OP">EQ</field>
+          <value name="A">
+            <shadow type="math_number">
+              <field name="NUM">10</field>
+            </shadow>
+          </value>
+          <value name="B">
+            <shadow type="math_number">
+              <field name="NUM">5</field>
+            </shadow>
+          </value>
+        </block>
+        <block type="controls_if">
+          <value name="IF0">
+            <shadow type="logic_boolean">
+              <field name="BOOL">TRUE</field>
+            </shadow>
+          </value>
+        </block>
+      </category>
+      <category name="🔄 Loops" colour="#E74C3C" id="cat_loops">
+        <block type="lp_while"></block>
+        <block type="lp_start"></block>
+        <block type="lp_repeat_count"></block>
+        <block type="lp_label"></block>
+        <block type="lp_break"></block>
+        <block type="loop_end"></block>
+        <block type="controls_repeat_ext">
+          <value name="TIMES">
+            <shadow type="math_number">
+              <field name="NUM">5</field>
+            </shadow>
+          </value>
+        </block>
+        <block type="controls_for">
+          <field name="VAR">i</field>
+          <value name="FROM">
+            <shadow type="math_number">
+              <field name="NUM">0</field>
+            </shadow>
+          </value>
+          <value name="TO">
+            <shadow type="math_number">
+              <field name="NUM">10</field>
+            </shadow>
+          </value>
+        </block>
+      </category>
+      <category name="⏱️ Delay &amp; Timing" colour="#C0392B" id="cat_delay">
+        <block type="ctl_delay"></block>
+      </category>
     </category>
-    <category name="Maths" colour="#9ACD32">
-      <block type="math_number">
-        <field name="NUM">1</field>
-      </block>
-      <block type="text"></block>
-      <block type="text_join"></block>
+
+    <!-- ══ DATA ══ -->
+    <category name="📊 Data" colour="#1ABC9C" id="cat_data">
+      <category name="🔢 Math" colour="#17A589" id="cat_math">
+        <block type="math_number">
+          <field name="NUM">0</field>
+        </block>
+        <block type="math_arithmetic">
+          <field name="OP">ADD</field>
+          <value name="A">
+            <shadow type="math_number">
+              <field name="NUM">1</field>
+            </shadow>
+          </value>
+          <value name="B">
+            <shadow type="math_number">
+              <field name="NUM">2</field>
+            </shadow>
+          </value>
+        </block>
+        <block type="math_random_int">
+          <value name="FROM">
+            <shadow type="math_number">
+              <field name="NUM">1</field>
+            </shadow>
+          </value>
+          <value name="TO">
+            <shadow type="math_number">
+              <field name="NUM">100</field>
+            </shadow>
+          </value>
+        </block>
+      </category>
+      <category name="🔤 Text" colour="#148F77" id="cat_text">
+        <block type="text">
+          <field name="TEXT">Hello</field>
+        </block>
+        <block type="text_join">
+          <value name="ADD0">
+            <shadow type="text">
+              <field name="TEXT">Hello</field>
+            </shadow>
+          </value>
+          <value name="ADD1">
+            <shadow type="text">
+              <field name="TEXT">World</field>
+            </shadow>
+          </value>
+        </block>
+        <block type="text_length">
+          <value name="VALUE">
+            <shadow type="text">
+              <field name="TEXT">Blockly</field>
+            </shadow>
+          </value>
+        </block>
+      </category>
+      <category name="📦 Variables" custom="VARIABLE" colour="#0E6655" id="cat_variables"></category>
+      <category name="📋 Lists" custom="LIST" colour="#0A3D62" id="cat_lists"></category>
     </category>
-    <category name="Function" custom="PROCEDURE" colour="#FF1493"></category>
-    <category name="Variable" custom="VARIABLE" colour="#0000FF"></category>
-    <category name="List" custom="LIST" colour="#FF6680"></category>
+
+    <category name="🔧 Functions" custom="PROCEDURE" colour="#FF1493" id="cat_functions"></category>
+
     <sep></sep>
-    <category name="Display-3.js" colour="#6366F1">
+
+    <!-- ══ VISUALISATION ══ -->
+    <category name="🎨 Animations" colour="#6366F1" id="cat_animations">
+      <block type="lottie_anim"></block>
+      <block type="lottie_rocket"></block>
+      <block type="lottie_heartbeat"></block>
+      <block type="lottie_weather"></block>
+      <block type="lottie_loading"></block>
+      <block type="lottie_robot"></block>
+      <block type="lottie_starburst"></block>
+      <block type="lottie_water"></block>
+      <block type="lottie_fire"></block>
+      <block type="lottie_lightning"></block>
+      <block type="lottie_gearspin"></block>
+    </category>
+    <category name="🌐 3D Simulations" colour="#4F46E5" id="cat_3d">
       <block type="three_d_model"></block>
       <block type="speedo_3d"></block>
       <block type="sim_solar"></block>
@@ -3652,21 +4084,10 @@
       <block type="sim_atom"></block>
       <block type="sim_globe"></block>
     </category>
-    <category name="Display-lotte" colour="#6366F1">
-      <block type="lottie_anim"></block>
-      <block type="lottie_rocket"></block>
-      <block type="lottie_heartbeat"></block>
-      <block type="lottie_weather"></block>
-      <block type="lottie_loading"></block>
-      <block type="lottie_robot"></block>
-      <block type="lottie_starburst"></block>
-      <block type="lottie_water"></block>
-      <block type="lottie_fire"></block>
-      <block type="lottie_lightning"></block>
-      <block type="lottie_gearspin"></block>
-    </category>
+
     <sep></sep>
-    <category name="default block" colour="#9ACD32">
+
+        <category name="default block" colour="#9ACD32">
       <block type="math_number">
         <field name="NUM">0</field>
       </block>
@@ -4428,6 +4849,8 @@
         }
       }
       pyGen = window.Blockly && window.Blockly.Python;
+      // Keep Blockly.Python in sync — any code that still references it gets the real object
+      if (pyGen && window.Blockly) window.Blockly.Python = pyGen;
       return !!(window.Blockly && window.Blockly.Python);
     }
 
@@ -5042,13 +5465,14 @@
 
 
     async function sendCodeToESP32_MQTT(code) {
+      const asyncCode = (typeof wrapWithAsyncio === 'function') ? wrapWithAsyncio(code) : code;
       const mqttClient = mqtt.connect('wss://3921b8461cb747b593a333f2aced8435.s1.eu.hivemq.cloud:8884/mqtt', {
         clientId: 'mqttjs_' + Math.random().toString(16).substr(2, 8),
         clean: true, connectTimeout: 10000, reconnectPeriod: 1000,
         protocolVersion: 5, username: 'ESP32', password: 'Esp@12345',
       });
       mqttClient.on('connect', function () {
-        mqttClient.publish('esp32/boot', `@@START \n${code} \n @@END`);
+        mqttClient.publish('esp32/boot', `@@START \n${asyncCode} \n @@END`);
         mqttClient.subscribe(['esp32/fire', 'esp32/ultrasonic', 'esp32/servo', 'esp32/led', 'esp32/motor', 'esp32/message']);
         handleBoardMessage("WiFi code sent ✅");
         setTimeout(() => handleBoardMessage("-"), 5000);
@@ -6766,22 +7190,58 @@
       reg['do_onoff'] = b => { const ports = (b.getFieldValue('PORTS') || '').split(',').map(s => s.trim()).filter(Boolean); if (!ports.length) return "# do_onoff: no ports\n"; const fn = b.getFieldValue('STATE') === '1' ? 'robot.port_on' : 'robot.port_off'; return ports.map(p => `${fn}(${p})\n`).join(''); };
       reg['port_on'] = b => { const ports = (b.getFieldValue('PORTS') || '').split(',').map(s => s.trim()); return ports.map(p => `robot.port_on(${p})\n`).join(''); };
       reg['port_off'] = b => { const ports = (b.getFieldValue('PORTS') || '').split(',').map(s => s.trim()); return ports.map(p => `robot.port_off(${p})\n`).join(''); };
-      reg['do_dc_motor'] = b => { const speed = b.getFieldValue('SPEED') || 0; const ports = (b.getFieldValue('MOTORS') || '').split(',').map(s => s.trim()).filter(Boolean); const state = b.getFieldValue('STATE'); if (!ports.length) return "# No motors\n"; if (ports.length === 1) return `motor_speed("${ports[0]}",${speed},"${state}")\n`; return `motor_speed(${ports.map(p => `"${p}"`).join(',')},${speed},"${state}")\n`; };
-      reg['start'] = b => { const body = py.statementToCode(b, 'DO') || '    pass\n'; const value = py.valueToCode(b, 'VALUE', py.ORDER_NONE) || ''; return `def start(${value}):\n${body}\n`; };
-      reg['do_dc_motor2'] = b => { const angle = b.getFieldValue('STATE') || 0; const ports = (b.getFieldValue('MOTORS') || '').split(',').map(s => s.trim()).filter(Boolean); if (!ports.length) return '# Motor: no port\n'; if (ports.length === 1) return `motor("${ports[0]}","${angle}")\n`; return `motor(${ports.map(p => `"${p}"`).join(',')}, "${angle}")\n`; };
-      reg['do_servo'] = b => { const ports = (b.getFieldValue('SERVO_PORT') || '').split(',').map(s => s.trim()).filter(Boolean); const angle = b.getFieldValue('ANG') || 0; if (!ports.length) return "# do_servo: no port\n"; if (ports.length === 1) return `servo("${ports[0]}",${angle})\n`; return `servo(${ports.map(p => `"${p}"`).join(',')},${angle})\n`; };
+      reg['do_dc_motor'] = b => { const speed = b.getFieldValue('SPEED') || 0; const ports = (b.getFieldValue('MOTORS') || '').split(',').map(s => s.trim()).filter(Boolean); const state = b.getFieldValue('STATE'); if (!ports.length) return "# No motors\n"; if (ports.length === 1) return `await async_motor_speed("${ports[0]}",${speed},"${state}")\n`; return `await async_motor_speed(${ports.map(p => `"${p}"`).join(',')},${speed},"${state}")\n`; };
+      reg['start'] = b => {
+        let body = py.statementToCode(b, 'DO');
+        const val = py.valueToCode(b, 'VALUE', py.ORDER_NONE);
+        if (val) {
+          body += '    return ' + val + '\n';
+        }
+        if (!body) {
+          body = '    pass\n';
+        }
+        return `async def start():\n${body}\n`;
+      };
+      reg['do_dc_motor2'] = b => { const angle = b.getFieldValue('STATE') || 0; const ports = (b.getFieldValue('MOTORS') || '').split(',').map(s => s.trim()).filter(Boolean); if (!ports.length) return '# Motor: no port\n'; if (ports.length === 1) return `await async_motor("${ports[0]}","${angle}")\n`; return `await async_motor(${ports.map(p => `"${p}"`).join(',')}, "${angle}")\n`; };
+      reg['do_servo'] = b => { const ports = (b.getFieldValue('SERVO_PORT') || '').split(',').map(s => s.trim()).filter(Boolean); const angle = b.getFieldValue('ANG') || 0; if (!ports.length) return "# do_servo: no port\n"; if (ports.length === 1) return `await async_servo("${ports[0]}",${angle})\n`; return `await async_servo(${ports.map(p => `"${p}"`).join(',')},${angle})\n`; };
       reg['ctl_delay'] = b => `time.sleep(${b.getFieldValue('MS') || 0})\n`;
-      reg['lp_while'] = b => { const cond = py.valueToCode(b, 'COND', py.ORDER_NONE) || 'False'; const body = py.statementToCode(b, 'DO') || '  pass\n'; return `while ${cond}:\n${body}`; };
+      reg['lp_while'] = b => { const cond = py.valueToCode(b, 'COND', py.ORDER_NONE) || 'False'; const body = py.statementToCode(b, 'DO') || '  pass\n'; return `while ${cond}:\n  await asyncio.sleep(0)\n${body}`; };
       reg['lp_break'] = () => 'break\n';
       reg['lp_start'] = () => '@@START\n';
       reg['lp_repeat_count'] = b => { const n = +b.getFieldValue('COUNT') || 0; const body = py.statementToCode(b, 'DO') || '  pass\n'; return `for _ in range(${n}):\n${body}`; };
       reg['lp_label'] = b => { const name = py.valueToCode(b, 'NAME', py.ORDER_NONE); return `print(${name || ''})\n`; };
-      reg['din_if_else'] = b => { const cond = py.valueToCode(b, 'COND', py.ORDER_NONE) || 'False'; const doS = py.statementToCode(b, 'DO') || '  pass\n'; const elseS = py.statementToCode(b, 'ELSE') || '  pass\n'; return `if ${cond}:\n${doS}else:\n${elseS}\n`; };
+      reg['din_if_else'] = function (b) {
+        const cond = py.valueToCode(b, 'COND', py.ORDER_NONE) || 'False';
+        const doS = py.statementToCode(b, 'DO') || '  pass\n';
+        const elseS = py.statementToCode(b, 'ELSE') || '  pass\n';
+        function makeGather(stmtCode) {
+          var ls = stmtCode.split('\n')
+            .map(function (l) { return l.trimEnd(); })
+            .filter(function (l) { return l.trim() && !l.trim().startsWith('#'); });
+          if (ls.length <= 1) return stmtCode;
+          // Separate lines into:
+          //   gatherLines: pure actuator awaits (await async_motor/servo/led/buzzer/relay...)
+          //   passthrough: assignment lines, control flow, etc.
+          var ind = (ls[0].match(/^(\s*)/) || ['', ''])[1];
+          // An actuator line is: optional indent + "await async_xxx(...)" with no "=" assignment before the await
+          var actuatorPat = /^\s*await\s+async_\w+\s*\(/;
+          var assignPat = /^\s*\w+\s*=\s*/;
+          var allActuators = ls.every(function(l) {
+            return actuatorPat.test(l) && !assignPat.test(l);
+          });
+          if (!allActuators) return stmtCode; // mixed content, keep as-is
+          var coros = ls.map(function (l) { return l.trim().replace(/^await\s+/, ''); });
+          return ind + 'await asyncio.gather(\n'
+            + coros.map(function (c) { return ind + '    ' + c + ','; }).join('\n')
+            + '\n' + ind + ')\n';
+        }
+        return 'if ' + cond + ':\n' + makeGather(doS) + 'else:\n' + makeGather(elseS) + '\n';
+      };
       reg['do_led_param'] = b => { const pins = (b.getFieldValue('PORTS') || '').split(',').map(s => s.trim()).filter(Boolean); const v1 = b.getFieldValue('VAL') || 0; const v2 = b.getFieldValue('VAL2') || 0; if (!pins.length) return "# do_led_param: no pins\n"; return pins.map(p => `led_blink('${p}',${v1},${v2})\n`).join(''); };
       reg['logical_comparison'] = b => { const v1 = py.valueToCode(b, 'VALUE1', py.ORDER_NONE); const op = b.getFieldValue('OPERATOR'); const v2 = py.valueToCode(b, 'VALUE2', py.ORDER_NONE); return [`${v1} ${op} ${v2}`, py.ORDER_RELATIONAL]; };
-      reg['red_led'] = b => { const pins = (b.getFieldValue('PORTS') || '').split(',').map(s => s.trim()).filter(Boolean); const v1 = b.getFieldValue('VAL1'); const v2 = b.getFieldValue('VAL2'); if (!pins.length) return "# red_blink: no pins\n"; return pins.map(p => `red_blink("${p}",${v1},${v2})\n`).join(''); };
-      reg['yellow_led'] = b => { const pins = (b.getFieldValue('PORTS') || '').split(',').map(s => s.trim()).filter(Boolean); const v1 = b.getFieldValue('VAL1'); const v2 = b.getFieldValue('VAL2'); if (!pins.length) return "# yellow_blink: no pins\n"; return pins.map(p => `yellow_blink("${p}",${v1},${v2})\n`).join(''); };
-      reg['green_led'] = b => { const pins = (b.getFieldValue('PORTS') || '').split(',').map(s => s.trim()).filter(Boolean); const v1 = b.getFieldValue('VAL1'); const v2 = b.getFieldValue('VAL2'); if (!pins.length) return "# green_blink: no pins\n"; return pins.map(p => `green_blink("${p}",${v1},${v2})\n`).join(''); };
+      reg['red_led'] = b => { const pins = (b.getFieldValue('PORTS') || '').split(',').map(s => s.trim()).filter(Boolean); const v1 = b.getFieldValue('VAL1'); const v2 = b.getFieldValue('VAL2'); if (!pins.length) return "# red_blink: no pins\n"; return pins.map(p => `await async_red_blink("${p}",${v1},${v2})\n`).join(''); };
+      reg['yellow_led'] = b => { const pins = (b.getFieldValue('PORTS') || '').split(',').map(s => s.trim()).filter(Boolean); const v1 = b.getFieldValue('VAL1'); const v2 = b.getFieldValue('VAL2'); if (!pins.length) return "# yellow_blink: no pins\n"; return pins.map(p => `await async_yellow_blink("${p}",${v1},${v2})\n`).join(''); };
+      reg['green_led'] = b => { const pins = (b.getFieldValue('PORTS') || '').split(',').map(s => s.trim()).filter(Boolean); const v1 = b.getFieldValue('VAL1'); const v2 = b.getFieldValue('VAL2'); if (!pins.length) return "# green_blink: no pins\n"; return pins.map(p => `await async_green_blink("${p}",${v1},${v2})\n`).join(''); };
 
 
       reg['three_d_model'] = function (block) {
@@ -6828,13 +7288,51 @@
       reg['lottie_lightning'] = function (b) { return 'robot.anim("lottie_lightning", ' + (parseInt(b.getFieldValue('LANIM_SPEED') || '100') / 100).toFixed(1) + ')\n'; };
       reg['lottie_gearspin'] = function (b) { return 'robot.anim("lottie_gearspin", ' + (parseInt(b.getFieldValue('LANIM_SPEED') || '100') / 100).toFixed(1) + ')\n'; };
       // Sensor output blocks
-      const sensorOutputMap = { din_sound: 'sound', din_tilt: 'tilt', din_door: 'get_door', din_button: 'button', din_motion: 'motion', light_freq: 'light_freq', din_proximity: 'get_proximity', din_ir: 'get_ir', din_flame: 'flame', load_cell: 'load_cell', tep_ana: 'temp_ana_sensor', heart_beat: 'heart_beat', ldr: 'LDR', soil_moisture: 'soil_moisture', dust: 'dust', 'vibration-switch-sensor': 'vibration_sensor', 'Current-sensor': 'current', 'IR-Temp': 'IrTemp', 'temp2-sensor': 'tempanalog', ecg: 'ecg', ana_temp: 'ana_temp', shock_sensor: 'shock_sensor', 'flex-sensor': 'flex', humidity: 'humidity', joystick_move: 'joy_stick', Air_quality_sensor: 'air_quality_sensor', flexi_force_sensor: 'flexi_sensor', TDS_Water_sensor: 'tds_sensor', 'water-turbidity-sensor': 'waterturbidity', ir_sen: 'IR', din_ultra: 'ultrasonic', voltage_sensor: 'voltage', water_sensor: 'water_sen' };
+      // Maps block type → [asyncFnName, syncFnName]
+      // asyncFnName is used for await async_xxx(...) in value context
+      // syncFnName kept for backward compat but async is preferred
+      const sensorOutputMap = {
+        din_sound: ['async_sound', 'sound'],
+        din_tilt: ['async_tilt', 'tilt'],
+        din_door: ['async_get_door', 'get_door'],
+        din_button: ['async_button', 'button'],
+        din_motion: ['async_motion', 'motion'],
+        light_freq: ['async_light_freq', 'light_freq'],
+        din_proximity: ['async_get_proximity', 'get_proximity'],
+        din_ir: ['async_get_ir', 'get_ir'],
+        din_flame: ['async_flame', 'flame'],
+        load_cell: ['async_load_cell', 'load_cell'],
+        tep_ana: ['async_temp_ana_sensor', 'temp_ana_sensor'],
+        heart_beat: ['async_heart_beat', 'heart_beat'],
+        ldr: ['async_LDR', 'LDR'],
+        soil_moisture: ['async_soil_moisture', 'soil_moisture'],
+        dust: ['async_dust', 'dust'],
+        'vibration-switch-sensor': ['async_vibration_sensor', 'vibration_sensor'],
+        'Current-sensor': ['async_current', 'current'],
+        'IR-Temp': ['async_IrTemp', 'IrTemp'],
+        'temp2-sensor': ['async_tempanalog', 'tempanalog'],
+        ecg: ['async_ecg', 'ecg'],
+        ana_temp: ['async_ana_temp', 'ana_temp'],
+        shock_sensor: ['async_shock_sensor', 'shock_sensor'],
+        'flex-sensor': ['async_flex', 'flex'],
+        humidity: ['async_humidity', 'humidity'],
+        joystick_move: ['async_joy_stick', 'joy_stick'],
+        Air_quality_sensor: ['async_air_quality_sensor', 'air_quality_sensor'],
+        flexi_force_sensor: ['async_flexi_sensor', 'flexi_sensor'],
+        TDS_Water_sensor: ['async_tds_sensor', 'tds_sensor'],
+        'water-turbidity-sensor': ['async_waterturbidity', 'waterturbidity'],
+        ir_sen: ['async_IR', 'IR'],
+        din_ultra: ['async_ultrasonic', 'ultrasonic'],
+        voltage_sensor: ['async_voltage', 'voltage'],
+        water_sensor: ['async_water_sen', 'water_sen'],
+      };
 
-      Object.entries(sensorOutputMap).forEach(([type, fn]) => {
+      Object.entries(sensorOutputMap).forEach(([type, [asyncFn, syncFn]]) => {
         reg[type] = b => {
           const pins = (b.getFieldValue('PORTS') || '').split(',').map(p => p.trim()).filter(Boolean);
           if (!pins.length) return ['# Invalid: no port', py.ORDER_NONE];
-          return [`${fn}(${pins.map(p => `"${p}"`).join(',')})`, py.ORDER_FUNCTION_CALL];
+          // Generate: await async_xxx("PIN") — works as expression value in async def
+          return [`await ${asyncFn}(${pins.map(p => `"${p}"`).join(',')})`, py.ORDER_FUNCTION_CALL];
         };
       });
 
@@ -6901,8 +7399,8 @@
       reg['waterpump'] = b => { const angle = b.getFieldValue('ANGLE') || 0; const ports = (b.getFieldValue('PORTS') || '').split(',').map(s => s.trim()).filter(Boolean); if (!ports.length) return '# Waterpump: no port\n'; if (ports.length === 1) return `get_waterpump("${ports[0]}",${angle})\n`; return `get_waterpump(${ports.map(p => `"${p}"`).join(',')},${angle})\n`; };
       reg['solinoid'] = b => { const angle = b.getFieldValue('STATE') || 0; const ports = (b.getFieldValue('PORTS') || '').split(',').map(s => s.trim()).filter(Boolean); if (!ports.length) return '# Solinoid: no port\n'; if (ports.length === 1) return `get_solinoid("${ports[0]}",${angle})\n`; return `get_solinoid(${ports.map(p => `"${p}"`).join(',')},${angle})\n`; };
       reg['animo'] = b => { const angle = b.getFieldValue('STATE') || 0; const ports = (b.getFieldValue('PORTS') || '').split(',').map(s => s.trim()).filter(Boolean); if (!ports.length) return '# Animo: no port\n'; if (ports.length === 1) return `get_animo("${ports[0]}",${angle})\n`; return `get_animo(${ports.map(p => `"${p}"`).join(',')},${angle})\n`; };
-      reg['relay'] = b => { const angle = b.getFieldValue('STATE') || 0; const ports = (b.getFieldValue('PORTS') || '').split(',').map(s => s.trim()).filter(Boolean); if (!ports.length) return '# relay: no port\n'; if (ports.length === 1) return `relay("${ports[0]}",${angle})\n`; return `relay(${ports.map(p => `"${p}"`).join(',')},${angle})\n`; };
-      reg['buzzer'] = b => { const v1 = b.getFieldValue('VAL1') || 0; const v2 = b.getFieldValue('VAL2') || 0; const v3 = b.getFieldValue('VAL3') || 0; const ports = (b.getFieldValue('PORTS') || '').split(',').map(s => s.trim()).filter(Boolean); if (!ports.length) return '# Buzzer: no port\n'; if (ports.length === 1) return `buzzer("${ports[0]}",${v1},${v2},${v3})\n`; return `buzzer(${ports.map(p => `"${p}"`).join(',')},${v1},${v2},${v3})\n`; };
+      reg['relay'] = b => { const angle = b.getFieldValue('STATE') || 0; const ports = (b.getFieldValue('PORTS') || '').split(',').map(s => s.trim()).filter(Boolean); if (!ports.length) return '# relay: no port\n'; if (ports.length === 1) return `await async_relay("${ports[0]}",${angle})\n`; return `await async_relay(${ports.map(p => `"${p}"`).join(',')},${angle})\n`; };
+      reg['buzzer'] = b => { const v1 = b.getFieldValue('VAL1') || 0; const v2 = b.getFieldValue('VAL2') || 0; const v3 = b.getFieldValue('VAL3') || 0; const ports = (b.getFieldValue('PORTS') || '').split(',').map(s => s.trim()).filter(Boolean); if (!ports.length) return '# Buzzer: no port\n'; if (ports.length === 1) return `await async_buzzer("${ports[0]}",${v1},${v2},${v3})\n`; return `await async_buzzer(${ports.map(p => `"${p}"`).join(',')},${v1},${v2},${v3})\n`; };
       reg['minifan'] = b => { const state = b.getFieldValue('STATE') || 0; const ports = (b.getFieldValue('PORTS') || '').split(',').map(s => s.trim()).filter(Boolean); if (!ports.length) return '# MINI FAN: no port\n'; if (ports.length === 1) return `mini_fan("${ports[0]}","${state}")\n`; return `mini_fan(${ports.map(p => `"${p}"`).join(',')},"${state}")\n`; };
       reg['loop_end'] = b => `${b.getFieldValue('NAME') || ''}\n`;
       reg['mini_motor'] = b => { const motors = (b.getFieldValue('MOTORS') || '').split(',').map(s => s.trim()).filter(Boolean); if (!motors.length) return "# No motors\n"; return motors.map(() => `red_blink("F4",1,1)\n`).join(''); };
@@ -6913,8 +7411,8 @@
       reg['rgb_component'] = b => { const ports = (b.getFieldValue('PORTS') || '').split(',').map(s => s.trim()).filter(Boolean); const freq = b.getFieldValue('freq'); const d1 = b.getFieldValue('Delay1'); const d2 = b.getFieldValue('DELAY2'); if (!ports.length) return "# rgb_component: no ports\n"; return ports.map(p => `rgb("${p}",${freq},${d1},${d2})\n`).join(''); };
       reg['buzzer_component'] = b => { const ports = (b.getFieldValue('PORTS') || '').split(',').map(s => s.trim()).filter(Boolean); const freq = b.getFieldValue('freq'); const d1 = b.getFieldValue('Delay1'); const d2 = b.getFieldValue('DELAY2'); if (!ports.length) return "# buzzer_component: no ports\n"; return ports.map(p => `buzzer("${p}",${freq},${d1},${d2})\n`).join(''); };
       reg['LCD_print'] = b => { const txt = py.valueToCode(b, 'TEXT', py.ORDER_NONE) || ""; return `lcd(${txt})\n`; };
-      reg['din_flame'] = b => { const port = b.getFieldValue('PORTS'); return [`get_flame("${port}")`, py.ORDER_NONE]; };
-      reg['din_temp'] = b => { const port = b.getFieldValue('PORTS'); return [`temp("${port}")`, py.ORDER_NONE]; };
+      reg['din_flame'] = b => { const port = b.getFieldValue('PORTS'); return [`await async_flame("${port}")`, py.ORDER_FUNCTION_CALL]; };
+      reg['din_temp'] = b => { const port = b.getFieldValue('PORTS'); return [`await async_temp("${port}")`, py.ORDER_FUNCTION_CALL]; };
       reg['magnetic_sensor'] = () => [`magnetic()`, py.ORDER_ATOMIC];
       reg['colour_sen'] = () => [`colour()`, py.ORDER_ATOMIC];
       reg['system_status'] = () => [`system_status.running`, py.ORDER_ATOMIC];
@@ -8170,126 +8668,123 @@
 
       // ── Python Generators for List Blocks ──
 
-      (Blockly.Python.forBlock || Blockly.Python)['list_create_empty'] = function (block) {
-        return ['[]', Blockly.Python.ORDER_ATOMIC];
+      (pyGen.forBlock || pyGen)['list_create_empty'] = function (block) {
+        return ['[]', pyGen.ORDER_ATOMIC];
       };
 
-      (Blockly.Python.forBlock || Blockly.Python)['list_create_with'] = function (block) {
+      (pyGen.forBlock || pyGen)['list_create_with'] = function (block) {
         var items = [];
         for (var i = 0; i < block.itemCount_; i++) {
-          items.push(Blockly.Python.valueToCode(block, 'ITEM' + i, Blockly.Python.ORDER_NONE) || 'None');
+          items.push(pyGen.valueToCode(block, 'ITEM' + i, pyGen.ORDER_NONE) || 'None');
         }
         var code = '[' + items.join(', ') + ']';
-        return [code, Blockly.Python.ORDER_ATOMIC];
+        return [code, pyGen.ORDER_ATOMIC];
       };
 
-      (Blockly.Python.forBlock || Blockly.Python)['list_add'] = function (block) {
-        var list = Blockly.Python.valueToCode(block, 'LIST', Blockly.Python.ORDER_MEMBER) || '[]';
-        var item = Blockly.Python.valueToCode(block, 'ITEM', Blockly.Python.ORDER_NONE) || 'None';
+      (pyGen.forBlock || pyGen)['list_add'] = function (block) {
+        var list = pyGen.valueToCode(block, 'LIST', pyGen.ORDER_MEMBER) || '[]';
+        var item = pyGen.valueToCode(block, 'ITEM', pyGen.ORDER_NONE) || 'None';
         return list + '.append(' + item + ')\n';
       };
 
-      (Blockly.Python.forBlock || Blockly.Python)['list_get'] = function (block) {
-        var list = Blockly.Python.valueToCode(block, 'LIST', Blockly.Python.ORDER_MEMBER) || '[]';
-        var index = Blockly.Python.valueToCode(block, 'INDEX', Blockly.Python.ORDER_NONE) || '0';
-        return [list + '[' + index + ']', Blockly.Python.ORDER_MEMBER];
+      (pyGen.forBlock || pyGen)['list_get'] = function (block) {
+        var list = pyGen.valueToCode(block, 'LIST', pyGen.ORDER_MEMBER) || '[]';
+        var index = pyGen.valueToCode(block, 'INDEX', pyGen.ORDER_NONE) || '0';
+        return [list + '[' + index + ']', pyGen.ORDER_MEMBER];
       };
 
-      (Blockly.Python.forBlock || Blockly.Python)['list_set'] = function (block) {
-        var list = Blockly.Python.valueToCode(block, 'LIST', Blockly.Python.ORDER_MEMBER) || '[]';
-        var index = Blockly.Python.valueToCode(block, 'INDEX', Blockly.Python.ORDER_NONE) || '0';
-        var value = Blockly.Python.valueToCode(block, 'VALUE', Blockly.Python.ORDER_NONE) || 'None';
+      (pyGen.forBlock || pyGen)['list_set'] = function (block) {
+        var list = pyGen.valueToCode(block, 'LIST', pyGen.ORDER_MEMBER) || '[]';
+        var index = pyGen.valueToCode(block, 'INDEX', pyGen.ORDER_NONE) || '0';
+        var value = pyGen.valueToCode(block, 'VALUE', pyGen.ORDER_NONE) || 'None';
         return list + '[' + index + '] = ' + value + '\n';
       };
 
-      (Blockly.Python.forBlock || Blockly.Python)['list_remove'] = function (block) {
-        var list = Blockly.Python.valueToCode(block, 'LIST', Blockly.Python.ORDER_MEMBER) || '[]';
-        var index = Blockly.Python.valueToCode(block, 'INDEX', Blockly.Python.ORDER_NONE) || '0';
+      (pyGen.forBlock || pyGen)['list_remove'] = function (block) {
+        var list = pyGen.valueToCode(block, 'LIST', pyGen.ORDER_MEMBER) || '[]';
+        var index = pyGen.valueToCode(block, 'INDEX', pyGen.ORDER_NONE) || '0';
         return list + '.pop(' + index + ')\n';
       };
 
-      (Blockly.Python.forBlock || Blockly.Python)['list_length'] = function (block) {
-        var list = Blockly.Python.valueToCode(block, 'LIST', Blockly.Python.ORDER_NONE) || '[]';
-        return ['len(' + list + ')', Blockly.Python.ORDER_FUNCTION_CALL];
+      (pyGen.forBlock || pyGen)['list_length'] = function (block) {
+        var list = pyGen.valueToCode(block, 'LIST', pyGen.ORDER_NONE) || '[]';
+        return ['len(' + list + ')', pyGen.ORDER_FUNCTION_CALL];
       };
 
-      (Blockly.Python.forBlock || Blockly.Python)['list_isEmpty'] = function (block) {
-        var list = Blockly.Python.valueToCode(block, 'LIST', Blockly.Python.ORDER_NONE) || '[]';
-        return ['len(' + list + ') == 0', Blockly.Python.ORDER_RELATIONAL];
+      (pyGen.forBlock || pyGen)['list_isEmpty'] = function (block) {
+        var list = pyGen.valueToCode(block, 'LIST', pyGen.ORDER_NONE) || '[]';
+        return ['len(' + list + ') == 0', pyGen.ORDER_RELATIONAL];
       };
 
-      (Blockly.Python.forBlock || Blockly.Python)['list_contains'] = function (block) {
-        var list = Blockly.Python.valueToCode(block, 'LIST', Blockly.Python.ORDER_NONE) || '[]';
-        var item = Blockly.Python.valueToCode(block, 'ITEM', Blockly.Python.ORDER_NONE) || 'None';
-        return [item + ' in ' + list, Blockly.Python.ORDER_RELATIONAL];
+      (pyGen.forBlock || pyGen)['list_contains'] = function (block) {
+        var list = pyGen.valueToCode(block, 'LIST', pyGen.ORDER_NONE) || '[]';
+        var item = pyGen.valueToCode(block, 'ITEM', pyGen.ORDER_NONE) || 'None';
+        return [item + ' in ' + list, pyGen.ORDER_RELATIONAL];
       };
 
-      (Blockly.Python.forBlock || Blockly.Python)['list_indexOf'] = function (block) {
-        var list = Blockly.Python.valueToCode(block, 'LIST', Blockly.Python.ORDER_MEMBER) || '[]';
-        var item = Blockly.Python.valueToCode(block, 'ITEM', Blockly.Python.ORDER_NONE) || 'None';
-        return [list + '.index(' + item + ')', Blockly.Python.ORDER_FUNCTION_CALL];
+      (pyGen.forBlock || pyGen)['list_indexOf'] = function (block) {
+        var list = pyGen.valueToCode(block, 'LIST', pyGen.ORDER_MEMBER) || '[]';
+        var item = pyGen.valueToCode(block, 'ITEM', pyGen.ORDER_NONE) || 'None';
+        return [list + '.index(' + item + ')', pyGen.ORDER_FUNCTION_CALL];
       };
 
-      (Blockly.Python.forBlock || Blockly.Python)['list_delete_all'] = function (block) {
-        var list = Blockly.Python.valueToCode(block, 'LIST', Blockly.Python.ORDER_MEMBER) || '[]';
+      (pyGen.forBlock || pyGen)['list_delete_all'] = function (block) {
+        var list = pyGen.valueToCode(block, 'LIST', pyGen.ORDER_MEMBER) || '[]';
         return list + '.clear()\n';
       };
 
-      (Blockly.Python.forBlock || Blockly.Python)['list_insert'] = function (block) {
-        var list = Blockly.Python.valueToCode(block, 'LIST', Blockly.Python.ORDER_MEMBER) || '[]';
-        var index = Blockly.Python.valueToCode(block, 'INDEX', Blockly.Python.ORDER_NONE) || '0';
-        var item = Blockly.Python.valueToCode(block, 'ITEM', Blockly.Python.ORDER_NONE) || 'None';
+      (pyGen.forBlock || pyGen)['list_insert'] = function (block) {
+        var list = pyGen.valueToCode(block, 'LIST', pyGen.ORDER_MEMBER) || '[]';
+        var index = pyGen.valueToCode(block, 'INDEX', pyGen.ORDER_NONE) || '0';
+        var item = pyGen.valueToCode(block, 'ITEM', pyGen.ORDER_NONE) || 'None';
         return list + '.insert(' + index + ', ' + item + ')\n';
       };
 
-      (Blockly.Python.forBlock || Blockly.Python)['list_show'] = function (block) {
-        var list = Blockly.Python.valueToCode(block, 'LIST', Blockly.Python.ORDER_NONE) || '[]';
+      (pyGen.forBlock || pyGen)['list_show'] = function (block) {
+        var list = pyGen.valueToCode(block, 'LIST', pyGen.ORDER_NONE) || '[]';
         return 'print(' + list + ')\n';
       };
 
       // ── Override variables_set / variables_get for list-typed variables ──
+      // Uses pyGen (set inside waitForBlockly) — guaranteed non-null here.
 
-      // Use forBlock API consistently for both READ and WRITE (Blockly v12+)
-      var _pyForBlock = Blockly.Python.forBlock || Blockly.Python;
-      var _origVarSet = _pyForBlock['variables_set'];
-      var _origVarGet = _pyForBlock['variables_get'];
+      var _pyFB = pyGen.forBlock || pyGen;
+      var _origVarSet = _pyFB['variables_set'];
+      var _origVarGet = _pyFB['variables_get'];
 
-      (Blockly.Python.forBlock || Blockly.Python)['variables_set'] = function (block) {
+      _pyFB['variables_set'] = function (block, generator) {
+        var gen = generator || pyGen;
         var varModel = block.getField('VAR').getVariable();
-        var varName = Blockly.Python.nameDB_.getName(varModel.name, Blockly.Names.NameType.VARIABLE);
-        var value = Blockly.Python.valueToCode(block, 'VALUE', Blockly.Python.ORDER_NONE);
+        var varName = gen.nameDB_.getName(varModel.name, Blockly.Names.NameType.VARIABLE);
+        var value = gen.valueToCode(block, 'VALUE', gen.ORDER_NONE);
 
         // If it's a list-typed variable and no value plugged in → default to []
         if (varModel.type === 'list' && !value) {
           return varName + ' = []\n';
         }
         // Otherwise use original generator
-        if (_origVarSet) return _origVarSet.call(this, block);
+        if (_origVarSet) return _origVarSet.call(this, block, gen);
         return varName + ' = ' + (value || 'None') + '\n';
       };
 
-      (Blockly.Python.forBlock || Blockly.Python)['variables_get'] = function (block) {
-        // Original behavior is fine, just ensure it works
-        if (_origVarGet) return _origVarGet.call(this, block);
+      _pyFB['variables_get'] = function (block, generator) {
+        var gen = generator || pyGen;
+        if (_origVarGet) return _origVarGet.call(this, block, gen);
         var varModel = block.getField('VAR').getVariable();
-        var varName = Blockly.Python.nameDB_.getName(varModel.name, Blockly.Names.NameType.VARIABLE);
-        return [varName, Blockly.Python.ORDER_ATOMIC];
+        var varName = gen.nameDB_.getName(varModel.name, Blockly.Names.NameType.VARIABLE);
+        return [varName, gen.ORDER_ATOMIC];
       };
 
-      // ── Patch Blockly.Python.finish to init list-typed vars as [] not None ──
-      var _origFinish = Blockly.Python.finish;
-      Blockly.Python.finish = function (code) {
-        // Call original finish first
+      // ── Patch pyGen.finish to init list-typed vars as [] not None ──
+      var _origFinish = pyGen.finish;
+      pyGen.finish = function (code) {
         var result = _origFinish.call(this, code);
-
-        // Now find all list-typed variables and replace their "= None" with "= []"
         var allVars = workspace.getAllVariables();
         for (var i = 0; i < allVars.length; i++) {
           if (allVars[i].type === 'list') {
-            var safeName = Blockly.Python.nameDB_.getName(
+            var safeName = pyGen.nameDB_.getName(
               allVars[i].name, Blockly.Names.NameType.VARIABLE
             );
-            // Replace "safeName = None" at line start with "safeName = []"
             var re = new RegExp('^(' + safeName.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + '\\s*=\\s*)None', 'm');
             result = result.replace(re, '$1[]');
           }
@@ -8781,12 +9276,16 @@
         if (!container || !input) return;
 
         // Prevent clicking inside the search box from bubbling up to document and triggering Blockly.hideChaff()
-        const preventClose = (e) => e.stopPropagation();
-        container.addEventListener('pointerdown', preventClose);
-        container.addEventListener('mousedown', preventClose);
-        container.addEventListener('touchstart', preventClose);
-        container.addEventListener('click', preventClose);
-
+        const preventClose = (e) => {
+          const c = document.getElementById('flyoutSearchContainer');
+          if (c && (e.target === c || c.contains(e.target))) {
+            e.stopPropagation();
+          }
+        };
+        window.addEventListener('pointerdown', preventClose, true);
+        window.addEventListener('mousedown', preventClose, true);
+        window.addEventListener('touchstart', preventClose, true);
+        window.addEventListener('click', preventClose, true);
         // ── Build search index from Blockly.Blocks registry ──────────────
         // This works regardless of whether the toolbox is XML or JS config.
         const searchIndex = [];
@@ -8885,9 +9384,14 @@
               clearTimeout(window._searchHideTimeout);
             }
             window._searchHideTimeout = setTimeout(() => {
+              if (container.contains(document.activeElement)) {
+                // If focus is still in the search bar, don't hide, re-select search category!
+                const searchItem = getSearchItem();
+                if (searchItem) workspace.getToolbox().setSelectedItem(searchItem);
+                return;
+              }
               container.classList.add('hidden');
-            }, 50);
-          }
+            }, 100);          }
         });
 
         // ── Input handler — force flyout redraw on every keystroke ────────
@@ -8906,6 +9410,9 @@
             // already selected.
             toolbox.clearSelection();
             toolbox.setSelectedItem(searchItem);
+
+            // Re-focus the search input because Blockly steals focus when it opens the flyout
+            setTimeout(() => input.focus(), 50);
           }, 120);
         });
 
@@ -9963,25 +10470,36 @@
         openBT();
       };
 
+      // ── ASYNC CONCURRENCY WRAPPER ─────────────────────────────────────────
+      // Wraps all Blockly-generated Python in uasyncio so every action inside
+      // an if/while block fires SIMULTANEOUSLY — fan + light + servo all at once.
+      // Without this, MicroPython runs each line one by one (sequential).
+      function wrapWithAsyncio(rawCode) {
+        // reg['start'] generates: async def start(): ...body... / start()
+        // main.py detects coroutine → asyncio.run(). No extra wrapper needed.
+        return rawCode || '';
+      }
+
       // UPLOAD button
       document.getElementById("upload").onclick = async () => {
         const code = pyGen.workspaceToCode(workspace);
         if (!code.trim()) { alert("Please drag some blocks first!"); return; }
+        const asyncCode = wrapWithAsyncio(code);
 
         if (isMobileApp()) {
           // Mobile: hand off to App.js via bridge
           handleBoardMessage("Uploading via Bluetooth…");
-          window.ReactNativeWebView.postMessage(JSON.stringify({ type: "SEND_DATA", data: code }));
+          window.ReactNativeWebView.postMessage(JSON.stringify({ type: "SEND_DATA", data: asyncCode }));
           return;
         }
 
         // Desktop: USB first, then BLE
         if (stm32Port && stm32Writer) {
-          await writeUserPyToBoard(code);
+          await writeUserPyToBoard(asyncCode);
           return;
         }
         if (bleConnected()) {
-          await sendCodeToBLEBoot(`${code}`);
+          await sendCodeToBLEBoot(asyncCode);
           return;
         }
         alert("No board connected. Please connect via USB or Bluetooth.");
@@ -9991,7 +10509,7 @@
       document.getElementById('btnboot').onclick = async () => {
         const code = pyGen.workspaceToCode(workspace);
         if (stm32Port && stm32Writer) {
-          await writeUserPyToBoard(code);
+          await writeUserPyToBoard(wrapWithAsyncio(code));
           handleBoardMessage("user.py saved on board");
         } else {
           alert("USB not connected.");
@@ -10416,10 +10934,10 @@
       'use strict';
 
       // ── Config ──────────────────────────────────────────────────────────────
-      const DEBOUNCE_NUMBER_MS   = 120;   // slider / number fields
-      const DEBOUNCE_DROPDOWN_MS =  60;   // dropdown fields
-      const BLE_MAX_CHUNK        = 512;   // max BLE write bytes per call
-      const LIVE_PREFIX          = 'LIVE:';
+      const DEBOUNCE_NUMBER_MS = 120;   // slider / number fields
+      const DEBOUNCE_DROPDOWN_MS = 60;   // dropdown fields
+      const BLE_MAX_CHUNK = 512;   // max BLE write bytes per call
+      const LIVE_PREFIX = 'LIVE:';
 
       // ── Block Registry ──────────────────────────────────────────────────────
       // Maps block type → extractor(block) → hardware payload object.
@@ -10432,134 +10950,134 @@
           return {
             type: 'servo',
             port: block.getFieldValue('SERVO_PORT') || '',
-            val:  Math.min(360, Math.max(0, parseFloat(block.getFieldValue('ANG')) || 0)),
+            val: Math.min(360, Math.max(0, parseFloat(block.getFieldValue('ANG')) || 0)),
           };
         },
 
         // ── DC Motors ────────────────────────────────────────────────────────
         do_dc_motor(block) {
           return {
-            type:   'motor',
+            type: 'motor',
             motors: block.getFieldValue('MOTORS') || '',
-            speed:  parseInt(block.getFieldValue('SPEED'), 10) || 0,
-            dir:    block.getFieldValue('STATE') || 'forward',
+            speed: parseInt(block.getFieldValue('SPEED'), 10) || 0,
+            dir: block.getFieldValue('STATE') || 'forward',
           };
         },
         do_dc_motor2(block) {
           return {
-            type:   'motor',
+            type: 'motor',
             motors: block.getFieldValue('MOTORS') || '',
-            speed:  100,
-            dir:    block.getFieldValue('STATE') || 'forward',
+            speed: 100,
+            dir: block.getFieldValue('STATE') || 'forward',
           };
         },
         mini_motor(block) {
           const raw = parseInt(block.getFieldValue('SPEED'), 10) || 0;
           return {
-            type:   'motor',
+            type: 'motor',
             motors: block.getFieldValue('MOTORS') || '',
-            speed:  Math.abs(raw),
-            dir:    raw >= 0 ? 'forward' : 'backward',
+            speed: Math.abs(raw),
+            dir: raw >= 0 ? 'forward' : 'backward',
           };
         },
         remote_motor(block) {
           const raw = parseInt(block.getFieldValue('SPEED'), 10) || 0;
-          return { type:'motor', motors:block.getFieldValue('MOTORS')||'', speed:Math.abs(raw), dir:raw>=0?'forward':'backward' };
+          return { type: 'motor', motors: block.getFieldValue('MOTORS') || '', speed: Math.abs(raw), dir: raw >= 0 ? 'forward' : 'backward' };
         },
         water_motor(block) {
           const raw = parseInt(block.getFieldValue('SPEED'), 10) || 0;
-          return { type:'motor', motors:block.getFieldValue('MOTORS')||'', speed:Math.abs(raw), dir:raw>=0?'forward':'backward' };
+          return { type: 'motor', motors: block.getFieldValue('MOTORS') || '', speed: Math.abs(raw), dir: raw >= 0 ? 'forward' : 'backward' };
         },
         tank_motor(block) {
           const raw = parseInt(block.getFieldValue('SPEED'), 10) || 0;
-          return { type:'motor', motors:block.getFieldValue('MOTORS')||'', speed:Math.abs(raw), dir:raw>=0?'forward':'backward' };
+          return { type: 'motor', motors: block.getFieldValue('MOTORS') || '', speed: Math.abs(raw), dir: raw >= 0 ? 'forward' : 'backward' };
         },
         motor_driver(block) {
-          return { type:'motor', motors:block.getFieldValue('MOTORS')||'', speed:parseInt(block.getFieldValue('SPEED'),10)||0, dir:block.getFieldValue('STATE')||'forward' };
+          return { type: 'motor', motors: block.getFieldValue('MOTORS') || '', speed: parseInt(block.getFieldValue('SPEED'), 10) || 0, dir: block.getFieldValue('STATE') || 'forward' };
         },
         steper(block) {
-          return { type:'stepper', ports:block.getFieldValue('PORTS')||'', steps:parseInt(block.getFieldValue('STEPS'),10)||0, dir:block.getFieldValue('DIR')||'cw' };
+          return { type: 'stepper', ports: block.getFieldValue('PORTS') || '', steps: parseInt(block.getFieldValue('STEPS'), 10) || 0, dir: block.getFieldValue('DIR') || 'cw' };
         },
 
         // ── LEDs ─────────────────────────────────────────────────────────────
         do_led(block) {
-          return { type:'led', ports:block.getFieldValue('PORTS')||'', state:block.getFieldValue('STATE')||'0' };
+          return { type: 'led', ports: block.getFieldValue('PORTS') || '', state: block.getFieldValue('STATE') || '0' };
         },
         do_led_param(block) {
-          return { type:'led_pwm', ports:block.getFieldValue('PORTS')||'', val:parseInt(block.getFieldValue('VAL'),10)||0, val2:parseInt(block.getFieldValue('VAL2'),10)||0 };
+          return { type: 'led_pwm', ports: block.getFieldValue('PORTS') || '', val: parseInt(block.getFieldValue('VAL'), 10) || 0, val2: parseInt(block.getFieldValue('VAL2'), 10) || 0 };
         },
         red_led(block) {
-          const v = Math.min(255, Math.round((parseInt(block.getFieldValue('VAL1'),10)||0)*2.55));
-          return { type:'rgb', ports:block.getFieldValue('PORTS')||'', r:v, g:0, b:0 };
+          const v = Math.min(255, Math.round((parseInt(block.getFieldValue('VAL1'), 10) || 0) * 2.55));
+          return { type: 'rgb', ports: block.getFieldValue('PORTS') || '', r: v, g: 0, b: 0 };
         },
         yellow_led(block) {
-          const v = Math.min(255, Math.round((parseInt(block.getFieldValue('VAL1'),10)||100)*2.55));
-          return { type:'rgb', ports:block.getFieldValue('PORTS')||'', r:v, g:v, b:0 };
+          const v = Math.min(255, Math.round((parseInt(block.getFieldValue('VAL1'), 10) || 100) * 2.55));
+          return { type: 'rgb', ports: block.getFieldValue('PORTS') || '', r: v, g: v, b: 0 };
         },
         green_led(block) {
-          const v = Math.min(255, Math.round((parseInt(block.getFieldValue('VAL1'),10)||100)*2.55));
-          return { type:'rgb', ports:block.getFieldValue('PORTS')||'', r:0, g:v, b:0 };
+          const v = Math.min(255, Math.round((parseInt(block.getFieldValue('VAL1'), 10) || 100) * 2.55));
+          return { type: 'rgb', ports: block.getFieldValue('PORTS') || '', r: 0, g: v, b: 0 };
         },
 
         // ── RGB ──────────────────────────────────────────────────────────────
         rgb_display(block) {
-          return { type:'rgb', r:Math.min(255,parseInt(block.getFieldValue('R'),10)||0), g:Math.min(255,parseInt(block.getFieldValue('G'),10)||0), b:Math.min(255,parseInt(block.getFieldValue('B'),10)||0) };
+          return { type: 'rgb', r: Math.min(255, parseInt(block.getFieldValue('R'), 10) || 0), g: Math.min(255, parseInt(block.getFieldValue('G'), 10) || 0), b: Math.min(255, parseInt(block.getFieldValue('B'), 10) || 0) };
         },
         rgb_led_display(block) {
-          return { type:'rgb', r:Math.min(255,parseInt(block.getFieldValue('R'),10)||0), g:Math.min(255,parseInt(block.getFieldValue('G'),10)||0), b:Math.min(255,parseInt(block.getFieldValue('B'),10)||0) };
+          return { type: 'rgb', r: Math.min(255, parseInt(block.getFieldValue('R'), 10) || 0), g: Math.min(255, parseInt(block.getFieldValue('G'), 10) || 0), b: Math.min(255, parseInt(block.getFieldValue('B'), 10) || 0) };
         },
         rgb_component(block) {
-          return { type:'rgb_ch', component:block.getFieldValue('COLOR')||'R', val:Math.min(255,parseInt(block.getFieldValue('VAL'),10)||0) };
+          return { type: 'rgb_ch', component: block.getFieldValue('COLOR') || 'R', val: Math.min(255, parseInt(block.getFieldValue('VAL'), 10) || 0) };
         },
 
         // ── Digital pins ─────────────────────────────────────────────────────
         do_onoff(block) {
-          return { type:'digital', ports:block.getFieldValue('PORTS')||'', state:block.getFieldValue('STATE')||'0' };
+          return { type: 'digital', ports: block.getFieldValue('PORTS') || '', state: block.getFieldValue('STATE') || '0' };
         },
-        port_on(block)  { return { type:'digital', ports:block.getFieldValue('PORTS')||'', state:'1' }; },
-        port_off(block) { return { type:'digital', ports:block.getFieldValue('PORTS')||'', state:'0' }; },
+        port_on(block) { return { type: 'digital', ports: block.getFieldValue('PORTS') || '', state: '1' }; },
+        port_off(block) { return { type: 'digital', ports: block.getFieldValue('PORTS') || '', state: '0' }; },
       };
 
       // ── Non-Live Types ───────────────────────────────────────────────────────
       // These block types are silently skipped — they have no instantaneous
       // hardware output or their output depends on runtime program state.
       const NON_LIVE_TYPES = new Set([
-        'start','ctl_delay',
-        'controls_if','controls_ifelse','controls_repeat_ext','controls_for',
-        'controls_forEach','controls_while','controls_whileUntil','controls_flow_statements',
-        'logic_compare','logic_operation','logic_boolean','logic_negate','logic_ternary',
-        'variables_set','variables_get',
-        'math_number','math_arithmetic','math_random_int','math_random_float',
-        'math_trigonometry','math_on_list','math_constrain','math_modulo',
-        'math_round','math_single',
-        'text','text_join','text_print','text_length','text_isEmpty',
-        'text_indexOf','text_charAt','text_getSubstring','text_changeCase',
-        'text_trim','text_count','text_replace','text_reverse',
-        'procedures_defnoreturn','procedures_callnoreturn',
-        'procedures_defreturn','procedures_callreturn',
-        'sen_ultrasonic','sen_temp','sen_ir','sen_colour','sen_sound',
+        'start', 'ctl_delay',
+        'controls_if', 'controls_ifelse', 'controls_repeat_ext', 'controls_for',
+        'controls_forEach', 'controls_while', 'controls_whileUntil', 'controls_flow_statements',
+        'logic_compare', 'logic_operation', 'logic_boolean', 'logic_negate', 'logic_ternary',
+        'variables_set', 'variables_get',
+        'math_number', 'math_arithmetic', 'math_random_int', 'math_random_float',
+        'math_trigonometry', 'math_on_list', 'math_constrain', 'math_modulo',
+        'math_round', 'math_single',
+        'text', 'text_join', 'text_print', 'text_length', 'text_isEmpty',
+        'text_indexOf', 'text_charAt', 'text_getSubstring', 'text_changeCase',
+        'text_trim', 'text_count', 'text_replace', 'text_reverse',
+        'procedures_defnoreturn', 'procedures_callnoreturn',
+        'procedures_defreturn', 'procedures_callreturn',
+        'sen_ultrasonic', 'sen_temp', 'sen_ir', 'sen_colour', 'sen_sound',
         'bt_send',
-        'list_add','list_remove','list_delete_all','list_insert',
-        'list_set','list_get','list_indexOf','list_length','list_contains','list_show',
-        'sim_solar','sim_pendulum','sim_particles','sim_dna','sim_gears',
-        'sim_wave','sim_bouncing','sim_windmill','sim_atom','sim_globe',
+        'list_add', 'list_remove', 'list_delete_all', 'list_insert',
+        'list_set', 'list_get', 'list_indexOf', 'list_length', 'list_contains', 'list_show',
+        'sim_solar', 'sim_pendulum', 'sim_particles', 'sim_dna', 'sim_gears',
+        'sim_wave', 'sim_bouncing', 'sim_windmill', 'sim_atom', 'sim_globe',
       ]);
 
       // ── State ────────────────────────────────────────────────────────────────
-      let _enabled     = false;
-      let _workspace   = null;
+      let _enabled = false;
+      let _workspace = null;
       let _debounceMap = {};
       let _lastPackets = {};
-      let _mqttLive    = null;
+      let _mqttLive = null;
 
       // ── Transport Layer ──────────────────────────────────────────────────────
       const Transport = {
         isConnected() {
-          if (typeof stm32Writer    !== 'undefined' && stm32Writer)                          return true;
-          if (typeof bleControlChar !== 'undefined' && bleControlChar)                       return true;
+          if (typeof stm32Writer !== 'undefined' && stm32Writer) return true;
+          if (typeof bleControlChar !== 'undefined' && bleControlChar) return true;
           if (typeof window !== 'undefined' && window.ReactNativeWebView
-              && window._mobileBLEConnected)                                                 return true;
-          if (_mqttLive && _mqttLive.connected)                                              return true;
+            && window._mobileBLEConnected) return true;
+          if (_mqttLive && _mqttLive.connected) return true;
           return false;
         },
         async send(raw) {
@@ -10567,7 +11085,7 @@
           // 1. USB
           if (typeof stm32Writer !== 'undefined' && stm32Writer) {
             try { await stm32Writer.write(enc.encode(raw)); return 'usb'; }
-            catch(e) { console.warn('[LiveMode/USB]', e.message); }
+            catch (e) { console.warn('[LiveMode/USB]', e.message); }
           }
           // 2. BLE — chunked to stay within ATT MTU
           if (typeof bleControlChar !== 'undefined' && bleControlChar) {
@@ -10576,35 +11094,35 @@
               for (let i = 0; i < bytes.length; i += BLE_MAX_CHUNK)
                 await bleControlChar.writeValue(bytes.slice(i, i + BLE_MAX_CHUNK));
               return 'ble';
-            } catch(e) { console.warn('[LiveMode/BLE]', e.message); }
+            } catch (e) { console.warn('[LiveMode/BLE]', e.message); }
           }
           // 3. React Native bridge
           if (typeof window !== 'undefined' && window.ReactNativeWebView && window._mobileBLEConnected) {
-            try { window.ReactNativeWebView.postMessage(JSON.stringify({type:'LIVE_CMD',raw})); return 'rn'; }
-            catch(e) { console.warn('[LiveMode/RN]', e.message); }
+            try { window.ReactNativeWebView.postMessage(JSON.stringify({ type: 'LIVE_CMD', raw })); return 'rn'; }
+            catch (e) { console.warn('[LiveMode/RN]', e.message); }
           }
           // 4. MQTT live client
           if (_mqttLive && _mqttLive.connected) {
             try { _mqttLive.publish('esp32/live', raw); return 'mqtt'; }
-            catch(e) { console.warn('[LiveMode/MQTT]', e.message); }
+            catch (e) { console.warn('[LiveMode/MQTT]', e.message); }
           }
           return null;
         },
         initMQTT(brokerUrl, opts = {}) {
-          if (_mqttLive) { try { _mqttLive.end(true); } catch(_) {} _mqttLive = null; }
+          if (_mqttLive) { try { _mqttLive.end(true); } catch (_) { } _mqttLive = null; }
           if (typeof mqtt === 'undefined') { console.warn('[LiveMode] mqtt.js not loaded'); return; }
           _mqttLive = mqtt.connect(brokerUrl, {
-            clientId: 'live_' + Math.random().toString(16).slice(2,10),
+            clientId: 'live_' + Math.random().toString(16).slice(2, 10),
             clean: true, connectTimeout: 8000, reconnectPeriod: 3000, ...opts,
           });
-          _mqttLive.on('connect', () => { console.log('[LiveMode/MQTT] connected'); _showToast('⚡ MQTT Live ready','info'); });
+          _mqttLive.on('connect', () => { console.log('[LiveMode/MQTT] connected'); _showToast('⚡ MQTT Live ready', 'info'); });
           _mqttLive.on('error', e => console.error('[LiveMode/MQTT]', e));
         },
       };
 
       // ── Packet builder ───────────────────────────────────────────────────────
       function buildPacket(blockId, payload) {
-        return { cmd:'live', id:blockId, ts:Date.now(), ...payload };
+        return { cmd: 'live', id: blockId, ts: Date.now(), ...payload };
       }
       function serialise(packet) {
         return LIVE_PREFIX + JSON.stringify(packet) + '\n';
@@ -10615,8 +11133,8 @@
         if (_debounceMap[key]) clearTimeout(_debounceMap[key]);
         _debounceMap[key] = setTimeout(async () => {
           delete _debounceMap[key];
-          if (!_enabled)                { return; }
-          if (!Transport.isConnected()) { _showToast('⚡ Live Mode: No device connected','warn'); return; }
+          if (!_enabled) { return; }
+          if (!Transport.isConnected()) { _showToast('⚡ Live Mode: No device connected', 'warn'); return; }
           const channel = await Transport.send(serialise(packet));
           if (channel) {
             _lastPackets[packet.id] = packet;
@@ -10624,7 +11142,7 @@
             _sync3D(packet);
             console.debug('[LiveMode] \u2713 ' + channel + ' \u2192', packet);
           } else {
-            _showToast('⚡ Live send failed — check connection','error');
+            _showToast('⚡ Live send failed — check connection', 'error');
           }
         }, delay);
       }
@@ -10656,22 +11174,22 @@
               const dot = document.getElementById('liveLedDot');
               if (dot) {
                 const on = (packet.state === '1' || (packet.val || 0) > 0);
-                dot.style.background  = on ? '#00ff88' : '#374151';
-                dot.style.boxShadow   = on ? '0 0 8px #00ff88' : 'none';
+                dot.style.background = on ? '#00ff88' : '#374151';
+                dot.style.boxShadow = on ? '0 0 8px #00ff88' : 'none';
               }
               break;
             }
             case 'rgb': case 'rgb_ch': {
-              const r=packet.r||0, g=packet.g||0, b=packet.b||0;
+              const r = packet.r || 0, g = packet.g || 0, b = packet.b || 0;
               const dot = document.getElementById('liveLedDot');
               if (dot) {
-                dot.style.background = 'rgb('+r+','+g+','+b+')';
-                dot.style.boxShadow  = (r+g+b)>0 ? '0 0 10px rgba('+r+','+g+','+b+',0.8)' : 'none';
+                dot.style.background = 'rgb(' + r + ',' + g + ',' + b + ')';
+                dot.style.boxShadow = (r + g + b) > 0 ? '0 0 10px rgba(' + r + ',' + g + ',' + b + ',0.8)' : 'none';
               }
               break;
             }
           }
-        } catch(e) { /* 3D sync is best-effort */ }
+        } catch (e) { /* 3D sync is best-effort */ }
       }
 
       // ── UI helpers ───────────────────────────────────────────────────────────
@@ -10698,7 +11216,7 @@
         const el = document.getElementById('liveModeToast');
         if (!el) return;
         el.textContent = msg;
-        el.className = 'live-toast live-toast-' + (level||'info') + ' live-toast-show';
+        el.className = 'live-toast live-toast-' + (level || 'info') + ' live-toast-show';
         clearTimeout(_toastTimer);
         _toastTimer = setTimeout(() => el.classList.remove('live-toast-show'), 2800);
       }
@@ -10720,27 +11238,27 @@
             if (this._paused || !this._el) return;
             if (this._count === 0) this._el.innerHTML = '';
             this._count++;
-            const ts  = new Date().toLocaleTimeString('en',{hour12:false});
-            const arrow = dir==='out'?'↑':dir==='in'?'↓':'·';
+            const ts = new Date().toLocaleTimeString('en', { hour12: false });
+            const arrow = dir === 'out' ? '↑' : dir === 'in' ? '↓' : '·';
             const row = document.createElement('div');
             row.className = 'lt-row lt-' + dir;
-            row.innerHTML = '<span class="lt-ts">'+ts+'</span><span class="lt-dir">'+arrow+'</span><span class="lt-badge '+cls+'">'+label+'</span><span class="lt-val">'+valHTML+'</span>';
+            row.innerHTML = '<span class="lt-ts">' + ts + '</span><span class="lt-dir">' + arrow + '</span><span class="lt-badge ' + cls + '">' + label + '</span><span class="lt-val">' + valHTML + '</span>';
             this._el.appendChild(row);
             const el = this._el;
             if (el.scrollHeight - el.scrollTop < el.clientHeight + 60) el.scrollTop = el.scrollHeight;
             while (el.children.length > 200) el.removeChild(el.firstChild);
           },
           logCommand(p) {
-            const t = p.type||'';
+            const t = p.type || '';
             const m = {
-              servo:   ['lb-servo',  'SERVO',  '<span class="lt-pin">'+(p.port||'')+'</span>  <span class="lt-num">'+(p.val||0)+'</span><span class="lt-unit">°</span>'],
-              motor:   ['lb-motor',  'MOTOR',  '<span class="lt-pin">'+(p.motors||'')+'</span>  <span class="lt-num">'+(p.dir||'')+'</span>  <span class="lt-num">'+(p.speed||0)+'</span><span class="lt-unit">%</span>'],
-              led:     ['lb-led',    'LED',    '<span class="lt-pin">'+(p.ports||'')+'</span>  '+(p.state==='1'?'<span class="lt-num">ON</span>':'<span style="color:#475569">OFF</span>')],
-              led_pwm: ['lb-led',    'LED PWM','<span class="lt-pin">'+(p.ports||'')+'</span>  <span class="lt-num">'+(p.val||0)+'</span><span class="lt-unit">%</span>'],
-              rgb:     ['lb-rgb',    'RGB',    'r<span class="lt-num">'+(p.r||0)+'</span> g<span class="lt-num">'+(p.g||0)+'</span> b<span class="lt-num">'+(p.b||0)+'</span>'],
-              digital: ['lb-digital','DIGITAL','<span class="lt-pin">'+(p.ports||'')+'</span>  '+(p.state==='1'?'<span class="lt-num">HIGH</span>':'<span style="color:#475569">LOW</span>')],
-              relay:   ['lb-relay',  'RELAY',  '<span class="lt-pin">'+(p.port||'')+'</span>  '+(p.state?'<span class="lt-num">ON</span>':'<span style="color:#475569">OFF</span>')],
-              buzzer:  ['lb-led',    'BUZZER', '<span class="lt-num">'+(p.freq||0)+'</span><span class="lt-unit">Hz</span>'],
+              servo: ['lb-servo', 'SERVO', '<span class="lt-pin">' + (p.port || '') + '</span>  <span class="lt-num">' + (p.val || 0) + '</span><span class="lt-unit">°</span>'],
+              motor: ['lb-motor', 'MOTOR', '<span class="lt-pin">' + (p.motors || '') + '</span>  <span class="lt-num">' + (p.dir || '') + '</span>  <span class="lt-num">' + (p.speed || 0) + '</span><span class="lt-unit">%</span>'],
+              led: ['lb-led', 'LED', '<span class="lt-pin">' + (p.ports || '') + '</span>  ' + (p.state === '1' ? '<span class="lt-num">ON</span>' : '<span style="color:#475569">OFF</span>')],
+              led_pwm: ['lb-led', 'LED PWM', '<span class="lt-pin">' + (p.ports || '') + '</span>  <span class="lt-num">' + (p.val || 0) + '</span><span class="lt-unit">%</span>'],
+              rgb: ['lb-rgb', 'RGB', 'r<span class="lt-num">' + (p.r || 0) + '</span> g<span class="lt-num">' + (p.g || 0) + '</span> b<span class="lt-num">' + (p.b || 0) + '</span>'],
+              digital: ['lb-digital', 'DIGITAL', '<span class="lt-pin">' + (p.ports || '') + '</span>  ' + (p.state === '1' ? '<span class="lt-num">HIGH</span>' : '<span style="color:#475569">LOW</span>')],
+              relay: ['lb-relay', 'RELAY', '<span class="lt-pin">' + (p.port || '') + '</span>  ' + (p.state ? '<span class="lt-num">ON</span>' : '<span style="color:#475569">OFF</span>')],
+              buzzer: ['lb-led', 'BUZZER', '<span class="lt-num">' + (p.freq || 0) + '</span><span class="lt-unit">Hz</span>'],
             };
             const e = m[t];
             if (e) this.log('out', e[0], e[1], e[2]);
@@ -10750,46 +11268,46 @@
             if (msg.startsWith('DATA:')) {
               try {
                 const j = JSON.parse(msg.slice(5));
-                const t = j.type||'';
+                const t = j.type || '';
                 const v = j.value !== undefined ? j.value : '?';
-                const u = j.unit||'';
+                const u = j.unit || '';
                 const sm = {
-                  ultrasonic:['lb-ultra', 'DIST',  '<span class="lt-num">'+v+'</span><span class="lt-unit"> cm</span>'],
-                  temp:      ['lb-temp',  'TEMP',  '<span class="lt-num">'+v+'</span><span class="lt-unit"> °C</span>'],
-                  ir:        ['lb-ir',    'IR',    v?'<span class="lt-num">DETECTED</span>':'<span style="color:#475569">clear</span>'],
-                  button:    ['lb-button','BUTTON',v?'<span class="lt-num">PRESSED</span>':'<span style="color:#475569">open</span>'],
-                  flame:     ['lb-temp',  'FLAME', v?'<span class="lt-num" style="color:#f87171">DETECTED</span>':'<span style="color:#475569">none</span>'],
-                  motion:    ['lb-button','MOTION',v?'<span class="lt-num">DETECTED</span>':'<span style="color:#475569">idle</span>'],
-                  sound:     ['lb-ultra', 'SOUND', '<span class="lt-num">'+v+'</span>'],
+                  ultrasonic: ['lb-ultra', 'DIST', '<span class="lt-num">' + v + '</span><span class="lt-unit"> cm</span>'],
+                  temp: ['lb-temp', 'TEMP', '<span class="lt-num">' + v + '</span><span class="lt-unit"> °C</span>'],
+                  ir: ['lb-ir', 'IR', v ? '<span class="lt-num">DETECTED</span>' : '<span style="color:#475569">clear</span>'],
+                  button: ['lb-button', 'BUTTON', v ? '<span class="lt-num">PRESSED</span>' : '<span style="color:#475569">open</span>'],
+                  flame: ['lb-temp', 'FLAME', v ? '<span class="lt-num" style="color:#f87171">DETECTED</span>' : '<span style="color:#475569">none</span>'],
+                  motion: ['lb-button', 'MOTION', v ? '<span class="lt-num">DETECTED</span>' : '<span style="color:#475569">idle</span>'],
+                  sound: ['lb-ultra', 'SOUND', '<span class="lt-num">' + v + '</span>'],
                 };
                 const se = sm[t];
                 if (se) this.log('in', se[0], se[1], se[2]);
-                else    this.log('in','lb-board',t.toUpperCase().slice(0,8)||'DATA','<span class="lt-num">'+v+'</span>'+(u?'<span class="lt-unit"> '+u+'</span>':''));
-              } catch(_) { this.log('in','lb-board','DATA', msg.slice(5,80)); }
-            } else if (_enabled && msg.length>1 && !msg.startsWith('>>') && !msg.startsWith('[LIVE]') && !msg.startsWith('[!]')) {
-              this.log('board','lb-board','BOARD','<span style="color:#475569">'+msg.slice(0,90)+'</span>');
+                else this.log('in', 'lb-board', t.toUpperCase().slice(0, 8) || 'DATA', '<span class="lt-num">' + v + '</span>' + (u ? '<span class="lt-unit"> ' + u + '</span>' : ''));
+              } catch (_) { this.log('in', 'lb-board', 'DATA', msg.slice(5, 80)); }
+            } else if (_enabled && msg.length > 1 && !msg.startsWith('>>') && !msg.startsWith('[LIVE]') && !msg.startsWith('[!]')) {
+              this.log('board', 'lb-board', 'BOARD', '<span style="color:#475569">' + msg.slice(0, 90) + '</span>');
             }
           },
-          show() { const e=document.getElementById('liveTerminal'); if(e) e.classList.add('lt-active'); },
-          hide() { const e=document.getElementById('liveTerminal'); if(e) e.classList.remove('lt-active'); },
-          clear() { if(this._el){this._el.innerHTML='<div class="lt-empty">Cleared — waiting for data…</div>'; this._count=0;} },
-          togglePause() { this._paused=!this._paused; const b=document.getElementById('ltPauseBtn'); if(b)b.textContent=this._paused?'▶ Resume':'⏸ Pause'; },
+          show() { const e = document.getElementById('liveTerminal'); if (e) e.classList.add('lt-active'); },
+          hide() { const e = document.getElementById('liveTerminal'); if (e) e.classList.remove('lt-active'); },
+          clear() { if (this._el) { this._el.innerHTML = '<div class="lt-empty">Cleared — waiting for data…</div>'; this._count = 0; } },
+          togglePause() { this._paused = !this._paused; const b = document.getElementById('ltPauseBtn'); if (b) b.textContent = this._paused ? '▶ Resume' : '⏸ Pause'; },
         },
 
         // ── Sensor polling loop ───────────────────────────────────────────────────
         _pollTimer: null,
         _SENSOR_TYPES: {
-          sen_ultrasonic: b => ({ cmd:'read', type:'ultrasonic', port: b.getFieldValue('PORT')||'' }),
-          sen_temp:       b => ({ cmd:'read', type:'temp',       pin:  b.getFieldValue('PORTS')||'' }),
-          button:         b => ({ cmd:'read', type:'button',     pin:  b.getFieldValue('PORTS')||'' }),
-          get_ir:         b => ({ cmd:'read', type:'ir',         pin:  b.getFieldValue('PORTS')||'' }),
-          flame:          b => ({ cmd:'read', type:'flame',      pin:  b.getFieldValue('PORTS')||'' }),
-          motion:         b => ({ cmd:'read', type:'motion',     pin:  b.getFieldValue('PORTS')||'' }),
-          sound:          b => ({ cmd:'read', type:'sound',      pin:  b.getFieldValue('PORTS')||'' }),
+          sen_ultrasonic: b => ({ cmd: 'read', type: 'ultrasonic', port: b.getFieldValue('PORT') || '' }),
+          sen_temp: b => ({ cmd: 'read', type: 'temp', pin: b.getFieldValue('PORTS') || '' }),
+          button: b => ({ cmd: 'read', type: 'button', pin: b.getFieldValue('PORTS') || '' }),
+          get_ir: b => ({ cmd: 'read', type: 'ir', pin: b.getFieldValue('PORTS') || '' }),
+          flame: b => ({ cmd: 'read', type: 'flame', pin: b.getFieldValue('PORTS') || '' }),
+          motion: b => ({ cmd: 'read', type: 'motion', pin: b.getFieldValue('PORTS') || '' }),
+          sound: b => ({ cmd: 'read', type: 'sound', pin: b.getFieldValue('PORTS') || '' }),
         },
         _startPolling() {
           this._stopPolling();
-          const rate = parseInt(document.getElementById('ltPollRate')?.value||'500');
+          const rate = parseInt(document.getElementById('ltPollRate')?.value || '500');
           this._pollTimer = setInterval(async () => {
             if (!_enabled || !_workspace) { this._stopPolling(); return; }
             if (!Transport.isConnected()) return;
@@ -10799,14 +11317,14 @@
               if (!ex) continue;
               try {
                 const payload = ex(block);
-                payload.id   = block.id;
+                payload.id = block.id;
                 await Transport.send(serialise(payload));
-              } catch(e) { }
+              } catch (e) { }
             }
           }, rate);
         },
         _stopPolling() {
-          if (this._pollTimer) { clearInterval(this._pollTimer); this._pollTimer=null; }
+          if (this._pollTimer) { clearInterval(this._pollTimer); this._pollTimer = null; }
         },
 
         /** Call once inside start() after workspace is created. */
@@ -10825,13 +11343,13 @@
         /** Enable Live Mode. Device must be connected first. */
         enable() {
           if (!Transport.isConnected()) {
-            _showToast('\u26A1 Connect a device before enabling Live Mode','warn');
+            _showToast('\u26A1 Connect a device before enabling Live Mode', 'warn');
             return false;
           }
           _enabled = true; _updateUI();
           this.Terminal.show();
           this._startPolling();
-          _showToast('\u26A1 Live Mode ON','info');
+          _showToast('\u26A1 Live Mode ON', 'info');
           return true;
         },
 
@@ -10843,7 +11361,7 @@
           _updateUI();
           this.Terminal.hide();
           this._stopPolling();
-          _showToast('\u26A1 Live Mode OFF','info');
+          _showToast('\u26A1 Live Mode OFF', 'info');
         },
 
         /** Toggle Live Mode on/off. */
@@ -10856,7 +11374,7 @@
         onWorkspaceChange(ev) {
           if (!_enabled) return;
           const ok = ev.type === Blockly.Events.BLOCK_CHANGE ||
-                     ev.type === (Blockly.Events.BLOCK_FIELD_INTERMEDIATE_VALUE || '__never__');
+            ev.type === (Blockly.Events.BLOCK_FIELD_INTERMEDIATE_VALUE || '__never__');
           if (!ok) return;
           const blockId = ev.blockId;
           if (!blockId) return;
@@ -10868,18 +11386,18 @@
           if (extractor === undefined) { return; }
           if (extractor === null) return;
           let payload;
-          try { payload = extractor(block); } catch(e) { return; }
+          try { payload = extractor(block); } catch (e) { return; }
           if (!payload) return;
           const packet = buildPacket(blockId, payload);
-          const isNum  = /^(ANG|SPEED|VAL|VAL1|VAL2|R|G|B|STEPS|MS|FREQ)$/.test(ev.name||'');
-          const key    = blockId + ':' + (ev.name||'chg');
-          const delay  = isNum ? DEBOUNCE_NUMBER_MS : DEBOUNCE_DROPDOWN_MS;
+          const isNum = /^(ANG|SPEED|VAL|VAL1|VAL2|R|G|B|STEPS|MS|FREQ)$/.test(ev.name || '');
+          const key = blockId + ':' + (ev.name || 'chg');
+          const delay = isNum ? DEBOUNCE_NUMBER_MS : DEBOUNCE_DROPDOWN_MS;
           if (_debounceMap[key]) clearTimeout(_debounceMap[key]);
           _debounceMap[key] = setTimeout(async () => {
             delete _debounceMap[key];
             if (!_enabled) return;
-            if (!Transport.isConnected()) { _showToast('\u26A1 Live Mode: No device connected','warn'); return; }
-            const raw     = serialise(packet);
+            if (!Transport.isConnected()) { _showToast('\u26A1 Live Mode: No device connected', 'warn'); return; }
+            const raw = serialise(packet);
             const channel = await Transport.send(raw);
             if (channel) {
               _lastPackets[packet.id] = packet;
@@ -10887,7 +11405,7 @@
               _sync3D(packet);
               this.Terminal.logCommand(packet);
             } else {
-              _showToast('\u26A1 Live send failed','error');
+              _showToast('\u26A1 Live send failed', 'error');
             }
           }, delay);
         },
@@ -10899,14 +11417,14 @@
             await Transport.send(serialise(p));
             await new Promise(r => setTimeout(r, 20));
           }
-          _showToast('\u26A1 Re-synced '+packets.length+' block(s)','info');
+          _showToast('\u26A1 Re-synced ' + packets.length + ' block(s)', 'info');
         },
 
         Transport,
         LIVE_BLOCK_REGISTRY,
         NON_LIVE_TYPES,
         _buildPacket: buildPacket,
-        _serialise:   serialise,
+        _serialise: serialise,
       };
     })();
 
