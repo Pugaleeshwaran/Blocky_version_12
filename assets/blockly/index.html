@@ -3310,40 +3310,6 @@
         </select>
       </div>
 
-      <!-- Animated Water Drop -->
-      <svg class="water-drop-anim" id="myHoverLottie" viewBox="0 0 100 120" xmlns="http://www.w3.org/2000/svg">
-        <defs>
-          <radialGradient id="dropGrad" cx="40%" cy="35%" r="60%">
-            <stop offset="0%" stop-color="#b3e8ff" />
-            <stop offset="45%" stop-color="#47c9ff" />
-            <stop offset="100%" stop-color="#0077cc" />
-          </radialGradient>
-          <radialGradient id="shineGrad" cx="35%" cy="30%" r="30%">
-            <stop offset="0%" stop-color="rgba(255,255,255,0.9)" />
-            <stop offset="100%" stop-color="rgba(255,255,255,0)" />
-          </radialGradient>
-          <filter id="dropShadow">
-            <feDropShadow dx="0" dy="3" stdDeviation="3" flood-color="rgba(0,100,200,0.3)" />
-          </filter>
-        </defs>
-        <!-- Ripple rings at bottom -->
-        <ellipse class="ripple-ring" cx="50" cy="105" rx="18" ry="4" fill="none" stroke="#47c9ff" stroke-width="1.5"
-          opacity="0.5" />
-        <ellipse class="ripple-ring" cx="50" cy="105" rx="18" ry="4" fill="none" stroke="#47c9ff" stroke-width="1"
-          opacity="0.3" />
-        <ellipse class="ripple-ring" cx="50" cy="105" rx="18" ry="4" fill="none" stroke="#47c9ff" stroke-width="0.8"
-          opacity="0.2" />
-        <!-- Drop body -->
-        <g class="drop-body" filter="url(#dropShadow)" transform-origin="50 60">
-          <path d="M50 8 C50 8, 18 55, 18 72 C18 90, 32 102, 50 102 C68 102, 82 90, 82 72 C82 55, 50 8, 50 8 Z"
-            fill="url(#dropGrad)" />
-          <!-- Shine highlight -->
-          <ellipse cx="40" cy="55" rx="12" ry="18" fill="url(#shineGrad)" opacity="0.7" />
-          <!-- Small sparkle -->
-          <circle cx="38" cy="45" r="3" fill="white" opacity="0.8" />
-        </g>
-      </svg>
-
 
       <div class="btns">
         <button class="btn-circle back" id="btnConnect" title="Connect Board"><i class="fa-solid fa-plug"></i></button>
@@ -3353,8 +3319,6 @@
             class="fa-brands fa-bluetooth-b"></i></button>
         <button class="btn-circle cwl" id="btnboot" title="save board"><i
             class="fa-solid fa-cloud-arrow-up"></i></button>
-        <dotlottie-wc src="https://lottie.host/220e1b12-96ae-4b5a-add2-77a86893f99e/dzCTjXqTZn.lottie" speed="1"
-          style="width: 50px; height: 50px" mode="forward" class="fill-current h8" loop autoplay></dotlottie-wc>
         <button class="btn-circle save" id="btnSave" title="Save"><i class="fa-solid fa-download"></i></button>
         <button class="btn-circle fwd" id="btnLoad" title="Load"><i class="fa-brands fa-openid"></i></button>
         <button class="btn-circle back" id="btnClear" title="Clear"><i class="fa-solid fa-broom"></i></button>
@@ -3630,9 +3594,7 @@
               }
             },
             {
-              kind: 'block', type: 'controls_if', inputs: {
-                IF0: { shadow: { type: 'logic_boolean', fields: { BOOL: 'TRUE' } } }
-              }
+              kind: 'block', type: 'controls_if', fields: { BOOL: 'TRUE' }
             },
           ]
         },
@@ -3762,6 +3724,17 @@
             { kind: 'block', type: 'logic_operation', fields: { OP: 'AND' } },
           ]
         },
+
+        { kind: 'sep' },
+
+        // ── AI BLOCK ────────────────────────────────────────────────
+        {
+          kind: 'category', name: "AI blocks", colour: '#9c0000', id: 'cat_ai',
+          contents: [
+            { kind: 'block', type: 'ai_block' },
+            { kind: 'block', type: 'ai_output' },
+          ]
+        }
       ]
     };
   </script>
@@ -4087,7 +4060,7 @@
 
     <sep></sep>
 
-        <category name="default block" colour="#9ACD32">
+    <category name="default block" colour="#9ACD32">
       <block type="math_number">
         <field name="NUM">0</field>
       </block>
@@ -7047,6 +7020,45 @@
           nextStatement: null,
           extensions: ["dc_color"]
         },
+        {
+          type: "ai_block",
+          message0: "Ai Blocks %1",
+          args0: [
+            {
+              type: "field_dropdown",
+              name: "STATE", options:
+                [["Face Detection", "face_detection"],
+                ["Color Delection", "color_delection"],
+                ["Multi color Recognition", "multi_color_recognition"],
+                ["Same Color Object counting", "same_color_object_counting"],
+                ["QR Code Recognition", "qr_code_recognition"],
+                ["Live Camera", "live_camera"],
+                ["Train", "Train"]]
+            }],
+          colour: "#FF69B4",
+          previousStatement: null,
+          nextStatement: null,
+          extensions: ["servo_color"]
+        },
+        {
+          type: "ai_output",
+          message0: "Ai Output %1",
+          args0: [
+            {
+              type: "field_dropdown",
+              name: "STATE", options:
+                [["Face Detection", "face_detection"],
+                ["Color Delection", "color_delection"],
+                ["Multi color Recognition", "multi_color_recognition"],
+                ["Same Color Object counting", "same_color_object_counting"],
+                ["QR Code Recognition", "qr_code_recognition"],
+                ["Live Camera", "live_camera"],
+                ["Train", "Train"]]
+            }],
+          colour: "#FF69B4",
+          output: "Boolean",
+          extensions: ["servo_color"]
+        },
       ]);
 
       // Extensions
@@ -7226,7 +7238,7 @@
           // An actuator line is: optional indent + "await async_xxx(...)" with no "=" assignment before the await
           var actuatorPat = /^\s*await\s+async_\w+\s*\(/;
           var assignPat = /^\s*\w+\s*=\s*/;
-          var allActuators = ls.every(function(l) {
+          var allActuators = ls.every(function (l) {
             return actuatorPat.test(l) && !assignPat.test(l);
           });
           if (!allActuators) return stmtCode; // mixed content, keep as-is
@@ -7456,6 +7468,15 @@
         var name = py.valueToCode(b, 'NAME', py.ORDER_NONE); // Correct way to get field value
         var name2 = py.valueToCode(b, 'NAME2', py.ORDER_NONE);
         return `${name || ''} = ${name2 || ''} \n`;  // Ensure empty string fallback
+      };
+
+      reg['ai_block'] = b => {
+        const State = b.getFieldValue('STATE') || 0;
+        return `await async_ai_block("${State}")\n`;
+      };
+      reg['ai_output'] = b => {
+        const State = b.getFieldValue('STATE') || 0;
+        return `await async_ai_output("${State}")\n`;
       };
 
     }
@@ -9391,7 +9412,8 @@
                 return;
               }
               container.classList.add('hidden');
-            }, 100);          }
+            }, 100);
+          }
         });
 
         // ── Input handler — force flyout redraw on every keystroke ────────
