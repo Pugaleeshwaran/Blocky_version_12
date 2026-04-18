@@ -9845,15 +9845,12 @@
 
         // Prevent clicking inside the search box from bubbling up to document and triggering Blockly.hideChaff()
         const preventClose = (e) => {
-          const c = document.getElementById('flyoutSearchContainer');
-          if (c && (e.target === c || c.contains(e.target))) {
-            e.stopPropagation();
-          }
+          e.stopPropagation();
         };
-        window.addEventListener('pointerdown', preventClose, true);
-        window.addEventListener('mousedown', preventClose, true);
-        window.addEventListener('touchstart', preventClose, true);
-        window.addEventListener('click', preventClose, true);
+        container.addEventListener('pointerdown', preventClose);
+        container.addEventListener('mousedown', preventClose);
+        container.addEventListener('touchstart', preventClose);
+        container.addEventListener('click', preventClose);
         // ── Build search index from Blockly.Blocks registry ──────────────
         // This works regardless of whether the toolbox is XML or JS config.
         const searchIndex = [];
@@ -9959,6 +9956,12 @@
                 return;
               }
               container.classList.add('hidden');
+              
+              // Clear search when it hides so the next time it opens or after a block is dragged, it's empty
+              if (input.value !== '') {
+                input.value = '';
+                clearBtn.style.display = 'none';
+              }
             }, 100);
           }
         });
