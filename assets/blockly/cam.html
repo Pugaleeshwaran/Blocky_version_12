@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>K230 Camera + Snapshot</title>
+
+<style>
+    body {
+        margin: 0;
+        background: black;
+        overflow: hidden;
+        font-family: Arial;
+    }
+
+    #camera {
+        width: 100vw;
+        height: 100vh;
+        object-fit: contain;
+        background: black;
+    }
+
+    .controls {
+        position: absolute;
+        bottom: 20px;
+        width: 100%;
+        text-align: center;
+    }
+
+    button {
+        padding: 12px 20px;
+        margin: 5px;
+        font-size: 16px;
+        border: none;
+        border-radius: 8px;
+        background: #00bcd4;
+        color: white;
+        cursor: pointer;
+    }
+
+    button:hover {
+        background: #0097a7;
+    }
+</style>
+</head>
+
+<body>
+
+<!-- LIVE STREAM -->
+<img id="camera" src="http://192.168.169.1:8080/">
+
+<!-- HIDDEN CANVAS FOR SNAPSHOT -->
+<canvas id="canvas" style="display:none;"></canvas>
+
+<!-- CONTROLS -->
+<div class="controls">
+    <button onclick="reloadStream()">Reload</button>
+    <button onclick="takeSnapshot()">📸 Snapshot</button>
+</div>
+
+<script>
+function reloadStream() {
+    const cam = document.getElementById("camera");
+    cam.src = "http://192.168.169.1:8080/?t=" + new Date().getTime();
+}
+
+function takeSnapshot() {
+    const img = document.getElementById("camera");
+    const canvas = document.getElementById("canvas");
+    const ctx = canvas.getContext("2d");
+
+    // Set canvas size same as image
+    canvas.width = img.naturalWidth || 640;
+    canvas.height = img.naturalHeight || 480;
+
+    try {
+        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+
+        // Convert to image
+        const link = document.createElement('a');
+        link.download = "k230_snapshot.png";
+        link.href = canvas.toDataURL("image/png");
+        link.click();
+
+    } catch (error) {
+        alert("Snapshot failed ❌\n\nReason: Browser blocked cross-origin image.\n\nFix: Enable CORS in K230 server.");
+    }
+}
+</script>
+
+</body>
+</html>
