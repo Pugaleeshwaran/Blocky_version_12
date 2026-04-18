@@ -170,19 +170,19 @@ export default function App() {
       return;
     }
 
-    injectJS(`handleBoardMessage("Scanning…");`);
+    injectJS(`handleBoardMessage("Scanning…", "SYS");`);
 
     bleManager.state().then(state => {
       if (state !== 'PoweredOn') {
         Alert.alert("Bluetooth Off", "Please turn on Bluetooth and Location.");
-        injectJS(`handleBoardMessage("Bluetooth is OFF");`);
+        injectJS(`handleBoardMessage("Bluetooth is OFF", "SYS");`);
         return;
       }
 
       bleManager.startDeviceScan(null, { allowDuplicates: false }, (error, device) => {
         if (error) {
           console.log("Scan Error:", error);
-          injectJS(`handleBoardMessage("Scan Error: ${error.reason || 'Check GPS/BT'}");`);
+          injectJS(`handleBoardMessage("Scan Error: ${error.reason || 'Check GPS/BT'}", "SYS");`);
           return;
         }
         if (device && device.name) {
@@ -198,7 +198,7 @@ export default function App() {
       }, 10000);
     }).catch(e => {
       console.log("BLE state error:", e);
-      injectJS(`handleBoardMessage("BLE Error: ${e.message}");`);
+      injectJS(`handleBoardMessage("BLE Error: ${e.message}", "SYS");`);
     });
   }, [bleManager, injectJS]);
 
@@ -207,7 +207,7 @@ export default function App() {
     if (!deviceId || !bleManager) return;
 
     bleManager.stopDeviceScan();
-    injectJS(`handleBoardMessage("Connecting…");`);
+    injectJS(`handleBoardMessage("Connecting…", "SYS");`);
 
     const previousDevice = connectedDeviceRef.current;
 
@@ -270,7 +270,7 @@ export default function App() {
                   if (nonPrintable > line.length * 0.3) continue;
 
                   const safe = line.replace(/\\/g, '\\\\').replace(/"/g, '\\"');
-                  injectJS(`handleBoardMessage("${safe}");`);
+                  injectJS(`handleBoardMessage("${safe}", "BLE");`);
                 }
               }
             );
@@ -285,7 +285,7 @@ export default function App() {
               setConnectedDevice(null);
               injectJS(`
                 window._mobileBLEConnected = false;
-                handleBoardMessage("BLE disconnected");
+                handleBoardMessage("BLE disconnected", "SYS");
                 var p = document.getElementById('bt-text');
                 if (p) p.innerText = 'Bluetooth';
               `);
@@ -294,7 +294,7 @@ export default function App() {
         })
         .catch(e => {
           console.log("Connection error:", e);
-          injectJS(`handleBoardMessage("Connection failed: ${e.message.replace(/"/g, "'")}");`);
+          injectJS(`handleBoardMessage("Connection failed: ${e.message.replace(/"/g, "'")}", "SYS");`);
         });
     };
 
@@ -325,7 +325,7 @@ export default function App() {
         setConnectedDevice(null);
         injectJS(`
           window._mobileBLEConnected = false;
-          handleBoardMessage("BLE lost — please reconnect");
+          handleBoardMessage("BLE lost — please reconnect", "SYS");
           var p = document.getElementById('bt-text'); if (p) p.innerText = 'Bluetooth';
         `);
         return;
@@ -350,7 +350,7 @@ export default function App() {
         device.id, SERVICE_UUID, WRITE_UUID, base64.encode('\n@@END')
       );
 
-      injectJS(`handleBoardMessage("Upload Done! ✅");`);
+      injectJS(`handleBoardMessage("Upload Done! ✅", "SYS");`);
     } catch (error) {
       console.error("BLE Send Error:", error);
       const stillUp = await bleManager.isDeviceConnected(device.id).catch(() => false);
@@ -361,7 +361,7 @@ export default function App() {
           var p = document.getElementById('bt-text'); if (p) p.innerText = 'Bluetooth';
         `);
       }
-      injectJS(`handleBoardMessage("Send Failed ❌: ${String(error.message || error).replace(/"/g, "'")}");`);
+      injectJS(`handleBoardMessage("Send Failed ❌: ${String(error.message || error).replace(/"/g, "'")}", "SYS");`);
     }
   }, [bleManager, injectJS, setConnectedDevice]);
 
@@ -369,7 +369,7 @@ export default function App() {
   const sendCommandBLE = useCallback(async (command) => {
     const device = connectedDeviceRef.current;
     if (!device || !bleManager) {
-      injectJS(`handleBoardMessage("No BLE connection");`);
+      injectJS(`handleBoardMessage("No BLE connection", "SYS");`);
       return;
     }
     try {
@@ -378,7 +378,7 @@ export default function App() {
         setConnectedDevice(null);
         injectJS(`
           window._mobileBLEConnected = false;
-          handleBoardMessage("BLE lost — please reconnect");
+          handleBoardMessage("BLE lost — please reconnect", "SYS");
           var p = document.getElementById('bt-text'); if (p) p.innerText = 'Bluetooth';
         `);
         return;
@@ -387,10 +387,10 @@ export default function App() {
         device.id, SERVICE_UUID, WRITE_UUID,
         base64.encode(command + "\n")
       );
-      injectJS(`handleBoardMessage("${command} sent ✅");`);
+      injectJS(`handleBoardMessage("${command} sent ✅", "SYS");`);
     } catch (e) {
       console.error("Command Error:", e);
-      injectJS(`handleBoardMessage("Command failed ❌");`);
+      injectJS(`handleBoardMessage("Command failed ❌", "SYS");`);
     }
   }, [bleManager, injectJS, setConnectedDevice]);
 
@@ -400,7 +400,7 @@ export default function App() {
     const device = connectedDeviceRef.current;
 
     if (!device || !bleManager) {
-      injectJS(`handleBoardMessage("Not connected to any device");`);
+      injectJS(`handleBoardMessage("Not connected to any device", "SYS");`);
       return;
     }
 
@@ -409,8 +409,8 @@ export default function App() {
       // FIX: Previously used undefined `bleControlChar.writeValue()` (Web Bluetooth API).
       //      Now correctly uses react-native-ble-plx's writeCharacteristicWithResponseForDevice,
       //      and base64.encode() instead of the unavailable TextEncoder.
-      injectJS(`handleBoardMessage("🔴 Initiating safe disconnect...");`);
-      injectJS(`handleBoardMessage("⏹️ Stopping board execution...");`);
+      injectJS(`handleBoardMessage("🔴 Initiating safe disconnect...", "SYS");`);
+      injectJS(`handleBoardMessage("⏹️ Stopping board execution...", "SYS");`);
 
       let disconnectSent = false;
       try {
@@ -421,37 +421,37 @@ export default function App() {
             base64.encode("DISCONNECT\n")   // FIX: base64.encode, not TextEncoder
           );
           disconnectSent = true;
-          injectJS(`handleBoardMessage("  ✓ Disconnect command sent");`);
+          injectJS(`handleBoardMessage("  ✓ Disconnect command sent", "SYS");`);
           console.log("✅ Disconnect command sent");
         }
       } catch (disconnectError) {
         console.log("⚠️ Disconnect send error:", disconnectError.message);
-        injectJS(`handleBoardMessage("  ⚠️ Could not send disconnect");`);
+        injectJS(`handleBoardMessage("  ⚠️ Could not send disconnect", "SYS");`);
       }
 
       if (!disconnectSent) {
-        injectJS(`handleBoardMessage("❌ No BLE connection");`);
+        injectJS(`handleBoardMessage("❌ No BLE connection", "SYS");`);
         setConnectedDevice(null);
         return;
       }
 
       // STEP 2 — Flush
-      injectJS(`handleBoardMessage("💾 Flushing data to storage...");`);
+      injectJS(`handleBoardMessage("💾 Flushing data to storage...", "SYS");`);
       await new Promise(r => setTimeout(r, 400));
 
       // STEP 3 — Graceful shutdown
-      injectJS(`handleBoardMessage("🔧 Graceful shutdown of peripherals...");`);
+      injectJS(`handleBoardMessage("🔧 Graceful shutdown of peripherals...", "SYS");`);
       await new Promise(r => setTimeout(r, 400));
 
       // STEP 4 — Wait for safe state
-      injectJS(`handleBoardMessage("📢 Waiting for safe state confirmation...");`);
+      injectJS(`handleBoardMessage("📢 Waiting for safe state confirmation...", "SYS");`);
       await new Promise(r => setTimeout(r, 400));
 
       // STEP 5 — Clear device reference
       setConnectedDevice(null);
 
       // STEP 6 — Close GATT connection
-      injectJS(`handleBoardMessage("🔌 Closing connection...");`);
+      injectJS(`handleBoardMessage("🔌 Closing connection...", "SYS");`);
       try {
         await device.cancelConnection();
       } catch (e) {
@@ -463,8 +463,8 @@ export default function App() {
       console.log("✅ Safe disconnect complete");
       injectJS(`
         window._mobileBLEConnected = false;
-        handleBoardMessage("🟢 [SAFE_DISCONNECT] Complete!");
-        handleBoardMessage("✨ Safe to unplug device");
+        handleBoardMessage("🟢 [SAFE_DISCONNECT] Complete!", "SYS");
+        handleBoardMessage("✨ Safe to unplug device", "SYS");
         var p = document.getElementById('bt-text');
         if (p) p.innerText = 'Bluetooth';
       `);
@@ -472,7 +472,7 @@ export default function App() {
     } catch (error) {
       console.error("❌ Disconnect error:", error);
       setConnectedDevice(null);
-      injectJS(`handleBoardMessage("Error: ${error.message}");`);
+      injectJS(`handleBoardMessage("Error: ${error.message}", "SYS");`);
     }
   }, [bleManager, injectJS, setConnectedDevice]);
 
@@ -513,7 +513,7 @@ export default function App() {
         if (connectedDeviceRef.current) {
           disconnectBLE().catch(e => console.error("Disconnect error:", e));
         } else {
-          injectJS(`handleBoardMessage("Already disconnected");`);
+          injectJS(`handleBoardMessage("Already disconnected", "SYS");`);
         }
         break;
 
@@ -533,10 +533,10 @@ export default function App() {
             } else {
               Alert.alert("Saved", `File saved to: ${file.uri}`);
             }
-            injectJS(`handleBoardMessage("File saved ✅");`);
+            injectJS(`handleBoardMessage("File saved ✅", "SYS");`);
           } catch (e) {
             console.error("File save error:", e);
-            injectJS(`handleBoardMessage("Save failed: ${String(e.message || e).replace(/"/g, "'")}");`);
+            injectJS(`handleBoardMessage("Save failed: ${String(e.message || e).replace(/"/g, "'")}", "SYS");`);
           }
         })();
         break;
@@ -550,10 +550,10 @@ export default function App() {
             console.log("SAVE_CLOUD requested:", msg.name);
             // TODO: replace with your actual cloud upload call, e.g.:
             // await uploadToCloud(msg.name, msg.data);
-            injectJS(`handleBoardMessage("Cloud sync coming soon ☁️");`);
+            injectJS(`handleBoardMessage("Cloud sync coming soon ☁️", "SYS");`);
           } catch (e) {
             console.error("Cloud save error:", e);
-            injectJS(`handleBoardMessage("Cloud save failed: ${String(e.message || e).replace(/"/g, "'")}");`);
+            injectJS(`handleBoardMessage("Cloud save failed: ${String(e.message || e).replace(/"/g, "'")}", "SYS");`);
           }
         })();
         break;
@@ -574,10 +574,10 @@ export default function App() {
               .replace(/`/g, '\\`')
               .replace(/\$/g, '\\$');
             injectJS(`loadXml(\`${safe}\`);`);
-            injectJS(`handleBoardMessage("File loaded ✅");`);
+            injectJS(`handleBoardMessage("File loaded ✅", "SYS");`);
           } catch (e) {
             console.error("File load error:", e);
-            injectJS(`handleBoardMessage("Load failed: ${String(e.message || e).replace(/"/g, "'")}");`);
+            injectJS(`handleBoardMessage("Load failed: ${String(e.message || e).replace(/"/g, "'")}", "SYS");`);
           }
         })();
         break;

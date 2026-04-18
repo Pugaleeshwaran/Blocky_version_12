@@ -1478,10 +1478,32 @@
 
     #responseDisplay {
       height: 50%;
-      background-color: #9ca3af;
+      background-color: #1a2235;
+      color: #e2e8f0;
       padding: 10px;
       border-radius: 15px;
+      overflow-y: auto;
+      font-family: 'Courier New', Courier, monospace;
+      font-size: 11px;
+      line-height: 1.5;
+      display: flex;
+      flex-direction: column;
     }
+    #responseDisplay .rd-line { display: flex; gap: 6px; align-items: baseline; word-break: break-all; }
+    #responseDisplay .rd-badge-usb  { color: #60a5fa; font-weight: 700; flex-shrink: 0; }
+    #responseDisplay .rd-badge-ble  { color: #34d399; font-weight: 700; flex-shrink: 0; }
+    #responseDisplay .rd-badge-sys  { color: #fbbf24; font-weight: 700; flex-shrink: 0; }
+    #responseDisplay .rd-badge-wifi { color: #a78bfa; font-weight: 700; flex-shrink: 0; }
+    #responseDisplay .rd-ts  { color: #475569; font-size: 10px; flex-shrink: 0; }
+    #responseDisplay .rd-msg { color: #e2e8f0; }
+    #rd-clear-btn {
+      position: absolute; top: 4px; right: 8px;
+      background: #243049; color: #94a3b8;
+      border: none; border-radius: 6px;
+      font-size: 10px; padding: 2px 7px; cursor: pointer; z-index: 2;
+    }
+    #rd-clear-btn:hover { background: #334155; color: #e2e8f0; }
+    .rd-wrapper { position: relative; height: 50%; display: flex; flex-direction: column; }
 
     #pyOut {
       height: 50%;
@@ -3275,7 +3297,7 @@
       width: min(300px, 85%);
       right: -100%;
       transition: right 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-      box-shadow: -4px 0 24px rgba(0,0,0,0.18);
+      box-shadow: -4px 0 24px rgba(0, 0, 0, 0.18);
       overflow-y: auto;
     }
 
@@ -3591,7 +3613,10 @@
           <strong>Python (generated)</strong><small id="status">ready</small>
         </header>
         <pre id="pyOut"># drag & drop blocks to generate Python…</pre>
-        <div id="responseDisplay">Waiting for response...</div>
+        <div class="rd-wrapper">
+          <button id="rd-clear-btn" onclick="rdClear()" title="Clear log">✕ Clear</button>
+          <div id="responseDisplay"></div>
+        </div>
       </div>
     </section>
 
@@ -3862,7 +3887,9 @@
         // ── LOGIC ────────────────────────────────────────────────────────
         {
           kind: 'category', name: 'Logic', colour: '#4C97FF', id: 'cat_logic', contents: [
-            { kind: 'block', type: 'start' },
+            {
+              kind: 'block', type: 'controls_if', fields: { BOOL: 'TRUE' }
+            },
             { kind: 'block', type: 'din_if_else' },
             { kind: 'block', type: 'logic_operation', fields: { OP: 'AND' } },
             { kind: 'block', type: 'logic_boolean', fields: { BOOL: 'TRUE' } },
@@ -3876,9 +3903,7 @@
                 B: { shadow: { type: 'math_number', fields: { NUM: '5' } } }
               }
             },
-            {
-              kind: 'block', type: 'controls_if', fields: { BOOL: 'TRUE' }
-            },
+
           ]
         },
 
@@ -5127,6 +5152,7 @@
     let bleDevice = null;
     let bleGattServer = null;
     let bleControlChar = null;
+    let bleDataChar = null;      // TX notify char — board → browser
 
     /** True when running inside React Native WebView */
     function isMobileApp() {
@@ -5156,7 +5182,7 @@
     function finalizeConnection(deviceName) {
       closeBT();
       window._mobileBLEConnected = true;
-      handleBoardMessage("Connected ✅ " + deviceName);
+      handleBoardMessage("Connected ✅ " + deviceName, "SYS");
       const pill = document.getElementById('bt-text');
       if (pill) pill.innerText = deviceName || "Connected";
       // Live Mode: re-send last known hardware state on reconnect
@@ -5230,7 +5256,7 @@
     /** Unified connect – routes to browser or mobile path */
     async function connectToDevice(deviceId) {
       if (isMobileApp()) {
-        handleBoardMessage("Connecting…");
+        handleBoardMessage("Connecting…", "SYS");
         window.ReactNativeWebView.postMessage(JSON.stringify({
           type: "SELECT_DEVICE",
           deviceId: deviceId
@@ -5243,7 +5269,7 @@
     /** Browser-only Web Bluetooth GATT connect */
     async function _connectBrowserBLE(deviceId) {
       try {
-        handleBoardMessage("Connecting…");
+        handleBoardMessage("Connecting…", "SYS");
         const device = _foundBLEDevices[deviceId];
         if (!device) throw new Error("Device object not in cache");
 
@@ -5262,6 +5288,7 @@
         bleDevice = device;
         bleGattServer = null;
         bleControlChar = null;
+        bleDataChar = null;
 
         // Remove before adding to avoid duplicate listener accumulation across reconnects
         bleDevice.removeEventListener('gattserverdisconnected', _onBLEDisconnect);
@@ -5269,19 +5296,50 @@
 
         bleGattServer = await bleDevice.gatt.connect();
         const service = await bleGattServer.getPrimaryService(BLE_SERVICE_UUID);
+
+        // ── Write characteristic (browser → ESP32) ────────────────────
         bleControlChar = await service.getCharacteristic(BLE_CONTROL_UUID);
+
+        // ── Notify characteristic (ESP32 → browser) ───────────────────
+        // THIS WAS MISSING: without startNotifications() the browser
+        // never receives any data back from the board.
+        bleDataChar = await service.getCharacteristic(BLE_DATA_UUID);
+        await bleDataChar.startNotifications();
+
+        // Line-buffer: ESP32 may split a single logical line across
+        // multiple BLE notification packets.
+        let _bleRxBuffer = '';
+        bleDataChar.addEventListener('characteristicvaluechanged', (event) => {
+          const bytes = new Uint8Array(event.target.value.buffer);
+          _bleRxBuffer += new TextDecoder().decode(bytes);
+
+          // Split on newlines and dispatch each complete line
+          const lines = _bleRxBuffer.split('\n');
+          _bleRxBuffer = lines.pop();  // last element = incomplete tail
+
+          for (let raw of lines) {
+            const line = raw.replace(/\r/g, '').trim();
+            if (!line) continue;
+            // Filter out noisy MicroPython REPL artefacts
+            if (/^>{2,}/.test(line)) continue;
+            if (/^\.{3,}/.test(line)) continue;
+            if (line === 'OK' || line === 'MPY: soft reboot') continue;
+            handleBoardMessage(line, 'BLE');
+          }
+        });
 
         finalizeConnection(bleDevice.name || 'STM32');
       } catch (e) {
         console.error("BLE connect error:", e);
-        handleBoardMessage("Connection Failed ❌ " + e.message);
+        handleBoardMessage("Connection Failed ❌ " + e.message, "SYS");
       }
     }
 
     function _onBLEDisconnect() {
       bleGattServer = null;
       bleControlChar = null;
-      handleBoardMessage("BLE disconnected");
+      bleDataChar = null;
+      handleBoardMessage("BLE disconnected", "SYS");
       const pill = document.getElementById('bt-text');
       if (pill) pill.innerText = "Bluetooth";
     }
@@ -5300,13 +5358,13 @@
           type: "SEND_DATA",
           data: code
         }));
-        handleBoardMessage("Uploading via Bluetooth…");
+        handleBoardMessage("Uploading via Bluetooth…", "SYS");
         return;
       }
 
       // ── BROWSER: original chunked write logic ──
       if (!bleControlChar) {
-        handleBoardMessage("BLE not connected");
+        handleBoardMessage("BLE not connected", "SYS");
         return;
       }
 
@@ -5325,10 +5383,10 @@
 
         // Send END marker
         await bleControlChar.writeValue(encoder.encode("\n@@END"));
-        handleBoardMessage("Upload Done! ✅");
+        handleBoardMessage("Upload Done! ✅", "SYS");
       } catch (e) {
         console.error("BLE upload error:", e);
-        handleBoardMessage("Upload Error ❌");
+        handleBoardMessage("Upload Error ❌", "SYS");
       }
     }
 
@@ -5354,9 +5412,8 @@
         }
         stm32Writer = stm32Port.writable.getWriter();
         listenForData();
-        handleBoardMessage("USB Connected ✅");
-        setTimeout(() => handleBoardMessage("-"), 5000);
-      } catch (e) {
+        handleBoardMessage("USB Connected ✅", "SYS");
+              } catch (e) {
         console.error("Failed to open port", e);
         alert("USB Connection failed: " + e.message);
       }
@@ -5367,7 +5424,7 @@
       const payload = `@@START\n${code}\n@@END`;
       try {
         await stm32Writer.write(stm32Encoder.encode(payload));
-        handleBoardMessage("user.py sent via USB ✅");
+        handleBoardMessage("user.py sent via USB ✅", "SYS");
       } catch (e) {
         console.error("USB write error:", e);
         alert("USB write failed: " + e.message);
@@ -5400,20 +5457,20 @@
               buffer = lines.pop();
               for (let line of lines) {
                 line = line.trim();
-                if (line) handleBoardMessage(line);
+                if (line) handleBoardMessage(line, 'USB');
               }
             }
           } catch (readError) {
             if (!stopUsbReader) {
               console.error("USB read error:", readError.message);
-              handleBoardMessage("USB disconnected (cable unplugged?)");
+              handleBoardMessage("USB disconnected (cable unplugged?)", "SYS");
               break;
             }
           }
         }
       } catch (e) {
         console.error("USB setup error:", e);
-        handleBoardMessage("USB error: " + e.message);
+        handleBoardMessage("USB error: " + e.message, "SYS");
       } finally {
         if (reader) {
           try {
@@ -5433,7 +5490,7 @@
     // =====================================================================
     async function closeUSB() {
       if (!stm32Port) {
-        handleBoardMessage("USB not connected");
+        handleBoardMessage("USB not connected", "SYS");
         return;
       }
 
@@ -5469,7 +5526,7 @@
 
         await new Promise(r => setTimeout(r, 300));
 
-        handleBoardMessage("USB Disconnected ✅");
+        handleBoardMessage("USB Disconnected ✅", "SYS");
         const pill = document.getElementById('bt-text');
         if (pill) pill.innerText = "USB";
 
@@ -5504,9 +5561,10 @@
 
         bleGattServer = null;
         bleControlChar = null;
+        bleDataChar = null;
         bleDevice = null;
 
-        handleBoardMessage("BLE Disconnected ✅");
+        handleBoardMessage("BLE Disconnected ✅", "SYS");
         const pill = document.getElementById('bt-text');
         if (pill) pill.innerText = "Bluetooth";
 
@@ -5514,6 +5572,7 @@
         console.error("BLE disconnect error:", e);
         bleGattServer = null;
         bleControlChar = null;
+        bleDataChar = null;
         bleDevice = null;
       }
     }
@@ -5549,12 +5608,12 @@
         // (Like "Safely Remove USB Drive" on Windows/Mac)
         // ============================================================
 
-        handleBoardMessage("🔴 Initiating safe disconnect...");
+        handleBoardMessage("🔴 Initiating safe disconnect...", "SYS");
 
         // ============================================================
         // STEP 1: STOP EXECUTION (Send disconnect command)
         // ============================================================
-        handleBoardMessage("⏹️ Stopping board execution...");
+        handleBoardMessage("⏹️ Stopping board execution...", "SYS");
         const encoder = new TextEncoder();
         let disconnectSent = false;
 
@@ -5562,10 +5621,10 @@
           try {
             await stm32Writer.write(encoder.encode("DISCONNECT\n"));
             disconnectSent = true;
-            handleBoardMessage("  ✓ Disconnect command sent");
+            handleBoardMessage("  ✓ Disconnect command sent", "SYS");
           } catch (e) {
             console.error("Disconnect send error:", e);
-            handleBoardMessage("  ⚠️ Could not send disconnect");
+            handleBoardMessage("  ⚠️ Could not send disconnect", "SYS");
           }
         }
 
@@ -5573,39 +5632,39 @@
           try {
             await bleControlChar.writeValue(encoder.encode("DISCONNECT\n"));
             disconnectSent = true;
-            handleBoardMessage("  ✓ Disconnect command sent");
+            handleBoardMessage("  ✓ Disconnect command sent", "SYS");
           } catch (e) {
             console.error("BLE error:", e);
           }
         }
 
         if (!disconnectSent) {
-          handleBoardMessage("⚠️ No connection available");
+          handleBoardMessage("⚠️ No connection available", "SYS");
           return;
         }
 
         // ============================================================
         // STEP 2: FLUSH DATA (App waits for board to flush)
         // ============================================================
-        handleBoardMessage("💾 Flushing data to storage...");
+        handleBoardMessage("💾 Flushing data to storage...", "SYS");
         await new Promise(r => setTimeout(r, 400));
 
         // ============================================================
         // STEP 3: GRACEFUL SHUTDOWN
         // ============================================================
-        handleBoardMessage("🔧 Graceful shutdown of peripherals...");
+        handleBoardMessage("🔧 Graceful shutdown of peripherals...", "SYS");
         await new Promise(r => setTimeout(r, 400));
 
         // ============================================================
         // STEP 4: NOTIFY SAFE STATE
         // ============================================================
-        handleBoardMessage("📢 Waiting for safe state confirmation...");
+        handleBoardMessage("📢 Waiting for safe state confirmation...", "SYS");
         await new Promise(r => setTimeout(r, 400));
 
         // ============================================================
         // STEP 5: CLOSE CONNECTION CLEANLY
         // ============================================================
-        handleBoardMessage("🔌 Closing connection...");
+        handleBoardMessage("🔌 Closing connection...", "SYS");
 
         if (isUSBConnected()) {
           try {
@@ -5626,12 +5685,12 @@
         // ============================================================
         // STEP 6: DISCONNECTED SAFELY
         // ============================================================
-        handleBoardMessage("🟢 [SAFE_DISCONNECT] Complete!");
-        handleBoardMessage("✨ Safe to unplug device");
+        handleBoardMessage("🟢 [SAFE_DISCONNECT] Complete!", "SYS");
+        handleBoardMessage("✨ Safe to unplug device", "SYS");
 
       } catch (error) {
         console.error("Disconnect error:", error);
-        handleBoardMessage("Error: " + error.message);
+        handleBoardMessage("Error: " + error.message, "SYS");
       }
     }
 
@@ -5644,7 +5703,7 @@
       if (stm32Port && stm32Writer) {
         try {
           await stm32Writer.write(encoder.encode(commandName + "\n"));
-          handleBoardMessage(commandName + " sent via USB");
+          handleBoardMessage(commandName + " sent via USB", "SYS");
           return true;
         } catch (e) { console.error("USB send failed:", e); }
       }
@@ -5652,7 +5711,7 @@
       if (bleConnected() && bleControlChar) {
         try {
           await bleControlChar.writeValue(encoder.encode(commandName + "\n"));
-          handleBoardMessage(commandName + " sent via BLE");
+          handleBoardMessage(commandName + " sent via BLE", "SYS");
           return true;
         } catch (e) { console.error("BLE send failed:", e); }
       }
@@ -5673,10 +5732,36 @@
     // =====================================================================
     // Status display
     // =====================================================================
-    function handleBoardMessage(msg) {
-      console.log("Board:", msg);
+    function handleBoardMessage(msg, source) {
+      if (!msg || msg === '-') return;   // skip legacy clear-placeholder
+      console.log("Board [" + (source || 'SYS') + "]:", msg);
       const el = document.getElementById("responseDisplay");
-      if (el) el.innerText = msg;
+      if (!el) return;
+
+      const ts = new Date().toLocaleTimeString('en', { hour12: false });
+      const src = (source || 'SYS').toUpperCase();
+      const cls = src === 'USB' ? 'rd-badge-usb'
+                : src === 'BLE' ? 'rd-badge-ble'
+                : src === 'WIFI'? 'rd-badge-wifi'
+                :                 'rd-badge-sys';
+
+      const row = document.createElement('div');
+      row.className = 'rd-line';
+      row.innerHTML =
+        '<span class="rd-ts">' + ts + '</span>' +
+        '<span class="' + cls + '">[' + src + ']</span>' +
+        '<span class="rd-msg">' + msg.replace(/</g,'&lt;').replace(/>/g,'&gt;') + '</span>';
+
+      el.appendChild(row);
+      // Keep at most 500 lines to avoid memory bloat
+      while (el.children.length > 500) el.removeChild(el.firstChild);
+      // Auto-scroll to latest message
+      el.scrollTop = el.scrollHeight;
+    }
+
+    function rdClear() {
+      const el = document.getElementById("responseDisplay");
+      if (el) el.innerHTML = '';
     }
 
     // =====================================================================
@@ -5732,13 +5817,30 @@
       mqttClient.on('connect', function () {
         mqttClient.publish('esp32/boot', `@@START \n${asyncCode} \n @@END`);
         mqttClient.subscribe(['esp32/fire', 'esp32/ultrasonic', 'esp32/servo', 'esp32/led', 'esp32/motor', 'esp32/message']);
-        handleBoardMessage("WiFi code sent ✅");
-        setTimeout(() => handleBoardMessage("-"), 5000);
+        handleBoardMessage("WiFi code sent ✅", "WIFI");
+              });
+      mqttClient.on('error', function (err) {
+        console.error('MQTT error:', err);
+        handleBoardMessage('MQTT error: ' + err.message, 'WIFI');
       });
-      mqttClient.on('error', function (err) { console.error('MQTT error:', err); });
       mqttClient.on('message', function (topic, message) {
         const data = message.toString();
         console.log(`📩 ${topic}:`, data);
+
+        // Route every board response to the frontend display.
+        // Topics like esp32/ultrasonic publish JSON: {"type":"ultrasonic","value":12,"unit":"cm"}
+        // Wrap them in the DATA: prefix so LiveTerminal also parses them correctly.
+        const shortTopic = topic.split('/').pop();   // e.g. "ultrasonic"
+        let displayMsg;
+        try {
+          // If it's already valid JSON, wrap as DATA: so LiveTerminal colour-codes it
+          JSON.parse(data);
+          displayMsg = 'DATA:' + data;
+        } catch (_) {
+          // Plain text (e.g. "OK", "print() output from board")
+          displayMsg = '[' + shortTopic.toUpperCase() + '] ' + data;
+        }
+        handleBoardMessage(displayMsg, 'WIFI');
       });
     }
 
@@ -7859,7 +7961,7 @@
       reg['rgb_display'] = b => `displayRGBColors(${b.getFieldValue('RED')},${b.getFieldValue('ORANGE')},${b.getFieldValue('YELLOW')},${b.getFieldValue('GREEN')},${b.getFieldValue('CYAN')});\n`;
       reg['rgb_component'] = b => { const ports = (b.getFieldValue('PORTS') || '').split(',').map(s => s.trim()).filter(Boolean); const freq = b.getFieldValue('freq'); const d1 = b.getFieldValue('Delay1'); const d2 = b.getFieldValue('DELAY2'); if (!ports.length) return "# rgb_component: no ports\n"; return ports.map(p => `rgb("${p}",${freq},${d1},${d2})\n`).join(''); };
       reg['buzzer_component'] = b => { const ports = (b.getFieldValue('PORTS') || '').split(',').map(s => s.trim()).filter(Boolean); const freq = b.getFieldValue('freq'); const d1 = b.getFieldValue('Delay1'); const d2 = b.getFieldValue('DELAY2'); if (!ports.length) return "# buzzer_component: no ports\n"; return ports.map(p => `buzzer("${p}",${freq},${d1},${d2})\n`).join(''); };
-      reg['LCD_print'] = b => { const txt = py.valueToCode(b, 'TEXT', py.ORDER_NONE) || ""; return `lcd(${txt})\n`; };
+      reg['LCD_print'] = b => { const txt = py.valueToCode(b, 'TEXT', py.ORDER_NONE) || ""; return `await async_lcd(${txt})\n`; };
       reg['din_flame'] = b => { const port = b.getFieldValue('PORTS'); return [`await async_flame("${port}")`, py.ORDER_FUNCTION_CALL]; };
       reg['din_temp'] = b => { const port = b.getFieldValue('PORTS'); return [`await async_temp("${port}")`, py.ORDER_FUNCTION_CALL]; };
       reg['magnetic_sensor'] = () => [`magnetic()`, py.ORDER_ATOMIC];
@@ -8856,10 +8958,10 @@
         disconnectBtn.onclick = async () => {
           const hasConnection = isUSBConnected() || isBLEConnected();
           if (!hasConnection) {
-            handleBoardMessage("Not connected to any device");
+            handleBoardMessage("Not connected to any device", "SYS");
             return;
           }
-          handleBoardMessage("Disconnecting...");
+          handleBoardMessage("Disconnecting...", "SYS");
           await disconnectAll();
         };
       }
@@ -10890,6 +10992,46 @@
       updateCode();
 
       // ═══════════════════════════════════════════════════════════════════════
+      // SINGLE START BLOCK ENFORCEMENT
+      // Prevents more than one "start" block from existing in the workspace.
+      // If a second start block is dropped/created, it is immediately deleted
+      // and a toast warning is shown to the user.
+      // ═══════════════════════════════════════════════════════════════════════
+      workspace.addChangeListener(function (ev) {
+        if (ev.type !== Blockly.Events.BLOCK_CREATE) return;
+
+        // Find all start-type blocks currently in the workspace
+        const startBlocks = workspace.getAllBlocks(false).filter(
+          b => b.type === 'start'
+        );
+
+        // Only act if there are now more than one
+        if (startBlocks.length <= 1) return;
+
+        // The newly created block is the one whose id matches ev.blockId
+        // (or the first id in ev.ids for group creates)
+        const newIds = ev.ids || (ev.blockId ? [ev.blockId] : []);
+        const toDelete = startBlocks.find(b => newIds.includes(b.id));
+
+        if (toDelete) {
+          // Wrap in Blockly.Events.disable/enable so undo history stays clean
+          Blockly.Events.disable();
+          try {
+            toDelete.dispose(false, false);
+          } finally {
+            Blockly.Events.enable();
+          }
+
+          // Notify the user
+          if (typeof _showToast === 'function') {
+            _showToast('⚠️ Only one Start block is allowed!', 'warn');
+          } else {
+            console.warn('[Blockly] Duplicate start block removed — only one allowed.');
+          }
+        }
+      });
+
+      // ═══════════════════════════════════════════════════════════════════════
       // LIVE MODE ENGINE — init
       // ═══════════════════════════════════════════════════════════════════════
       LiveModeEngine.init(workspace);
@@ -10923,13 +11065,13 @@
       // SOFT RESET
       document.getElementById("soft_reset").onclick = async () => {
         const ok = await sendUnifiedCommand("SOFT_RESET");
-        if (ok) handleBoardMessage("Soft Reset triggered");
+        if (ok) handleBoardMessage("Soft Reset triggered", "SYS");
       };
 
       // HARD RESET
       document.getElementById("hard_reset").onclick = async () => {
         const ok = await sendUnifiedCommand("HARD_RESET");
-        if (ok) handleBoardMessage("Hardware Rebooting…");
+        if (ok) handleBoardMessage("Hardware Rebooting…", "SYS");
       };
 
       // BLUETOOTH button – open scan popup
@@ -10955,7 +11097,7 @@
 
         if (isMobileApp()) {
           // Mobile: hand off to App.js via bridge
-          handleBoardMessage("Uploading via Bluetooth…");
+          handleBoardMessage("Uploading via Bluetooth…", "SYS");
           window.ReactNativeWebView.postMessage(JSON.stringify({ type: "SEND_DATA", data: asyncCode }));
           return;
         }
@@ -10977,7 +11119,7 @@
         const code = pyGen.workspaceToCode(workspace);
         if (stm32Port && stm32Writer) {
           await writeUserPyToBoard(wrapWithAsyncio(code));
-          handleBoardMessage("user.py saved on board");
+          handleBoardMessage("user.py saved on board", "SYS");
         } else {
           alert("USB not connected.");
         }
@@ -11445,7 +11587,7 @@
       Blockly.serialization.workspaces.load({
         blocks: {
           languageVersion: 0,
-          blocks: [{ type: "start", x: 40, y: 40, deletable: false, fields: { NAME: "when Start Button clicked" } }]
+          blocks: [{ type: "start", x: 40, y: 40, fields: { NAME: "when Start Button clicked" } }]
         }
       }, workspace);
     }
@@ -11865,7 +12007,7 @@
           // Patch handleBoardMessage to route DATA: lines to terminal
           if (typeof handleBoardMessage === 'function') {
             const _orig = handleBoardMessage;
-            handleBoardMessage = (msg) => { _orig(msg); this.Terminal.onBoardMessage(msg); };
+            handleBoardMessage = (msg, source) => { _orig(msg, source); this.Terminal.onBoardMessage(msg); };
           }
           console.log('[LiveMode] Engine initialised \u2014 ready.');
         },
