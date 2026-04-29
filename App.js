@@ -104,6 +104,9 @@ export default function App() {
   // Use a REF for connectedDevice so BLE callbacks always close over the
   // latest device without stale closure issues.
   const connectedDeviceRef = useRef(null);
+  
+  // Ref to prevent multiple document pickers opening simultaneously.
+  const documentPickerActiveRef = useRef(false);
 
   // NEW: Proper boolean state for UI-level connection status.
   // This replaces the previous forceRender(n => n + 1) anti-pattern.
@@ -561,12 +564,19 @@ export default function App() {
       // Mobile file picker — load XML back into the WebView
       case "LOAD_FILE":
         (async () => {
+          if (documentPickerActiveRef.current) {
+            console.log("Document picker already active. Ignoring request.");
+            return;
+          }
           try {
+            documentPickerActiveRef.current = true;
             const result = await DocumentPicker.getDocumentAsync({
               type: ['text/xml', 'application/xml'],
               copyToCacheDirectory: true,
             });
-            if (result.canceled || !result.assets?.length) return;
+            if (result.canceled || !result.assets?.length) {
+              return;
+            }
             const pickedFile = new File(result.assets[0].uri);
             const content = await pickedFile.text();
             const safe = content
@@ -578,6 +588,8 @@ export default function App() {
           } catch (e) {
             console.error("File load error:", e);
             injectJS(`handleBoardMessage("Load failed: ${String(e.message || e).replace(/"/g, "'")}", "SYS");`);
+          } finally {
+            documentPickerActiveRef.current = false;
           }
         })();
         break;

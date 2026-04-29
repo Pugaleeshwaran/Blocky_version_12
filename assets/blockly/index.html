@@ -318,7 +318,8 @@
       flex-direction: column;
       gap: 10px;
       min-height: 0;
-      height: 100%
+      height: 100%;
+      overflow: hidden;
     }
 
     .code pre {
@@ -328,8 +329,8 @@
       background: #0d1117;
       color: #c9d1d9;
       overflow: auto;
-      min-height: 140px;
-      flex: 1;
+      min-height: 0;
+      flex: 1 1 0;
       font: 500 13px/1.6 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace
     }
 
@@ -1477,7 +1478,8 @@
     }
 
     #responseDisplay {
-      height: 50%;
+      flex: 1 1 0;
+      min-height: 0;
       background-color: #1a2235;
       color: #e2e8f0;
       padding: 10px;
@@ -1489,24 +1491,124 @@
       display: flex;
       flex-direction: column;
     }
-    #responseDisplay .rd-line { display: flex; gap: 6px; align-items: baseline; word-break: break-all; }
-    #responseDisplay .rd-badge-usb  { color: #60a5fa; font-weight: 700; flex-shrink: 0; }
-    #responseDisplay .rd-badge-ble  { color: #34d399; font-weight: 700; flex-shrink: 0; }
-    #responseDisplay .rd-badge-sys  { color: #fbbf24; font-weight: 700; flex-shrink: 0; }
-    #responseDisplay .rd-badge-wifi { color: #a78bfa; font-weight: 700; flex-shrink: 0; }
-    #responseDisplay .rd-ts  { color: #475569; font-size: 10px; flex-shrink: 0; }
-    #responseDisplay .rd-msg { color: #e2e8f0; }
-    #rd-clear-btn {
-      position: absolute; top: 4px; right: 8px;
-      background: #243049; color: #94a3b8;
-      border: none; border-radius: 6px;
-      font-size: 10px; padding: 2px 7px; cursor: pointer; z-index: 2;
+
+    #responseDisplay .rd-line {
+      display: flex;
+      gap: 6px;
+      align-items: baseline;
+      word-break: break-all;
     }
-    #rd-clear-btn:hover { background: #334155; color: #e2e8f0; }
-    .rd-wrapper { position: relative; height: 50%; display: flex; flex-direction: column; }
+
+    #responseDisplay .rd-badge-usb {
+      color: #60a5fa;
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+
+    #responseDisplay .rd-badge-ble {
+      color: #34d399;
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+
+    #responseDisplay .rd-badge-sys {
+      color: #fbbf24;
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+
+    #responseDisplay .rd-badge-wifi {
+      color: #a78bfa;
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+
+    #responseDisplay .rd-ts {
+      color: #475569;
+      font-size: 10px;
+      flex-shrink: 0;
+    }
+
+    #responseDisplay .rd-msg {
+      color: #e2e8f0;
+    }
+
+    #rd-clear-btn {
+      position: absolute;
+      top: 4px;
+      right: 8px;
+      background: #243049;
+      color: #94a3b8;
+      border: none;
+      border-radius: 6px;
+      font-size: 10px;
+      padding: 2px 7px;
+      cursor: pointer;
+      z-index: 2;
+    }
+
+    #rd-clear-btn:hover {
+      background: #334155;
+      color: #e2e8f0;
+    }
+
+    .rd-wrapper {
+      position: relative;
+      flex: 1 1 0;
+      min-height: 0;
+      display: flex;
+      flex-direction: column;
+      transition: flex 0.3s ease, opacity 0.3s ease;
+      overflow: hidden;
+    }
 
     #pyOut {
-      height: 50%;
+      flex: 1 1 0;
+      min-height: 0;
+      transition: flex 0.3s ease, opacity 0.3s ease;
+      overflow: auto;
+    }
+
+    /* Toggle states */
+    #codePanel.show-pyout-only #pyOut {
+      flex: 1 1 100%;
+    }
+
+    #codePanel.show-pyout-only .rd-wrapper {
+      flex: 0 0 0;
+      opacity: 0;
+      pointer-events: none;
+      overflow: hidden;
+    }
+
+    #codePanel.show-terminal-only #pyOut {
+      flex: 0 0 0;
+      opacity: 0;
+      pointer-events: none;
+      overflow: hidden;
+    }
+
+    #codePanel.show-terminal-only .rd-wrapper {
+      flex: 1 1 100%;
+    }
+
+    /* Toggle button style */
+    #panelToggleBtn {
+      background: #e0f0ff;
+      border: none;
+      border-radius: 8px;
+      padding: 3px 10px;
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      color: #2b3c47;
+      white-space: nowrap;
+      box-shadow: 0 1px 4px rgba(0, 0, 0, 0.12);
+      transition: background 0.2s;
+    }
+
+    #panelToggleBtn:hover {
+      background: #b3d9ff;
     }
 
     #btnUndo {
@@ -1546,11 +1648,8 @@
       }
 
       #responseDisplay {
-        height: 50%;
-      }
-
-      #pyOut {
-        height: 50%;
+        flex: 1 1 0;
+        min-height: 0;
       }
 
       /* Inside media query: .main1 must also win here */
@@ -1982,12 +2081,12 @@
     /* ===== Flyout Search ===== */
     .flyout-search {
       position: absolute;
-      top: 15px;
+      top: 10px;
       left: 260px;
-      /* overridden by JS via toolbox.getWidth() */
+      /* left and width overridden by JS */
       z-index: 1200;
-      /* must be above Blockly flyout (~z-index 1000) */
-      width: 260px;
+      width: 240px;
+      box-sizing: border-box;
       background: #fff;
       border-radius: 99px;
       border: 1px solid #e2e8f0;
@@ -2743,52 +2842,116 @@
       align-items: center;
     }
 
-    /* === Project Tabs === */
-    .project-tabs {
+    /* === Project Tabs — Vertical Dropdown === */
+    .project-tabs-wrapper {
+      position: relative;
+      margin-left: 8px;
+    }
+
+    .project-tabs-toggle {
       display: flex;
-      gap: 4px;
-      margin-left: 10px;
-      overflow-x: auto;
-      max-width: 300px;
-      scrollbar-width: none;
+      align-items: center;
+      gap: 6px;
+      padding: 5px 12px;
+      border-radius: 8px;
+      background: #e2e8f0;
+      border: 1.5px solid #cbd5e1;
+      cursor: pointer;
+      font-size: 12px;
+      font-weight: 700;
+      color: #334155;
+      white-space: nowrap;
+      transition: all 0.15s;
+      user-select: none;
+    }
+
+    .project-tabs-toggle:hover {
+      background: #cbd5e1;
+    }
+
+    .project-tabs-toggle .ptab-arrow {
+      font-size: 10px;
+      transition: transform 0.2s;
+    }
+
+    .project-tabs-toggle.open .ptab-arrow {
+      transform: rotate(180deg);
+    }
+
+    .project-tabs {
+      display: none;
+      position: absolute;
+      top: calc(100% + 6px);
+      left: 0;
+      z-index: 9999;
+      min-width: 200px;
+      max-width: 280px;
+      max-height: 280px;
+      overflow-y: auto;
+      background: #fff;
+      border: 1.5px solid #cbd5e1;
+      border-radius: 10px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+      padding: 4px;
+      flex-direction: column;
+      gap: 2px;
+      scrollbar-width: thin;
+      scrollbar-color: #cbd5e1 transparent;
+    }
+
+    .project-tabs.open {
+      display: flex;
     }
 
     .project-tabs::-webkit-scrollbar {
-      display: none;
+      width: 5px;
+    }
+
+    .project-tabs::-webkit-scrollbar-thumb {
+      background: #cbd5e1;
+      border-radius: 4px;
     }
 
     .project-tab {
       display: flex;
       align-items: center;
-      gap: 4px;
-      padding: 4px 10px;
-      border-radius: 6px;
-      background: #e2e8f0;
+      justify-content: space-between;
+      gap: 6px;
+      padding: 7px 10px;
+      border-radius: 7px;
+      background: transparent;
       border: 1.5px solid transparent;
       cursor: pointer;
       font-size: 12px;
       font-weight: 600;
       color: #475569;
       white-space: nowrap;
-      transition: all 0.15s;
+      transition: all 0.12s;
     }
 
     .project-tab:hover {
-      background: #cbd5e1;
+      background: #f1f5f9;
     }
 
     .project-tab.active {
-      background: #fff;
-      border-color: #94a3b8;
-      color: #1e293b;
-      box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+      background: #eff6ff;
+      border-color: #93c5fd;
+      color: #1e40af;
+    }
+
+    .project-tab span:first-child {
+      flex: 1;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
 
     .project-tab .tab-close {
-      font-size: 11px;
+      font-size: 13px;
       color: #94a3b8;
       cursor: pointer;
-      margin-left: 2px;
+      flex-shrink: 0;
+      line-height: 1;
+      padding: 0 2px;
     }
 
     .project-tab .tab-close:hover {
@@ -3526,8 +3689,15 @@
         <div class="project-name-container">
           <input type="text" id="projectNameInput" value="Untitled" title="Project Name">
         </div>
-        <!-- Project Tabs (saved projects appear here) -->
-        <div class="project-tabs" id="projectTabs"></div>
+        <!-- Project Tabs — vertical dropdown -->
+        <div class="project-tabs-wrapper" id="projectTabsWrapper">
+          <div class="project-tabs-toggle" id="projectTabsToggle" onclick="toggleProjectDropdown()">
+            <i class="fa-solid fa-layer-group"></i>
+            <span id="projectTabsCount">Projects</span>
+            <span class="ptab-arrow">▼</span>
+          </div>
+          <div class="project-tabs" id="projectTabs"></div>
+        </div>
       </div>
 
 
@@ -3579,15 +3749,15 @@
       <button class="button-86" id="hard_reset" role="button">Hard Reset</button>
     </aside>
 
-    <section class="main">
+    <section class="main" style="position:relative;">
+      <!-- Floating Search Box — outside .workspace to avoid overflow:hidden clip -->
+      <div id="flyoutSearchContainer" class="flyout-search hidden">
+        <i class="fa-solid fa-magnifying-glass search-icon"></i>
+        <input type="text" id="flyoutSearchInput" placeholder="Search blocks..." autocomplete="off">
+        <button id="flyoutSearchClear" class="flyout-search-clear" style="display:none;"><i
+            class="fa-solid fa-xmark"></i></button>
+      </div>
       <div class="workspace">
-        <!-- Floating Search Box, initially hidden -->
-        <div id="flyoutSearchContainer" class="flyout-search hidden">
-          <i class="fa-solid fa-magnifying-glass search-icon"></i>
-          <input type="text" id="flyoutSearchInput" placeholder="Search blocks..." autocomplete="off">
-          <button id="flyoutSearchClear" class="flyout-search-clear" style="display:none;"><i
-              class="fa-solid fa-xmark"></i></button>
-        </div>
         <div id="blocklyDiv"></div>
         <div id="liveTerminal">
           <div class="lt-header">
@@ -3609,8 +3779,10 @@
         </div>
       </div>
       <div id="codePanel" class="code">
-        <header style="display:flex;justify-content:space-between;align-items:center">
-          <strong>Python (generated)</strong><small id="status">ready</small>
+        <header style="display:flex;justify-content:space-between;align-items:center;gap:8px">
+          <strong>Python (generated)</strong>
+          <button id="panelToggleBtn" title="Toggle panels" onclick="cyclePanelView()">⬍ Split</button>
+          <small id="status">ready</small>
         </header>
         <pre id="pyOut"># drag & drop blocks to generate Python…</pre>
         <div class="rd-wrapper">
@@ -3733,7 +3905,7 @@
             { kind: 'block', type: 'buzzer' },
             { kind: 'block', type: 'minifan' },
             { kind: 'block', type: 'buzzer_component' },
-            { kind: 'block', type: 'joystick_move' },
+
             { kind: 'block', type: 'ir_sen' },
             { kind: 'block', type: 'touch_sensor' },
           ]
@@ -3765,6 +3937,7 @@
             { kind: 'block', type: 'voltage_sensor' },
             { kind: 'block', type: 'humidity' },
             { kind: 'block', type: 'ldr' },
+            { kind: 'block', type: 'joystick_move' },
             { kind: 'block', type: 'piezo_sensor' },
           ]
         },
@@ -4609,10 +4782,10 @@
             </div>
             <div class="motor-box1-p2">
               <div class="row checkbox-wrapper-8"><input class="tgl tgl-skewed" type="checkbox" name="servoPort"
-                  id="s_C8" value="C8"><label class="tgl-btn" data-tg-off="C8" data-tg-on="C8 ON" for="s_C8"></label>
+                  id="s_B8" value="B8"><label class="tgl-btn" data-tg-off="B8" data-tg-on="B8 ON" for="s_B8"></label>
               </div>
               <div class="row checkbox-wrapper-8"><input class="tgl tgl-skewed" type="checkbox" name="servoPort"
-                  id="s_C9" value="C9"><label class="tgl-btn" data-tg-off="C9" data-tg-on="C9 ON" for="s_C9"></label>
+                  id="s_B9" value="B9"><label class="tgl-btn" data-tg-off="B9" data-tg-on="B9 ON" for="s_B9"></label>
               </div>
               <div class="row checkbox-wrapper-8"><input class="tgl tgl-skewed" type="checkbox" name="servoPort"
                   id="s_B15" value="B15"><label class="tgl-btn" data-tg-off="B15" data-tg-on="B15 ON"
@@ -4672,8 +4845,8 @@
       <div class="box1">
         <div class="row"><label><input type="checkbox" id="motorE11"> E11</label></div>
         <div class="row"><label><input type="checkbox" id="motorE12"> E12</label></div>
-        <div class="row"><label><input type="checkbox" id="motorC9"> C9</label></div>
-        <div class="row"><label><input type="checkbox" id="motorC8"> C8</label></div>
+        <div class="row"><label><input type="checkbox" id="motorB9"> B9</label></div>
+        <div class="row"><label><input type="checkbox" id="motorB8"> B8</label></div>
         <div class="row"><label><input type="checkbox" id="motorE13"> E13</label></div>
         <div class="row"><label><input type="checkbox" id="motorB15"> B15</label></div>
         <div class="row"><label><input type="checkbox" id="motorD15"> D15</label></div>
@@ -4755,10 +4928,10 @@
                   class="tgl-btn" data-tg-off="E14" data-tg-on="E14 ON" for="uni_motorE14"></label></div>
             </div>
             <div class="motor-box1-p2">
-              <div class="row checkbox-wrapper-8"><input class="tgl tgl-skewed" type="checkbox" id="uni_motorC8"><label
-                  class="tgl-btn" data-tg-off="C8" data-tg-on="C8 ON" for="uni_motorC8"></label></div>
-              <div class="row checkbox-wrapper-8"><input class="tgl tgl-skewed" type="checkbox" id="uni_motorC9"><label
-                  class="tgl-btn" data-tg-off="C9" data-tg-on="C9 ON" for="uni_motorC9"></label></div>
+              <div class="row checkbox-wrapper-8"><input class="tgl tgl-skewed" type="checkbox" id="uni_motorB8"><label
+                  class="tgl-btn" data-tg-off="B8" data-tg-on="B8 ON" for="uni_motorB8"></label></div>
+              <div class="row checkbox-wrapper-8"><input class="tgl tgl-skewed" type="checkbox" id="uni_motorB9"><label
+                  class="tgl-btn" data-tg-off="B9" data-tg-on="B9 ON" for="uni_motorB9"></label></div>
               <div class="row checkbox-wrapper-8"><input class="tgl tgl-skewed" type="checkbox" id="uni_motorB15"><label
                   class="tgl-btn" data-tg-off="B15" data-tg-on="B15 ON" for="uni_motorB15"></label></div>
               <div class="row checkbox-wrapper-8"><input class="tgl tgl-skewed" type="checkbox" id="uni_motorD15"><label
@@ -5413,7 +5586,7 @@
         stm32Writer = stm32Port.writable.getWriter();
         listenForData();
         handleBoardMessage("USB Connected ✅", "SYS");
-              } catch (e) {
+      } catch (e) {
         console.error("Failed to open port", e);
         alert("USB Connection failed: " + e.message);
       }
@@ -5442,6 +5615,7 @@
         stopUsbReader = false;
 
         let buffer = "";
+        let _yieldCounter = 0;
         while (!stopUsbReader) {
           try {
             const { value, done } = await reader.read();
@@ -5458,6 +5632,13 @@
               for (let line of lines) {
                 line = line.trim();
                 if (line) handleBoardMessage(line, 'USB');
+              }
+              // Yield to the UI thread every 32 reads to prevent starvation
+              // when data arrives in rapid continuous bursts
+              _yieldCounter++;
+              if (_yieldCounter >= 32) {
+                _yieldCounter = 0;
+                await new Promise(r => setTimeout(r, 0));
               }
             }
           } catch (readError) {
@@ -5730,33 +5911,153 @@
     }
 
     // =====================================================================
+    // Unified Chunked Upload with ACK
+    // =====================================================================
+
+    const sleep = ms => new Promise(Math.random ? r => setTimeout(r, ms) : r => setTimeout(r, ms));
+
+    let _ackResolver = null;
+    function checkAck(msg) {
+      if (msg && msg.toLowerCase().includes("ack") && _ackResolver) {
+        _ackResolver(msg);
+        _ackResolver = null;
+      }
+    }
+
+    function waitForAck(timeoutMs) {
+      return new Promise((resolve, reject) => {
+        _ackResolver = resolve;
+        setTimeout(() => {
+          if (_ackResolver === resolve) {
+            _ackResolver = null;
+            reject(new Error("Timeout"));
+          }
+        }, timeoutMs);
+      });
+    }
+
+    async function unifiedUploadCode(code) {
+      if (!code || !code.trim()) {
+        alert("No code to send");
+        return;
+      }
+
+      const encoder = new TextEncoder();
+      const rawData = encoder.encode(code);
+      const CHUNK_SIZE = 20;
+
+      let isUSB = (stm32Port && stm32Writer);
+      let isBLE = (bleConnected() && bleControlChar);
+
+      if (!isUSB && !isBLE) {
+        alert("No board connected! Please connect via USB or Bluetooth.");
+        return;
+      }
+
+      async function sendData(data) {
+        if (isUSB) {
+          await stm32Writer.write(data);
+        } else if (isBLE) {
+          await bleControlChar.writeValue(data);
+        }
+      }
+
+      try {
+        handleBoardMessage(isUSB ? "USB: uploading..." : "WEB (BLE): uploading...", "SYS");
+
+        // START marker
+        await sendData(encoder.encode("@@START\n"));
+
+        // Wait for ACK
+        try {
+          handleBoardMessage("Waiting for @@START ack...", "SYS");
+          await waitForAck(5000);
+          handleBoardMessage("@@START ack received!", "SYS");
+        } catch (e) {
+          handleBoardMessage("@@START ack timeout, continuing...", "SYS");
+        }
+
+        for (let i = 0; i < rawData.length; i += CHUNK_SIZE) {
+          const chunk = rawData.slice(i, i + CHUNK_SIZE);
+          await sendData(chunk);
+          await sleep(15);
+        }
+
+        // END marker
+        await sendData(encoder.encode("\n@@END"));
+
+        // Wait for ACK
+        try {
+          handleBoardMessage("Waiting for @@END ack...", "SYS");
+          await waitForAck(5000);
+          handleBoardMessage("@@END ack received!", "SYS");
+        } catch (e) {
+          handleBoardMessage("@@END ack timeout!", "SYS");
+        }
+
+        handleBoardMessage(`Upload done (${rawData.length} bytes)`, "SYS");
+      } catch (e) {
+        console.error("Upload error:", e);
+        alert("Upload failed: " + e.message);
+      }
+    }
+
+    // =====================================================================
     // Status display
     // =====================================================================
+    // ── Batched message queue — avoids a forced reflow on every USB/BLE line ──
+    const _msgQueue = [];
+    let _msgRafPending = false;
+
+    function _flushMsgQueue() {
+      _msgRafPending = false;
+      const el = document.getElementById("responseDisplay");
+      if (!el || _msgQueue.length === 0) return;
+
+      // Build a DocumentFragment so we do ONE DOM write, not N
+      const frag = document.createDocumentFragment();
+      while (_msgQueue.length > 0) {
+        const { ts, cls, src, text } = _msgQueue.shift();
+        const row = document.createElement('div');
+        row.className = 'rd-line';
+        row.innerHTML =
+          '<span class="rd-ts">' + ts + '</span>' +
+          '<span class="' + cls + '">[' + src + ']</span>' +
+          '<span class="rd-msg">' + text + '</span>';
+        frag.appendChild(row);
+      }
+      el.appendChild(frag);
+
+      // Trim to 500 lines in one pass
+      while (el.children.length > 500) el.removeChild(el.firstChild);
+
+      // Single scroll measurement (only when near bottom)
+      if (el.scrollHeight - el.scrollTop < el.clientHeight + 80) {
+        el.scrollTop = el.scrollHeight;
+      }
+    }
+
     function handleBoardMessage(msg, source) {
       if (!msg || msg === '-') return;   // skip legacy clear-placeholder
       console.log("Board [" + (source || 'SYS') + "]:", msg);
-      const el = document.getElementById("responseDisplay");
-      if (!el) return;
+
+      if (typeof checkAck === 'function') checkAck(msg);
 
       const ts = new Date().toLocaleTimeString('en', { hour12: false });
       const src = (source || 'SYS').toUpperCase();
       const cls = src === 'USB' ? 'rd-badge-usb'
-                : src === 'BLE' ? 'rd-badge-ble'
-                : src === 'WIFI'? 'rd-badge-wifi'
-                :                 'rd-badge-sys';
+        : src === 'BLE' ? 'rd-badge-ble'
+          : src === 'WIFI' ? 'rd-badge-wifi'
+            : 'rd-badge-sys';
 
-      const row = document.createElement('div');
-      row.className = 'rd-line';
-      row.innerHTML =
-        '<span class="rd-ts">' + ts + '</span>' +
-        '<span class="' + cls + '">[' + src + ']</span>' +
-        '<span class="rd-msg">' + msg.replace(/</g,'&lt;').replace(/>/g,'&gt;') + '</span>';
+      // Push to queue instead of writing to DOM immediately
+      _msgQueue.push({ ts, cls, src, text: msg.replace(/</g, '&lt;').replace(/>/g, '&gt;') });
 
-      el.appendChild(row);
-      // Keep at most 500 lines to avoid memory bloat
-      while (el.children.length > 500) el.removeChild(el.firstChild);
-      // Auto-scroll to latest message
-      el.scrollTop = el.scrollHeight;
+      // Schedule one RAF flush — if one is already pending, nothing extra needed
+      if (!_msgRafPending) {
+        _msgRafPending = true;
+        requestAnimationFrame(_flushMsgQueue);
+      }
     }
 
     function rdClear() {
@@ -5818,7 +6119,7 @@
         mqttClient.publish('esp32/boot', `@@START \n${asyncCode} \n @@END`);
         mqttClient.subscribe(['esp32/fire', 'esp32/ultrasonic', 'esp32/servo', 'esp32/led', 'esp32/motor', 'esp32/message']);
         handleBoardMessage("WiFi code sent ✅", "WIFI");
-              });
+      });
       mqttClient.on('error', function (err) {
         console.error('MQTT error:', err);
         handleBoardMessage('MQTT error: ' + err.message, 'WIFI');
@@ -5865,7 +6166,7 @@
       if (!currentPortBlock) { closePortModal(); return; }
       const sel = [];
       ALL_PORT_NUMBERS.forEach(p => { const cb = document.getElementById('port' + p); if (cb && cb.checked) sel.push(String(p)); });
-      currentPortBlock.setFieldValue(sel.length ? sel.join(',') : '—', 'PORTS');
+      currentPortBlock.setFieldValue(sel.length ? sel.join(',') : '', 'PORTS');
       closePortModal();
     }
 
@@ -5873,7 +6174,7 @@
     function openMotorSelectionModal(block) {
       currentMotorBlock = block;
       const selectedMotors = new Set((block.getFieldValue('MOTORS') || '').split(',').map(s => s.trim()));
-      ['E12', 'E11', 'C8', 'C9', 'B15', 'E13', 'E14', 'D15'].forEach(m => {
+      ['E12', 'E11', 'B8', 'B9', 'B15', 'E13', 'E14', 'D15'].forEach(m => {
         const cb = document.getElementById('motor' + m);
         if (cb) cb.checked = selectedMotors.has(m);
       });
@@ -5883,8 +6184,8 @@
     function saveMotorSelection() {
       if (!currentMotorBlock) { closeModal(); return; }
       const selected = [];
-      ['E12', 'E11', 'C8', 'C9', 'B15', 'E13', 'E14', 'D15'].forEach(m => { const cb = document.getElementById('motor' + m); if (cb && cb.checked) selected.push(m); });
-      currentMotorBlock.setFieldValue(selected.length ? selected.join(',') : '—', 'MOTORS');
+      ['E12', 'E11', 'B8', 'B9', 'B15', 'E13', 'E14', 'D15'].forEach(m => { const cb = document.getElementById('motor' + m); if (cb && cb.checked) selected.push(m); });
+      currentMotorBlock.setFieldValue(selected.length ? selected.join(',') : '', 'MOTORS');
       closeModal();
     }
 
@@ -5902,7 +6203,7 @@
       if (!currentLedBlock) { closeLedPinModal(); return; }
       const sel = [];
       LED_PIN_NAMES.forEach(pin => { const cb = document.getElementById('ledPin' + pin); if (cb && cb.checked) sel.push(pin); });
-      currentLedBlock.setFieldValue(sel.length ? sel.join(',') : '—', 'PORTS');
+      currentLedBlock.setFieldValue(sel.length ? sel.join(',') : '', 'PORTS');
       closeLedPinModal();
     }
 
@@ -6433,7 +6734,7 @@
     function openUnifiedModal(block) {
       currentUnifiedBlock = block;
       const currentMotors = (block.getFieldValue('MOTORS') || '').split(',').map(s => s.trim());
-      ['E12', 'E11', 'C8', 'C9', 'B15', 'E13', 'E14', 'D15'].forEach(m => {
+      ['E12', 'E11', 'B8', 'B9', 'B15', 'E13', 'E14', 'D15'].forEach(m => {
         const cb = document.getElementById('uni_motor' + m);
         if (cb) cb.checked = currentMotors.includes(m);
       });
@@ -6449,7 +6750,7 @@
     function saveUnifiedSelection() {
       if (!currentUnifiedBlock) { closeUnifiedModal(); return; }
       const selected = [];
-      ['E12', 'E11', 'C8', 'C9', 'B15', 'E13', 'E14', 'D15'].forEach(m => { const cb = document.getElementById('uni_motor' + m); if (cb && cb.checked) selected.push(m); });
+      ['E12', 'E11', 'B8', 'B9', 'B15', 'E13', 'E14', 'D15'].forEach(m => { const cb = document.getElementById('uni_motor' + m); if (cb && cb.checked) selected.push(m); });
       currentUnifiedBlock.setFieldValue(selected.length ? selected.join(',') : '', 'MOTORS');
       currentUnifiedBlock.setFieldValue(speedPercent, 'SPEED');
       closeUnifiedModal();
@@ -6503,7 +6804,7 @@
         return;
       }
 
-      const label = currentSelectedKeyArray.length ? currentSelectedKeyArray.join(',') : '—';
+      const label = currentSelectedKeyArray.length ? currentSelectedKeyArray.join(',') : '';
       currentkeyBlock.setFieldValue(label, 'PORTS');   // 🔴 changed PINS → PORTS
 
       closekeyPinModal();
@@ -6611,16 +6912,60 @@
 
     // Shadow map kept for the direct-setAttribute fallback path
     const BLOCK_SHADOW_MAP = {
+      // blue shadow — defult_style
       start: 'blueShadow',
+      sim_solar: 'blueShadow', sim_pendulum: 'blueShadow', sim_particles: 'blueShadow',
+      sim_dna: 'blueShadow', sim_gears: 'blueShadow', sim_wave: 'blueShadow',
+      sim_bouncing: 'blueShadow', sim_windmill: 'blueShadow', sim_atom: 'blueShadow',
+      sim_globe: 'blueShadow',
+      lottie_rocket: 'blueShadow', lottie_heartbeat: 'blueShadow', lottie_weather: 'blueShadow',
+      lottie_loading: 'blueShadow', lottie_robot: 'blueShadow', lottie_starburst: 'blueShadow',
+      lottie_water: 'blueShadow', lottie_fire: 'blueShadow', lottie_lightning: 'blueShadow',
+      lottie_gearspin: 'blueShadow',
+      // ledshodow — led_style
       port_on: 'ledshodow', port_off: 'ledshodow',
-      sen_ultrasonic: 'ledshodow', sen_temp: 'ledshodow',
-      do_onoff: 'servoshodow', do_dc_motor: 'servoshodow', do_servo: 'servoshodow',
-      bt_send: 'servoshodow', do_led: 'servoshodow',
+      sen_ultrasonic: 'ledshodow', sen_temp: 'ledshodow', custom_if_then: 'ledshodow',
+      // servoshodow — block-servo (actuators/outputs)
+      do_onoff: 'servoshodow', do_dc_motor: 'servoshodow', do_dc_motor2: 'servoshodow',
+      do_servo: 'servoshodow', bt_send: 'servoshodow', do_led: 'servoshodow',
+      animo: 'servoshodow', buzzer: 'servoshodow', buzzer_component: 'servoshodow',
+      din_temp: 'servoshodow', 'flex-sensor': 'servoshodow', flexi_force_sensor: 'servoshodow',
+      humidity: 'servoshodow', joystick_move: 'servoshodow', LCD_print: 'servoshodow',
+      minifan: 'servoshodow', relay: 'servoshodow', rgb_display: 'servoshodow',
+      shock_sensor: 'servoshodow', solinoid: 'servoshodow', steper: 'servoshodow',
+      TDS_Water_sensor: 'servoshodow', water_sensor: 'servoshodow',
+      'water-turbidity-sensor': 'servoshodow', waterpump: 'servoshodow',
+      Air_quality_sensor: 'servoshodow', flex_sensor: 'servoshodow',
+      // dummyshadow — dummy_block
       ctl_delay: 'dummyshadow', do_led_param: 'dummyshadow',
-      lp_while: 'dcshodow', lp_break: 'dcshodow', lp_repeat_count: 'dcshodow', lp_label: 'dcshodow',
-      sensor: 'tempshadow', tem_sensor: 'tempshadow', xray_sensor: 'tempshadow', rc_sensor: 'tempshadow',
-      mini_motor: 'ultrashowdow', remote_motor: 'ultrashowdow', water_motor: 'ultrashowdow',
-      din_if_else: 'ultrashowdow', din_sound: 'ultrashowdow', tank_motor: 'ultrashowdow'
+      green_led: 'dummyshadow', red_led: 'dummyshadow', yellow_led: 'dummyshadow',
+      // dcshodow — block_dc (loop)
+      lp_while: 'dcshodow', lp_break: 'dcshodow', lp_repeat_count: 'dcshodow',
+      lp_label: 'dcshodow', lp_start: 'dcshodow',
+      // ultrashowdow — ultra_style
+      sensor: 'ultrashowdow', tem_sensor: 'ultrashowdow', xray_sensor: 'ultrashowdow',
+      rc_sensor: 'ultrashowdow',
+      // tempshadow — temp_style (sensors)
+      accelerometer: 'tempshadow', accelerometer_sensor: 'tempshadow',
+      'ambient-sen': 'tempshadow', ana_temp: 'tempshadow',
+      ceprom: 'tempshadow', colour_sen: 'tempshadow', compass: 'tempshadow',
+      'Current-sensor': 'tempshadow',
+      din_button: 'tempshadow', din_door: 'tempshadow', din_flame: 'tempshadow',
+      din_if_else: 'tempshadow', din_ir: 'tempshadow', din_motion: 'tempshadow',
+      din_proximity: 'tempshadow', din_sound: 'tempshadow', din_tilt: 'tempshadow',
+      din_ultra: 'tempshadow', dust: 'tempshadow', ecg: 'tempshadow',
+      gusture: 'tempshadow', heart_beat: 'tempshadow',
+      'IR-Temp': 'tempshadow', ir_sen: 'tempshadow', ir_temp: 'tempshadow',
+      LCD: 'tempshadow', ldr: 'tempshadow', light_freq: 'tempshadow',
+      load_cell: 'tempshadow', loop_end: 'tempshadow',
+      mag_encoder: 'tempshadow', magnetic_sensor: 'tempshadow', mini_motor: 'tempshadow',
+      motor_driver: 'tempshadow', nfc_reader: 'tempshadow', pressure: 'tempshadow',
+      remote_motor: 'tempshadow', rfc: 'tempshadow', rtc_sensor: 'tempshadow',
+      soil_moisture: 'tempshadow', system_status: 'tempshadow',
+      tank_motor: 'tempshadow', 'temp2-sensor': 'tempshadow', temp_sensor: 'tempshadow',
+      tep_ana: 'tempshadow', text_speech: 'tempshadow', touch_sensor: 'tempshadow',
+      uv_sensor: 'tempshadow', 'vibration-switch-sensor': 'tempshadow',
+      voltage_sensor: 'tempshadow', water_motor: 'tempshadow',
     };
 
     // CSS class → gradient map (same as mkStyleExt class names)
@@ -6635,17 +6980,69 @@
     };
 
     // Block type → CSS class (mirrors mkStyleExt registrations)
+    // ── COMPLETE MAP: every block type that has a style extension ──
     const BLOCK_CLASS_MAP = {
+      // defult_style (blue gradient)
       start: 'defult_style',
+      sim_solar: 'defult_style', sim_pendulum: 'defult_style', sim_particles: 'defult_style',
+      sim_dna: 'defult_style', sim_gears: 'defult_style', sim_wave: 'defult_style',
+      sim_bouncing: 'defult_style', sim_windmill: 'defult_style', sim_atom: 'defult_style',
+      sim_globe: 'defult_style',
+      lottie_rocket: 'defult_style', lottie_heartbeat: 'defult_style', lottie_weather: 'defult_style',
+      lottie_loading: 'defult_style', lottie_robot: 'defult_style', lottie_starburst: 'defult_style',
+      lottie_water: 'defult_style', lottie_fire: 'defult_style', lottie_lightning: 'defult_style',
+      lottie_gearspin: 'defult_style',
+
+      // led_style (red/pink gradient)
       port_on: 'led_style', port_off: 'led_style',
       sen_ultrasonic: 'led_style', sen_temp: 'led_style',
-      do_onoff: 'block-servo', do_dc_motor: 'block-servo', do_servo: 'block-servo',
-      bt_send: 'block-servo', do_led: 'block-servo',
+      custom_if_then: 'led_style',
+
+      // dummy_block (green gradient)
       ctl_delay: 'dummy_block', do_led_param: 'dummy_block',
-      lp_while: 'block_dc', lp_break: 'block_dc', lp_repeat_count: 'block_dc', lp_label: 'block_dc',
-      sensor: 'temp_style', tem_sensor: 'temp_style', xray_sensor: 'temp_style', rc_sensor: 'temp_style',
-      mini_motor: 'ultra_style', remote_motor: 'ultra_style', water_motor: 'ultra_style',
-      din_if_else: 'ultra_style', din_sound: 'ultra_style', tank_motor: 'ultra_style'
+      green_led: 'dummy_block', red_led: 'dummy_block', yellow_led: 'dummy_block',
+
+      // block_dc (DC/orange gradient)
+      lp_while: 'block_dc', lp_break: 'block_dc', lp_repeat_count: 'block_dc',
+      lp_label: 'block_dc', lp_start: 'block_dc',
+
+      // block-servo (pink gradient) — actuators, motors, outputs
+      do_onoff: 'block-servo', do_dc_motor: 'block-servo', do_dc_motor2: 'block-servo',
+      do_servo: 'block-servo', bt_send: 'block-servo', do_led: 'block-servo',
+      animo: 'block-servo', buzzer: 'block-servo', buzzer_component: 'block-servo',
+      din_temp: 'block-servo', flex_sensor: 'block-servo', flexi_force_sensor: 'block-servo',
+      humidity: 'block-servo', joystick_move: 'block-servo', LCD_print: 'block-servo',
+      minifan: 'block-servo', relay: 'block-servo', rgb_display: 'block-servo',
+      shock_sensor: 'block-servo', solinoid: 'block-servo', steper: 'block-servo',
+      TDS_Water_sensor: 'block-servo', water_sensor: 'block-servo',
+      'water-turbidity-sensor': 'block-servo', waterpump: 'block-servo',
+      Air_quality_sensor: 'block-servo', 'flex-sensor': 'block-servo',
+
+      // ultra_style (brown gradient) — ultrasonic / RC sensors
+      sensor: 'ultra_style', tem_sensor: 'ultra_style', xray_sensor: 'ultra_style',
+      rc_sensor: 'ultra_style',
+
+      // temp_style (purple gradient) — sensors / I2C / digital inputs
+      accelerometer: 'temp_style', accelerometer_sensor: 'temp_style',
+      'ambient-sen': 'temp_style', ana_temp: 'temp_style',
+      ceprom: 'temp_style', colour_sen: 'temp_style', compass: 'temp_style',
+      'Current-sensor': 'temp_style',
+      din_button: 'temp_style', din_door: 'temp_style', din_flame: 'temp_style',
+      din_if_else: 'temp_style', din_ir: 'temp_style', din_motion: 'temp_style',
+      din_proximity: 'temp_style', din_sound: 'temp_style', din_tilt: 'temp_style',
+      din_ultra: 'temp_style', dust: 'temp_style', ecg: 'temp_style',
+      gusture: 'temp_style', heart_beat: 'temp_style',
+      'IR-Temp': 'temp_style', ir_sen: 'temp_style', ir_temp: 'temp_style',
+      LCD: 'temp_style', ldr: 'temp_style', light_freq: 'temp_style',
+      load_cell: 'temp_style', loop_end: 'temp_style',
+      mag_encoder: 'temp_style', magnetic_sensor: 'temp_style', mini_motor: 'temp_style',
+      motor_driver: 'temp_style', nfc_reader: 'temp_style', pressure: 'temp_style',
+      remote_motor: 'temp_style', rfc: 'temp_style', rtc_sensor: 'temp_style',
+      soil_moisture: 'temp_style', system_status: 'temp_style',
+      tank_motor: 'temp_style', 'temp2-sensor': 'temp_style', temp_sensor: 'temp_style',
+      tep_ana: 'temp_style', text_speech: 'temp_style', touch_sensor: 'temp_style',
+      uv_sensor: 'temp_style', 'vibration-switch-sensor': 'temp_style',
+      voltage_sensor: 'temp_style', water_motor: 'temp_style',
     };
 
     /**
@@ -6909,24 +7306,22 @@
       setTimeout(applyToAllBlocks, 300);
       setTimeout(applyToAllBlocks, 700);
 
+      // Only re-apply on CREATE/LOAD — not every drag/move/select/change
+      // (those events fired hundreds of times per second — causing the browser freeze)
+      let _gradRafPending = false;
       ws.addChangeListener((e) => {
         const relevant = [
           Blockly.Events.BLOCK_CREATE,
-          Blockly.Events.BLOCK_CHANGE,
-          Blockly.Events.BLOCK_MOVE,
-          Blockly.Events.BLOCK_DRAG,
-          Blockly.Events.SELECTED,
           Blockly.Events.FINISHED_LOADING,
           'finished_loading',
           'block_create',
-          'block_change',
-          'block_move',
-          'block_drag',
-          'selected'
         ];
-        if (relevant.includes(e.type)) {
-          // Double-RAF: run after Blockly’s own render pass
-          requestAnimationFrame(() => requestAnimationFrame(applyToAllBlocks));
+        if (relevant.includes(e.type) && !_gradRafPending) {
+          _gradRafPending = true;
+          requestAnimationFrame(() => {
+            applyToAllBlocks();
+            _gradRafPending = false;
+          });
         }
       });
 
@@ -6951,9 +7346,13 @@
       }
 
       // MutationObserver: catch Blockly resetting style.fill on .blocklyPath
+      // FIX: disconnect observer while applying to prevent self-triggering infinite loop
       const blocklyDiv = document.getElementById('blocklyDiv');
       if (blocklyDiv) {
+        let _moApplying = false;
+        const moOptions = { subtree: true, attributes: true, attributeFilter: ['style'] };
         const mo = new MutationObserver((mutations) => {
+          if (_moApplying) return; // guard: skip re-entrant calls triggered by our own writes
           let needsApply = false;
           for (const m of mutations) {
             if (
@@ -6969,13 +7368,17 @@
               }
             }
           }
-          if (needsApply) requestAnimationFrame(applyToAllBlocks);
+          if (needsApply) {
+            requestAnimationFrame(() => {
+              _moApplying = true;   // set guard BEFORE our style writes
+              mo.disconnect();      // stop watching while we apply gradients
+              applyToAllBlocks();
+              mo.observe(blocklyDiv, moOptions); // resume watching after
+              _moApplying = false;
+            });
+          }
         });
-        mo.observe(blocklyDiv, {
-          subtree: true,
-          attributes: true,
-          attributeFilter: ['style']
-        });
+        mo.observe(blocklyDiv, moOptions);
       }
     }
 
@@ -7280,7 +7683,7 @@
         },
 
         { type: "buzzer_component", message0: "buzzer_component %1 %2 %3 %4 %5", args0: [{ type: "field_image", src: "./assets/img/Chips_Chips_Show.png", width: 15, height: 15, alt: "", name: "IMG" }, { type: "field_label", name: "PORTS", text: "" }, { type: "field_number", name: "freq" }, { type: "field_number", name: "Delay1" }, { type: "field_number", name: "DELAY2" }], colour: "#81d4ed", previousStatement: null, nextStatement: null, extensions: ["port_image_click", "servo_color"] },
-        { type: "joystick_move", args0: [{ type: "field_label", name: "LABEL", text: "joystick" }, { type: "field_image", src: "./assets/img/Chips_Chips_Show.png", width: 15, height: 15, alt: "", name: "IMG", class: "hover-animate" }, { type: "field_label", name: "PORTS", text: "" }], message0: "%1 %2 %3", colour: "#ffb56a", output: "Boolean", extensions: ["port_image_click", "servo_color"] },
+        { type: "joystick_move", args0: [{ type: "field_label", name: "LABEL", text: "joystick" }, { type: "field_image", src: "./assets/img/Chips_Chips_Show.png", width: 15, height: 15, alt: "", name: "IMG", class: "hover-animate" }, { type: "field_label", name: "PORTS", text: "" }], message0: "%1 %2 %3", colour: "#ffb56a", output: "Boolean", extensions: ["led_pin_image_click", "servo_color"] },
         { type: "Air_quality_sensor", message0: "Air-quality-sensor %1 %2", args0: [{ type: "field_image", src: "./assets/img/Chips_Chips_Show.png", width: 15, height: 15, alt: "", name: "IMG" }, { type: "field_label", name: "PORTS", text: "" }], style: "control_blocks", output: "Boolean", extensions: ["servo_color", "led_pin_image_click"] },
         { type: "flexi_force_sensor", message0: "Flexi Force Sensor %1 %2", args0: [{ type: "field_image", src: "./assets/img/Chips_Chips_Show.png", width: 15, height: 15, alt: "", name: "IMG" }, { type: "field_label", name: "PORTS", text: "" }], style: "control_blocks", output: "Boolean", extensions: ["servo_color", "led_pin_image_click"] },
         { type: "TDS_Water_sensor", message0: "TDS Water Sensor %1 %2", args0: [{ type: "field_image", src: "./assets/img/Chips_Chips_Show.png", width: 15, height: 15, alt: "", name: "IMG" }, { type: "field_label", name: "PORTS", text: "" }], style: "control_blocks", output: "Boolean", extensions: ["servo_color", "led_pin_image_click"] },
@@ -7309,7 +7712,7 @@
         { type: "pressure", message0: "Pressure pin", style: "control_blocks", output: "Boolean", extensions: ["temp_style"] },
         { type: "compass", message0: "compass", style: "control_blocks", output: "Boolean", extensions: ["temp_style"] },
         { type: "ceprom", message0: "ceprom", style: "control_blocks", output: "Boolean", extensions: ["temp_style"] },
-        { type: "gusture", message0: "Gusture", style: "control_blocks", output: "Boolean", extensions: ["temp_style"] },
+        { type: "gusture", message0: "Gesture", style: "control_blocks", output: "Boolean", extensions: ["temp_style"] },
         { type: "ir_temp", message0: "IR temp", style: "control_blocks", output: "Boolean", extensions: ["temp_style"] },
         { type: "motor_driver", message0: "Motor Driver", style: "control_blocks", output: "Boolean", extensions: ["temp_style"] },
         { type: "nfc_reader", message0: "NFC Reader", style: "control_blocks", output: "Boolean", extensions: ["temp_style"] },
@@ -7591,15 +7994,28 @@
       Blockly.Extensions.register('lottie_fire_click', function () { this.appendDummyInput('H_LOTTIE_FIRE').appendField(new Blockly.FieldTextInput('lottie_fire'), 'LANIM_TYPE').appendField(new Blockly.FieldTextInput('100'), 'LANIM_SPEED').setVisible(false); var f = this.getField('IMG'); if (f) f.setOnClickHandler(() => openLAnimModal(this, 'lottie_fire')); });
       Blockly.Extensions.register('lottie_lightning_click', function () { this.appendDummyInput('H_LOTTIE_LIGHTNING').appendField(new Blockly.FieldTextInput('lottie_lightning'), 'LANIM_TYPE').appendField(new Blockly.FieldTextInput('100'), 'LANIM_SPEED').setVisible(false); var f = this.getField('IMG'); if (f) f.setOnClickHandler(() => openLAnimModal(this, 'lottie_lightning')); });
       Blockly.Extensions.register('lottie_gearspin_click', function () { this.appendDummyInput('H_LOTTIE_GEARSPIN').appendField(new Blockly.FieldTextInput('lottie_gearspin'), 'LANIM_TYPE').appendField(new Blockly.FieldTextInput('100'), 'LANIM_SPEED').setVisible(false); var f = this.getField('IMG'); if (f) f.setOnClickHandler(() => openLAnimModal(this, 'lottie_gearspin')); });
-      // Style extensions
+      // Style extensions — apply class immediately AND on every change
+      // so gradient stays consistent from the moment a block enters the workspace.
       function mkStyleExt(name, cls) {
         Blockly.Extensions.register(name, function () {
           const block = this;
-          block.setOnChange(function () {
+          // Apply immediately (covers drag-from-flyout moment)
+          function applyNow() {
             const root = (typeof block.getSvgRoot === 'function')
               ? block.getSvgRoot() : block.svgGroup_;
-            if (root) root.classList.add(cls);
-          });
+            if (root) {
+              root.classList.add(cls);
+              // Also trigger the full gradient fill immediately
+              if (typeof applyGradientAndShadowToBlock === 'function') {
+                applyGradientAndShadowToBlock(block);
+              }
+            }
+          }
+          // Try immediately; also retry after a frame in case SVG is not ready yet
+          applyNow();
+          requestAnimationFrame(applyNow);
+          // Re-apply on any workspace change (resilience against Blockly re-renders)
+          block.setOnChange(function () { applyNow(); });
         });
       }
       mkStyleExt('defult_style', 'defult_style');
@@ -7637,7 +8053,7 @@
         const fn = b.getFieldValue('STATE') === '1' ? 'robot.led_on' : 'robot.led_off';
         return ports.map(p => `${fn}(${p})\n`).join('');
       };
-      reg['rfid'] = b => [`rfid()`, py.ORDER_ATOMIC];
+      reg['rfid'] = b => [`await async_rfid()`, py.ORDER_ATOMIC];
       reg['bt_send'] = b => { const t = py.valueToCode(b, 'TEXT', py.ORDER_NONE) || "''"; return `robot.bt_send(${t})\n`; };
       reg['sen_ultrasonic'] = b => `distance = robot.ultrasonic_cm(${b.getFieldValue('PORT') || 0})\n`;
       reg['sen_temp'] = b => { const pins = (b.getFieldValue('PORTS') || '').split(',').map(s => s.trim()).filter(Boolean); if (!pins.length) return "# no pins\n"; return pins.map(p => `temp_port(${p})\n`).join(''); };
@@ -7931,16 +8347,16 @@
 
         // If one port is selected, return code for that port only
         if (pins.length === 1) {
-          return [`touch_sensor("${pins[0]}")`, py.ORDER_FUNCTION_CALL];
+          return [`await async_touch_sensor("${pins[0]}")`, py.ORDER_FUNCTION_CALL];
         }
 
         // If two ports are selected, use both for Trig and Echo
         if (pins.length === 2) {
-          return [`touch_sensor("${pins[0]}","${pins[1]}")`, py.ORDER_FUNCTION_CALL];
+          return [`await async_touch_sensor("${pins[0]}","${pins[1]}")`, py.ORDER_FUNCTION_CALL];
         }
 
         // If more than two ports are selected, return the first two only
-        return [`touch_sensor("${pins[0]}","${pins[1]}","${pins[2]}")`, py.ORDER_FUNCTION_CALL];
+        return [`await async_touch_sensor("${pins[0]}","${pins[1]}","${pins[2]}")`, py.ORDER_FUNCTION_CALL];
       };
       reg['sensor'] = b => { const ports = (b.getFieldValue('PORTS') || '').split(',').map(s => s.trim()).filter(Boolean); if (!ports.length) return "# no ports\n"; const fn = b.getFieldValue('STATE') === '1' ? 'sensor_on' : 'sensor_off'; return ports.map(p => `${fn}(${p})\n`).join(''); };
       reg['tem_sensor'] = b => { const ports = (b.getFieldValue('PORTS') || '').split(',').map(s => s.trim()).filter(Boolean); if (!ports.length) return "# no ports\n"; const fn = b.getFieldValue('STATE') === '1' ? 'tem_sensor_on' : 'tem_sensor_off'; return ports.map(p => `${fn}(${p})\n`).join(''); };
@@ -7964,32 +8380,32 @@
       reg['LCD_print'] = b => { const txt = py.valueToCode(b, 'TEXT', py.ORDER_NONE) || ""; return `await async_lcd(${txt})\n`; };
       reg['din_flame'] = b => { const port = b.getFieldValue('PORTS'); return [`await async_flame("${port}")`, py.ORDER_FUNCTION_CALL]; };
       reg['din_temp'] = b => { const port = b.getFieldValue('PORTS'); return [`await async_temp("${port}")`, py.ORDER_FUNCTION_CALL]; };
-      reg['magnetic_sensor'] = () => [`magnetic()`, py.ORDER_ATOMIC];
-      reg['colour_sen'] = () => [`colour()`, py.ORDER_ATOMIC];
+      reg['magnetic_sensor'] = () => [`await async_magnetic()`, py.ORDER_ATOMIC];
+      reg['colour_sen'] = () => [`await async_colour()`, py.ORDER_ATOMIC];
       reg['system_status'] = () => [`system_status.running`, py.ORDER_ATOMIC];
-      reg['accelerometer_sensor'] = () => [`accelerometer()`, py.ORDER_ATOMIC];
-      reg['rtc_sensor'] = () => [`rtc()`, py.ORDER_ATOMIC];
-      reg['LCD'] = () => [`LCD()`, py.ORDER_ATOMIC];
-      reg['pressure'] = () => [`pressure()`, py.ORDER_ATOMIC];
-      reg['compass'] = () => [`compass()`, py.ORDER_ATOMIC];
-      reg['ceprom'] = () => [`ceprom()`, py.ORDER_ATOMIC];
-      reg['gusture'] = () => [`gusture()`, py.ORDER_ATOMIC];
-      reg['ir_temp'] = () => [`ir_temp()`, py.ORDER_ATOMIC];
-      reg['motor_driver'] = () => [`motor_driver()`, py.ORDER_ATOMIC];
-      reg['nfc_reader'] = () => [`nfc_reader()`, py.ORDER_ATOMIC];
-      reg['mag_encoder'] = () => [`mag_encoder()`, py.ORDER_ATOMIC];
-      reg['rfc'] = () => [`rfc()`, py.ORDER_ATOMIC];
-      reg['text_speech'] = () => [`text_speech()`, py.ORDER_ATOMIC];
-      reg['uv_sensor'] = () => [`uv_sensor()`, py.ORDER_ATOMIC];
-      reg['temp_sensor'] = () => [`temp_sensor()`, py.ORDER_ATOMIC];
-      reg['accelerometer'] = () => [`accelerometer()`, py.ORDER_ATOMIC];
-      reg['max'] = b => [`max()`, py.ORDER_ATOMIC];
-      reg['ambient-sen'] = () => [`ambient()`, py.ORDER_ATOMIC];
-      reg['finger_print_enroll'] = b => [`fingerprint_enroll()`, py.ORDER_ATOMIC];
-      reg['finger_print_match'] = b => [`fingerprint_match()`, py.ORDER_ATOMIC];
+      reg['accelerometer_sensor'] = () => [`await async_accelerometer()`, py.ORDER_ATOMIC];
+      reg['rtc_sensor'] = () => [`await async_rtc()`, py.ORDER_ATOMIC];
+      reg['LCD'] = () => [`await async_lcd()`, py.ORDER_ATOMIC];
+      reg['pressure'] = () => [`await async_pressure()`, py.ORDER_ATOMIC];
+      reg['compass'] = () => [`await async_compass()`, py.ORDER_ATOMIC];
+      reg['ceprom'] = () => [`await async_eeprom()`, py.ORDER_ATOMIC];
+      reg['gusture'] = () => [`await async_gesture()`, py.ORDER_ATOMIC];
+      reg['ir_temp'] = () => [`await async_ir_temp()`, py.ORDER_ATOMIC];
+      reg['motor_driver'] = () => [`await async_motor_driver()`, py.ORDER_ATOMIC];
+      reg['nfc_reader'] = () => [`await async_nfc_reader()`, py.ORDER_ATOMIC];
+      reg['mag_encoder'] = () => [`await async_mag_encoder()`, py.ORDER_ATOMIC];
+      reg['rfc'] = () => [`await async_rfc()`, py.ORDER_ATOMIC];
+      reg['text_speech'] = () => [`await async_text_speech()`, py.ORDER_ATOMIC];
+      reg['uv_sensor'] = () => [`await async_uv_sensor()`, py.ORDER_ATOMIC];
+      reg['temp_sensor'] = () => [`await async_temp_sensor()`, py.ORDER_ATOMIC];
+      reg['accelerometer'] = () => [`await async_accelerometer()`, py.ORDER_ATOMIC];
+      reg['max'] = b => [`await async_max()`, py.ORDER_ATOMIC];
+      reg['ambient-sen'] = () => [`await async_ambient()`, py.ORDER_ATOMIC];
+      reg['finger_print_enroll'] = b => [`await async_fingerprint_enroll()`, py.ORDER_ATOMIC];
+      reg['finger_print_match'] = b => [`await async_fingerprint_match()`, py.ORDER_ATOMIC];
       reg['any_input_block'] = b => [b.getFieldValue('ANY'), py.ORDER_ATOMIC];
       reg['custom_if_then'] = b => { const cond = py.valueToCode(b, 'CONDITION', py.ORDER_NONE) || 'False'; const stmts = py.statementToCode(b, 'DO'); return `if ${cond}:\n${stmts || '    pass\n'}`; };
-      reg['rgb_led_display'] = b => { const led = b.getFieldValue('LED'); const hex = b.getFieldValue('COLOR') || "#ff0000"; const time = py.valueToCode(b, 'TIME', py.ORDER_ATOMIC) || 1; const r = parseInt(hex.substring(1, 3), 16); const g = parseInt(hex.substring(3, 5), 16); const bv = parseInt(hex.substring(5, 7), 16); return `rgb_led("${led}",${r},${g},${bv},${time})\n`; };
+      reg['rgb_led_display'] = b => { const led = b.getFieldValue('LED'); const hex = b.getFieldValue('COLOR') || "#ff0000"; const time = py.valueToCode(b, 'TIME', py.ORDER_ATOMIC) || 1; const r = parseInt(hex.substring(1, 3), 16); const g = parseInt(hex.substring(3, 5), 16); const bv = parseInt(hex.substring(5, 7), 16); return `await async_rgb_led("${led}",${r},${g},${bv},${time})\n`; };
 
       reg['keypad'] = function (block) {
         const ports = (block.getFieldValue('PORTS') || '').split(',').map(s => s.trim()).filter(Boolean);
@@ -7998,10 +8414,10 @@
           return '# No Keypin selected\n';
         }
         if (ports.length === 1) {
-          return `keypad("${ports[0]}")\n`;
+          return `await async_keypad("${ports[0]}")\n`;
         }
         const portList = ports.map(p => `"${p}"`).join(', ');
-        return `keypad(${portList})\n`;
+        return `await async_keypad(${portList})\n`;
       };
       reg['compare'] = function (b) {
         var name = py.valueToCode(b, 'NAME', py.ORDER_NONE); // Correct way to get field value
@@ -9705,7 +10121,6 @@
         // Expo dev server changes the base URL, so we try multiple paths
         var PATHS_TO_TRY = [
           './icons/',                    // normal (index.html and icons/ in same folder)
-          './blockly/icons/',            // Expo dev server (base = assets/)
           './assets/blockly/icons/',     // fallback
           '/assets/blockly/icons/'       // absolute fallback
         ];
@@ -9871,15 +10286,17 @@
           const xmlList = [];
 
           // Top spacer so blocks don't hide under the floating search box
+          // Using a non-breaking space ensures Blockly's bounding box calculation
+          // includes this block, stretching the dark blue flyout background to the top!
           const gap = document.createElement('label');
-          gap.setAttribute('text', ' ');
+          gap.setAttribute('text', '\u00A0');
           gap.setAttribute('gap', '48');
           xmlList.push(gap);
 
           const q = input.value.trim().toLowerCase();
           if (!q) {
             const hint = document.createElement('label');
-            hint.setAttribute('text', 'Type above to search all blocks…');
+            hint.setAttribute('text', '');
             xmlList.push(hint);
             return xmlList;
           }
@@ -9889,8 +10306,8 @@
 
           const header = document.createElement('label');
           header.setAttribute('text', hits.length
-            ? `${hits.length} result${hits.length > 1 ? 's' : ''} for "${q}"`
-            : `No blocks found for "${q}"`
+            ? ``
+            : ``
           );
           xmlList.push(header);
 
@@ -9928,13 +10345,29 @@
           }
 
           if (isSearch) {
-            // Position the box just to the right of the toolbox panel
-            try {
-              const toolboxWidth = toolbox.getWidth ? toolbox.getWidth() : 0;
-              container.style.left = (toolboxWidth + 16) + 'px';
-            } catch (_) {
-              container.style.left = '260px'; // safe fallback
-            }
+            // Position flush inside flyout panel
+            const _positionSearch = () => {
+              try {
+                const tbW = toolbox.getWidth ? toolbox.getWidth() : 160;
+                // Try to get flyout width, fallback to 240
+                let fw = 240;
+                try {
+                  const flyout = workspace.getFlyout ? workspace.getFlyout() : null;
+                  if (flyout && flyout.getWidth) {
+                    const w = flyout.getWidth();
+                    if (w > 50) fw = w - 20; // slight inner padding
+                  }
+                } catch (_) { }
+                container.style.left = tbW + 'px';
+                container.style.width = fw + 'px';
+              } catch (_) {
+                container.style.left = '160px';
+                container.style.width = '240px';
+              }
+            };
+            _positionSearch();
+            // Re-run after flyout finishes rendering
+            setTimeout(_positionSearch, 80);
             if (window._searchHideTimeout) {
               clearTimeout(window._searchHideTimeout);
               window._searchHideTimeout = null;
@@ -9956,7 +10389,7 @@
                 return;
               }
               container.classList.add('hidden');
-              
+
               // Clear search when it hides so the next time it opens or after a block is dragged, it's empty
               if (input.value !== '') {
                 input.value = '';
@@ -10093,33 +10526,33 @@
       }
 
       // ── 3. Block Count Badges on Toolbox Categories ───────────────
-      function setupCategoryBadges() {
-        function inject() {
-          try {
-            workspace.getToolbox().getToolboxItems().forEach(function (item) {
-              if (!item.getName) return;
-              const row = item.rowDiv_ ||
-                (item.getDiv && item.getDiv() &&
-                  item.getDiv().querySelector('.blocklyTreeRow'));
-              if (!row || row.querySelector('.cat-block-badge')) return;
-              let count = 0;
-              try {
-                count = (item.getContents ? item.getContents() : [])
-                  .filter(function (c) {
-                    return c.kind && c.kind.toLowerCase() === 'block';
-                  }).length;
-              } catch (_) { }
-              if (count === 0) return;
-              const badge = document.createElement('span');
-              badge.className = 'cat-block-badge';
-              badge.textContent = count;
-              row.appendChild(badge);
-            });
-          } catch (_) { }
-        }
-        setTimeout(inject, 900);
-        setTimeout(inject, 2200); // retry for slow renders
-      }
+      // function setupCategoryBadges() {
+      //   function inject() {
+      //     try {
+      //       workspace.getToolbox().getToolboxItems().forEach(function (item) {
+      //         if (!item.getName) return;
+      //         const row = item.rowDiv_ ||
+      //           (item.getDiv && item.getDiv() &&
+      //             item.getDiv().querySelector('.blocklyTreeRow'));
+      //         if (!row || row.querySelector('.cat-block-badge')) return;
+      //         let count = 0;
+      //         try {
+      //           count = (item.getContents ? item.getContents() : [])
+      //             .filter(function (c) {
+      //               return c.kind && c.kind.toLowerCase() === 'block';
+      //             }).length;
+      //         } catch (_) { }
+      //         if (count === 0) return;
+      //         const badge = document.createElement('span');
+      //         badge.className = 'cat-block-badge';
+      //         badge.textContent = count;
+      //         row.appendChild(badge);
+      //       });
+      //     } catch (_) { }
+      //   }
+      //   setTimeout(inject, 900);
+      //   setTimeout(inject, 2200); // retry for slow renders
+      // }
 
       // ── 4. Friendly Block Tooltips ────────────────────────────────
       function setupBlockTooltips() {
@@ -10199,7 +10632,7 @@
       setupBlockHoverEffects();
       setupWorkspaceHint();
       setupBlockTooltips();
-      setTimeout(setupCategoryBadges, 300);
+      // setTimeout(setupCategoryBadges, 300);
       setupResponsiveLayout();
 
 
@@ -11105,24 +11538,15 @@
           return;
         }
 
-        // Desktop: USB first, then BLE
-        if (stm32Port && stm32Writer) {
-          await writeUserPyToBoard(asyncCode);
-          return;
-        }
-        if (bleConnected()) {
-          await sendCodeToBLEBoot(asyncCode);
-          return;
-        }
-        alert("No board connected. Please connect via USB or Bluetooth.");
+        // Desktop: unified upload (USB or BLE)
+        await unifiedUploadCode(asyncCode);
       };
 
       // BOOT (save user.py via USB)
       document.getElementById('btnboot').onclick = async () => {
         const code = pyGen.workspaceToCode(workspace);
         if (stm32Port && stm32Writer) {
-          await writeUserPyToBoard(wrapWithAsyncio(code));
-          handleBoardMessage("user.py saved on board", "SYS");
+          await unifiedUploadCode(wrapWithAsyncio(code));
         } else {
           alert("USB not connected.");
         }
@@ -11337,6 +11761,10 @@
             label.onclick = (e) => {
               e.stopPropagation();
               ProjectManager.switchToProject(name);
+              // Close dropdown after switching
+              tabsContainer.classList.remove('open');
+              const toggle = document.getElementById('projectTabsToggle');
+              if (toggle) toggle.classList.remove('open');
             };
             tab.appendChild(label);
 
@@ -11352,6 +11780,14 @@
 
             tabsContainer.appendChild(tab);
           });
+
+          // Update toggle button label with count
+          const countEl = document.getElementById('projectTabsCount');
+          if (countEl) {
+            countEl.textContent = projects.length > 0
+              ? projects.length + ' Project' + (projects.length !== 1 ? 's' : '')
+              : 'Projects';
+          }
         },
 
         /** Switch to a different saved project */
@@ -11505,7 +11941,16 @@
 
 
       // CLEAR
-      document.getElementById('btnClear').onclick = () => { workspace.clear(); updateCode(); };
+      document.getElementById('btnClear').onclick = () => {
+        workspace.clear();
+        Blockly.serialization.workspaces.load({
+          blocks: {
+            languageVersion: 0,
+            blocks: [{ type: "start", x: 40, y: 40, deletable: false, fields: { NAME: "when Start Button clicked" } }]
+          }
+        }, workspace);
+        updateCode();
+      };
 
       // UNDO
       document.getElementById('btnUndo').onclick = () => { workspace.undo(false); };
@@ -11909,19 +12354,38 @@
         Terminal: {
           _el: null, _paused: false, _count: 0,
           init() { this._el = document.getElementById('ltBody'); },
+          _ltQueue: [],
+          _ltRafPending: false,
+          _flushLtQueue() {
+            this._ltRafPending = false;
+            if (!this._el || this._ltQueue.length === 0) return;
+            if (this._count === 0) this._el.innerHTML = '';
+            const frag = document.createDocumentFragment();
+            while (this._ltQueue.length > 0) {
+              const item = this._ltQueue.shift();
+              this._count++;
+              const row = document.createElement('div');
+              row.className = 'lt-row lt-' + item.dir;
+              row.innerHTML = item.html;
+              frag.appendChild(row);
+            }
+            this._el.appendChild(frag);
+            // Trim in one pass
+            const el = this._el;
+            while (el.children.length > 200) el.removeChild(el.firstChild);
+            // One scroll measurement
+            if (el.scrollHeight - el.scrollTop < el.clientHeight + 60) el.scrollTop = el.scrollHeight;
+          },
           log(dir, cls, label, valHTML) {
             if (this._paused || !this._el) return;
-            if (this._count === 0) this._el.innerHTML = '';
-            this._count++;
             const ts = new Date().toLocaleTimeString('en', { hour12: false });
             const arrow = dir === 'out' ? '↑' : dir === 'in' ? '↓' : '·';
-            const row = document.createElement('div');
-            row.className = 'lt-row lt-' + dir;
-            row.innerHTML = '<span class="lt-ts">' + ts + '</span><span class="lt-dir">' + arrow + '</span><span class="lt-badge ' + cls + '">' + label + '</span><span class="lt-val">' + valHTML + '</span>';
-            this._el.appendChild(row);
-            const el = this._el;
-            if (el.scrollHeight - el.scrollTop < el.clientHeight + 60) el.scrollTop = el.scrollHeight;
-            while (el.children.length > 200) el.removeChild(el.firstChild);
+            const html = '<span class="lt-ts">' + ts + '</span><span class="lt-dir">' + arrow + '</span><span class="lt-badge ' + cls + '">' + label + '</span><span class="lt-val">' + valHTML + '</span>';
+            this._ltQueue.push({ dir, html });
+            if (!this._ltRafPending) {
+              this._ltRafPending = true;
+              requestAnimationFrame(() => this._flushLtQueue());
+            }
           },
           logCommand(p) {
             const t = p.type || '';
@@ -12102,6 +12566,42 @@
         _serialise: serialise,
       };
     })();
+
+    // ── Panel toggle: Split → Python full → Terminal full → Split ────────────
+    (function () {
+      const STATES = ['split', 'pyout', 'terminal'];
+      const LABELS = { split: '⬍ Split', pyout: '▣ Python', terminal: '▤ Terminal' };
+      let idx = 0;
+      window.cyclePanelView = function () {
+        idx = (idx + 1) % STATES.length;
+        const panel = document.getElementById('codePanel');
+        const btn = document.getElementById('panelToggleBtn');
+        panel.classList.remove('show-pyout-only', 'show-terminal-only');
+        if (STATES[idx] === 'pyout') panel.classList.add('show-pyout-only');
+        if (STATES[idx] === 'terminal') panel.classList.add('show-terminal-only');
+        btn.textContent = LABELS[STATES[idx]];
+      };
+    })();
+
+    // ── Project Dropdown toggle ─────────────────────────────────────────────
+    window.toggleProjectDropdown = function () {
+      const panel = document.getElementById('projectTabs');
+      const toggle = document.getElementById('projectTabsToggle');
+      if (!panel || !toggle) return;
+      const isOpen = panel.classList.toggle('open');
+      toggle.classList.toggle('open', isOpen);
+    };
+
+    // Close dropdown when clicking outside
+    document.addEventListener('click', function (e) {
+      const wrapper = document.getElementById('projectTabsWrapper');
+      if (wrapper && !wrapper.contains(e.target)) {
+        const panel = document.getElementById('projectTabs');
+        const toggle = document.getElementById('projectTabsToggle');
+        if (panel) panel.classList.remove('open');
+        if (toggle) toggle.classList.remove('open');
+      }
+    });
 
     window.addEventListener('load', start);
 
