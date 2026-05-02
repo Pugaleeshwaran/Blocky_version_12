@@ -6441,7 +6441,7 @@
       load_cell: 'tempshadow', loop_end: 'tempshadow',
       mag_encoder: 'tempshadow', magnetic_sensor: 'tempshadow',
       motor_driver: 'tempshadow', nfc_reader: 'tempshadow', pressure: 'tempshadow',
-       rfc: 'tempshadow', rtc_sensor: 'tempshadow',
+      rfc: 'tempshadow', rtc_sensor: 'tempshadow',
       soil_moisture: 'tempshadow', system_status: 'tempshadow',
       tank_motor: 'tempshadow', 'temp2-sensor': 'tempshadow', temp_sensor: 'tempshadow',
       tep_ana: 'tempshadow', text_speech: 'tempshadow', touch_sensor: 'tempshadow',
@@ -6516,7 +6516,7 @@
       'IR-Temp': 'temp_style', ir_sen: 'temp_style', ir_temp: 'temp_style',
       LCD: 'temp_style', ldr: 'temp_style', light_freq: 'temp_style',
       load_cell: 'temp_style', loop_end: 'temp_style',
-      mag_encoder: 'temp_style', magnetic_sensor: 'temp_style', 
+      mag_encoder: 'temp_style', magnetic_sensor: 'temp_style',
       motor_driver: 'temp_style', nfc_reader: 'temp_style', pressure: 'temp_style',
       rfc: 'temp_style', rtc_sensor: 'temp_style',
       soil_moisture: 'temp_style', system_status: 'temp_style',
@@ -7641,7 +7641,12 @@
       reg['lp_while'] = b => { const cond = py.valueToCode(b, 'COND', py.ORDER_NONE) || 'False'; const body = py.statementToCode(b, 'DO') || '  pass\n'; return `while ${cond}:\n  await asyncio.sleep(0)\n${body}`; };
       reg['lp_break'] = () => 'break\n';
       reg['lp_start'] = () => '@@START\n';
-      reg['lp_repeat_count'] = b => { const n = +b.getFieldValue('COUNT') || 0; const pin = +b.getFieldValue('PIN'); const body = py.statementToCode(b, 'DO') || '  pass\n'; return `for ${pin} in range(${n}):\n${body}`; };
+      reg['lp_repeat_count'] = function (block) {
+        const n = block.getFieldValue('COUNT') || 0;
+        const pin = block.getFieldValue('PIN');
+        const body = py.statementToCode(block, 'DO') || '  pass\n';
+        return `for i in range(${pin},${n}):\n${body}`;
+      };
       reg['lp_label'] = b => { const name = py.valueToCode(b, 'NAME', py.ORDER_NONE); return `print(${name || ''})\n`; };
       reg['din_if_else'] = function (b) {
         const cond = py.valueToCode(b, 'COND', py.ORDER_NONE) || 'False';
