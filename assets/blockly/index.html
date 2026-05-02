@@ -2891,7 +2891,7 @@
       background: #fff;
       border: 1.5px solid #cbd5e1;
       border-radius: 10px;
-      box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
       padding: 4px;
       flex-direction: column;
       gap: 2px;
@@ -3908,6 +3908,8 @@
 
             { kind: 'block', type: 'ir_sen' },
             { kind: 'block', type: 'touch_sensor' },
+            { kind: 'block', type: 'peltier' },
+            { kind: 'block', type: 'microwave_sensor' },
           ]
         },
 
@@ -4000,14 +4002,9 @@
             { kind: 'block', type: 'finger_print_enroll' },
             { kind: 'block', type: 'finger_print_match' },
             { kind: 'block', type: 'keypad' },
-            { kind: 'block', type: 'mini_motor' },
-            { kind: 'block', type: 'remote_motor' },
-            { kind: 'block', type: 'water_motor' },
-            { kind: 'block', type: 'tank_motor' },
-            { kind: 'block', type: 'port_on' },
-            { kind: 'block', type: 'port_off' },
-            { kind: 'block', type: 'sen_ultrasonic' },
-            { kind: 'block', type: 'sen_temp' },
+            { kind: 'block', type: 'gps' },
+            { kind: 'block', type: 'gsm' },
+            { kind: 'block', type: 'tof' },
           ]
         },
 
@@ -4015,13 +4012,6 @@
         {
           kind: 'category', name: 'SPI', colour: '#2EB061', id: 'cat_spi', contents: [
             { kind: 'block', type: 'rfid' },
-            { kind: 'block', type: 'sensor' },
-            { kind: 'block', type: 'tem_sensor' },
-            { kind: 'block', type: 'xray_sensor' },
-            { kind: 'block', type: 'rc_sensor' },
-            { kind: 'block', type: 'do_onoff' },
-            { kind: 'block', type: 'bt_send' },
-            { kind: 'block', type: 'loop_end' },
           ]
         },
 
@@ -4185,11 +4175,6 @@
               }
             },
             {
-              kind: 'block', type: 'controls_repeat_ext', inputs: {
-                TIMES: { shadow: { type: 'math_number', fields: { NUM: '5' } } }
-              }
-            },
-            {
               kind: 'block', type: 'controls_for', fields: { VAR: 'i' }, inputs: {
                 FROM: { shadow: { type: 'math_number', fields: { NUM: '0' } } },
                 TO: { shadow: { type: 'math_number', fields: { NUM: '10' } } }
@@ -4221,510 +4206,6 @@
       ]
     };
   </script>
-
-  <!-- Toolbox XML kept as data source for search index -->
-  <!-- Toolbox XML kept as data source for search index -->
-  <xml id="toolbox" style="display:none">
-    <category name="Search" custom="SEARCH_CATEGORY" colour="#526271" id="cat_search"></category>
-
-    <!-- ══ SENSORS ══ -->
-    <category name="📡 Sensors" colour="#E67E22" id="cat_sensors">
-      <category name="🌡️ Environmental" colour="#E59866" id="cat_environmental">
-        <block type="tep_ana"></block>
-        <block type="ana_temp"></block>
-        <block type="din_temp"></block>
-        <block type="temp_sensor"></block>
-        <block type="sen_temp"></block>
-        <block type="IR-Temp"></block>
-        <block type="ir_temp"></block>
-        <block type="temp2-sensor"></block>
-        <block type="humidity"></block>
-        <block type="soil_moisture"></block>
-        <block type="dust"></block>
-        <block type="Air_quality_sensor"></block>
-        <block type="water_sensor"></block>
-        <block type="water-turbidity-sensor"></block>
-        <block type="TDS_Water_sensor"></block>
-        <block type="pressure"></block>
-      </category>
-      <category name="🏃 Motion &amp; Position" colour="#DC7633" id="cat_motion">
-        <block type="din_motion"></block>
-        <block type="din_proximity"></block>
-        <block type="din_tilt"></block>
-        <block type="din_ultra"></block>
-        <block type="sen_ultrasonic"></block>
-        <block type="accelerometer_sensor"></block>
-        <block type="accelerometer"></block>
-        <block type="compass"></block>
-        <block type="mag_encoder"></block>
-        <block type="gusture"></block>
-        <block type="flex-sensor"></block>
-        <block type="shock_sensor"></block>
-        <block type="vibration-switch-sensor"></block>
-        <block type="joystick_move"></block>
-      </category>
-      <category name="💡 Light &amp; Color" colour="#F39C12" id="cat_light">
-        <block type="ldr"></block>
-        <block type="din_ir"></block>
-        <block type="ir_sen"></block>
-        <block type="colour_sen"></block>
-        <block type="ambient-sen"></block>
-        <block type="uv_sensor"></block>
-        <block type="light_freq"></block>
-        <block type="magnetic_sensor"></block>
-      </category>
-      <category name="❤️ Biometric &amp; Safety" colour="#E74C3C" id="cat_biometric">
-        <block type="heart_beat"></block>
-        <block type="ecg"></block>
-        <block type="max"></block>
-        <block type="din_flame"></block>
-        <block type="din_door"></block>
-        <block type="din_sound"></block>
-        <block type="din_button"></block>
-        <block type="touch_sensor"></block>
-        <block type="finger_print_enroll"></block>
-        <block type="finger_print_match"></block>
-      </category>
-      <category name="⚡ Electrical" colour="#D35400" id="cat_electrical">
-        <block type="Current-sensor"></block>
-        <block type="voltage_sensor"></block>
-        <block type="load_cell"></block>
-        <block type="flexi_force_sensor"></block>
-        <block type="piezo_sensor"></block>
-      </category>
-      <category name="🔬 Specialised" colour="#BA4A00" id="cat_specialised">
-        <block type="rtc_sensor"></block>
-        <block type="rfid"></block>
-        <block type="nfc_reader"></block>
-        <block type="rc_sensor"></block>
-        <block type="xray_sensor"></block>
-        <block type="tem_sensor"></block>
-        <block type="sensor"></block>
-        <block type="ceprom"></block>
-      </category>
-    </category>
-
-    <!-- ══ ACTUATORS ══ -->
-    <category name="⚙️ Actuators" colour="#2E86C1" id="cat_actuators">
-      <category name="🔄 Motors" colour="#2874A6" id="cat_motors">
-        <block type="do_dc_motor"></block>
-        <block type="do_dc_motor2"></block>
-        <block type="steper"></block>
-        <block type="mini_motor"></block>
-        <block type="remote_motor"></block>
-        <block type="water_motor"></block>
-        <block type="tank_motor"></block>
-        <block type="motor_driver"></block>
-        <block type="waterpump"></block>
-        <block type="minifan"></block>
-      </category>
-      <category name="🦾 Servo" colour="#1A5276" id="cat_servo">
-        <block type="do_servo"></block>
-      </category>
-      <category name="🔌 Relay &amp; Switch" colour="#154360" id="cat_relay">
-        <block type="relay"></block>
-        <block type="solinoid"></block>
-        <block type="animo"></block>
-        <block type="port_on"></block>
-        <block type="port_off"></block>
-        <block type="do_onoff"></block>
-      </category>
-    </category>
-
-    <!-- ══ DISPLAY & LIGHTS ══ -->
-    <category name="💡 Display &amp; Lights" colour="#F39C12" id="cat_display">
-      <category name="🔦 LEDs" colour="#F8C471" id="cat_leds">
-        <block type="do_led"></block>
-        <block type="do_led_param"></block>
-        <block type="red_led"></block>
-        <block type="yellow_led"></block>
-        <block type="green_led"></block>
-      </category>
-      <category name="🌈 RGB" colour="#E59866" id="cat_rgb">
-        <block type="rgb_display"></block>
-        <block type="rgb_led_display"></block>
-        <block type="rgb_component"></block>
-      </category>
-      <category name="🖥️ Screen" colour="#D4AC0D" id="cat_screen">
-        <block type="LCD"></block>
-        <block type="LCD_print"></block>
-        <block type="text_speech"></block>
-      </category>
-    </category>
-
-    <!-- ══ INPUT DEVICES ══ -->
-    <category name="🔊 Input Devices" colour="#27AE60" id="cat_input">
-      <block type="din_button"></block>
-      <block type="keypad"></block>
-      <block type="touch_sensor"></block>
-      <block type="joystick_move"></block>
-      <block type="buzzer"></block>
-      <block type="buzzer_component"></block>
-    </category>
-
-    <!-- ══ COMMUNICATION ══ -->
-    <category name="📶 Communication" colour="#8E44AD" id="cat_comm">
-      <category name="📡 Wireless" colour="#7D3C98" id="cat_wireless">
-        <block type="bt_send"></block>
-      </category>
-      <category name="🪪 Identification" colour="#6C3483" id="cat_identification">
-        <block type="rfid"></block>
-        <block type="nfc_reader"></block>
-        <block type="rfc"></block>
-        <block type="finger_print_enroll"></block>
-        <block type="finger_print_match"></block>
-      </category>
-    </category>
-
-    <sep></sep>
-
-    <!-- ══ CONTROL FLOW ══ -->
-    <category name="🔁 Control Flow" colour="#E74C3C" id="cat_control">
-      <category name="🧠 Logic" colour="#C0392B" id="cat_logic">
-        <block type="start"></block>
-        <block type="din_if_else"></block>
-        <block type="custom_if_then"></block>
-        <block type="any_input_block"></block>
-        <block type="system_status"></block>
-        <block type="logic_boolean">
-          <field name="BOOL">TRUE</field>
-        </block>
-        <block type="logic_operation">
-          <field name="OP">AND</field>
-        </block>
-        <block type="logical_comparison"></block>
-        <block type="compare"></block>
-        <block type="logic_compare">
-          <field name="OP">EQ</field>
-          <value name="A">
-            <shadow type="math_number">
-              <field name="NUM">10</field>
-            </shadow>
-          </value>
-          <value name="B">
-            <shadow type="math_number">
-              <field name="NUM">5</field>
-            </shadow>
-          </value>
-        </block>
-        <block type="controls_if">
-          <value name="IF0">
-            <shadow type="logic_boolean">
-              <field name="BOOL">TRUE</field>
-            </shadow>
-          </value>
-        </block>
-      </category>
-      <category name="🔄 Loops" colour="#E74C3C" id="cat_loops">
-        <block type="lp_while"></block>
-        <block type="lp_start"></block>
-        <block type="lp_repeat_count"></block>
-        <block type="lp_label"></block>
-        <block type="lp_break"></block>
-        <block type="loop_end"></block>
-        <block type="controls_repeat_ext">
-          <value name="TIMES">
-            <shadow type="math_number">
-              <field name="NUM">5</field>
-            </shadow>
-          </value>
-        </block>
-        <block type="controls_for">
-          <field name="VAR">i</field>
-          <value name="FROM">
-            <shadow type="math_number">
-              <field name="NUM">0</field>
-            </shadow>
-          </value>
-          <value name="TO">
-            <shadow type="math_number">
-              <field name="NUM">10</field>
-            </shadow>
-          </value>
-        </block>
-      </category>
-      <category name="⏱️ Delay &amp; Timing" colour="#C0392B" id="cat_delay">
-        <block type="ctl_delay"></block>
-      </category>
-    </category>
-
-    <!-- ══ DATA ══ -->
-    <category name="📊 Data" colour="#1ABC9C" id="cat_data">
-      <category name="🔢 Math" colour="#17A589" id="cat_math">
-        <block type="math_number">
-          <field name="NUM">0</field>
-        </block>
-        <block type="math_arithmetic">
-          <field name="OP">ADD</field>
-          <value name="A">
-            <shadow type="math_number">
-              <field name="NUM">1</field>
-            </shadow>
-          </value>
-          <value name="B">
-            <shadow type="math_number">
-              <field name="NUM">2</field>
-            </shadow>
-          </value>
-        </block>
-        <block type="math_random_int">
-          <value name="FROM">
-            <shadow type="math_number">
-              <field name="NUM">1</field>
-            </shadow>
-          </value>
-          <value name="TO">
-            <shadow type="math_number">
-              <field name="NUM">100</field>
-            </shadow>
-          </value>
-        </block>
-      </category>
-      <category name="🔤 Text" colour="#148F77" id="cat_text">
-        <block type="text">
-          <field name="TEXT">Hello</field>
-        </block>
-        <block type="text_join">
-          <value name="ADD0">
-            <shadow type="text">
-              <field name="TEXT">Hello</field>
-            </shadow>
-          </value>
-          <value name="ADD1">
-            <shadow type="text">
-              <field name="TEXT">World</field>
-            </shadow>
-          </value>
-        </block>
-        <block type="text_length">
-          <value name="VALUE">
-            <shadow type="text">
-              <field name="TEXT">Blockly</field>
-            </shadow>
-          </value>
-        </block>
-      </category>
-      <category name="📦 Variables" custom="VARIABLE" colour="#0E6655" id="cat_variables"></category>
-      <category name="📋 Lists" custom="LIST" colour="#0A3D62" id="cat_lists"></category>
-    </category>
-
-    <category name="🔧 Functions" custom="PROCEDURE" colour="#FF1493" id="cat_functions"></category>
-
-    <sep></sep>
-
-    <!-- ══ VISUALISATION ══ -->
-    <category name="🎨 Animations" colour="#6366F1" id="cat_animations">
-      <block type="lottie_anim"></block>
-      <block type="lottie_rocket"></block>
-      <block type="lottie_heartbeat"></block>
-      <block type="lottie_weather"></block>
-      <block type="lottie_loading"></block>
-      <block type="lottie_robot"></block>
-      <block type="lottie_starburst"></block>
-      <block type="lottie_water"></block>
-      <block type="lottie_fire"></block>
-      <block type="lottie_lightning"></block>
-      <block type="lottie_gearspin"></block>
-    </category>
-    <category name="🌐 3D Simulations" colour="#4F46E5" id="cat_3d">
-      <block type="three_d_model"></block>
-      <block type="speedo_3d"></block>
-      <block type="sim_solar"></block>
-      <block type="sim_pendulum"></block>
-      <block type="sim_particles"></block>
-      <block type="sim_dna"></block>
-      <block type="sim_gears"></block>
-      <block type="sim_wave"></block>
-      <block type="sim_bouncing"></block>
-      <block type="sim_windmill"></block>
-      <block type="sim_atom"></block>
-      <block type="sim_globe"></block>
-    </category>
-
-    <sep></sep>
-
-    <category name="default block" colour="#9ACD32">
-      <block type="math_number">
-        <field name="NUM">0</field>
-      </block>
-      <block type="math_number">
-        <field name="NUM">0</field>
-      </block>
-
-      <block type="math_arithmetic">
-        <field name="OP">ADD</field>
-        <value name="A">
-          <block type="math_number">
-            <field name="NUM">1</field>
-          </block>
-        </value>
-        <value name="B">
-          <block type="math_number">
-            <field name="NUM">2</field>
-          </block>
-        </value>
-      </block>
-
-      <block type="math_random_int">
-        <value name="FROM">
-          <block type="math_number">
-            <field name="NUM">1</field>
-          </block>
-        </value>
-        <value name="TO">
-          <block type="math_number">
-            <field name="NUM">100</field>
-          </block>
-        </value>
-      </block>
-
-      <!-- <block type="math_trigonometry">
-        <field name="OP">SIN</field>
-        <value name="ANGLE">
-          <block type="math_number">
-            <field name="NUM">90</field>
-          </block>
-        </value>
-      </block> -->
-
-      <block type="text">
-        <field name="TEXT">Hello</field>
-      </block>
-
-      <block type="text_join">
-        <value name="ADD0">
-          <block type="text">
-            <field name="TEXT">Hello</field>
-          </block>
-        </value>
-        <value name="ADD1">
-          <block type="text">
-            <field name="TEXT">World</field>
-          </block>
-        </value>
-      </block>
-
-      <block type="text_length">
-        <value name="VALUE">
-          <block type="text">
-            <field name="TEXT">Blockly</field>
-          </block>
-        </value>
-      </block>
-
-      <block type="variables_set">
-        <field name="VAR">item</field>
-        <value name="VALUE">
-          <block type="math_number">
-            <field name="NUM">10</field>
-          </block>
-        </value>
-      </block>
-
-      <block type="variables_get">
-        <field name="VAR">item</field>
-      </block>
-
-      <block type="variables_set">
-        <field name="VAR">counter</field>
-        <value name="VALUE">
-          <block type="math_number">
-            <field name="NUM">0</field>
-          </block>
-        </value>
-      </block>
-
-      <block type="controls_if">
-        <value name="IF0">
-          <block type="logic_boolean">
-            <field name="BOOL">TRUE</field>
-          </block>
-        </value>
-        <statement name="DO0">
-          <block type="math_number">
-            <field name="NUM">10</field>
-          </block>
-        </statement>
-      </block>
-
-      <block type="controls_repeat_ext">
-        <value name="TIMES">
-          <block type="math_number">
-            <field name="NUM">5</field>
-          </block>
-        </value>
-        <statement name="DO">
-          <block type="math_number">
-            <field name="NUM">1</field>
-          </block>
-        </statement>
-      </block>
-
-      <block type="controls_for">
-        <field name="VAR">i</field>
-        <value name="FROM">
-          <block type="math_number">
-            <field name="NUM">0</field>
-          </block>
-        </value>
-        <value name="TO">
-          <block type="math_number">
-            <field name="NUM">10</field>
-          </block>
-        </value>
-        <statement name="DO">
-          <block type="math_number">
-            <field name="NUM">i</field>
-          </block>
-        </statement>
-      </block>
-
-      <block type="logic_boolean">
-        <field name="BOOL">TRUE</field>
-      </block>
-
-      <block type="logic_compare">
-        <field name="OP">EQ</field>
-        <value name="A">
-          <block type="math_number">
-            <field name="NUM">10</field>
-          </block>
-        </value>
-        <value name="B">
-          <block type="math_number">
-            <field name="NUM">5</field>
-          </block>
-        </value>
-      </block>
-
-      <block type="logic_operation">
-        <field name="OP">AND</field>
-        <value name="A">
-          <block type="logic_boolean">
-            <field name="BOOL">TRUE</field>
-          </block>
-        </value>
-        <value name="B">
-          <block type="logic_boolean">
-            <field name="BOOL">FALSE</field>
-          </block>
-        </value>
-      </block>
-
-      <block type="procedures_defnoreturn">
-        <field name="NAME">doSomething</field>
-        <statement name="STACK">
-          <block type="math_number">
-            <field name="NUM">5</field>
-          </block>
-        </statement>
-      </block>
-
-      <block type="procedures_callnoreturn">
-        <field name="NAME">doSomething</field>
-      </block>
-    </category>
-  </xml>
 
   <!-- Port selection modal -->
   <div id="portSelectionModal">
@@ -6958,9 +6439,9 @@
       'IR-Temp': 'tempshadow', ir_sen: 'tempshadow', ir_temp: 'tempshadow',
       LCD: 'tempshadow', ldr: 'tempshadow', light_freq: 'tempshadow',
       load_cell: 'tempshadow', loop_end: 'tempshadow',
-      mag_encoder: 'tempshadow', magnetic_sensor: 'tempshadow', mini_motor: 'tempshadow',
+      mag_encoder: 'tempshadow', magnetic_sensor: 'tempshadow',
       motor_driver: 'tempshadow', nfc_reader: 'tempshadow', pressure: 'tempshadow',
-      remote_motor: 'tempshadow', rfc: 'tempshadow', rtc_sensor: 'tempshadow',
+       rfc: 'tempshadow', rtc_sensor: 'tempshadow',
       soil_moisture: 'tempshadow', system_status: 'tempshadow',
       tank_motor: 'tempshadow', 'temp2-sensor': 'tempshadow', temp_sensor: 'tempshadow',
       tep_ana: 'tempshadow', text_speech: 'tempshadow', touch_sensor: 'tempshadow',
@@ -7035,9 +6516,9 @@
       'IR-Temp': 'temp_style', ir_sen: 'temp_style', ir_temp: 'temp_style',
       LCD: 'temp_style', ldr: 'temp_style', light_freq: 'temp_style',
       load_cell: 'temp_style', loop_end: 'temp_style',
-      mag_encoder: 'temp_style', magnetic_sensor: 'temp_style', mini_motor: 'temp_style',
+      mag_encoder: 'temp_style', magnetic_sensor: 'temp_style', 
       motor_driver: 'temp_style', nfc_reader: 'temp_style', pressure: 'temp_style',
-      remote_motor: 'temp_style', rfc: 'temp_style', rtc_sensor: 'temp_style',
+      rfc: 'temp_style', rtc_sensor: 'temp_style',
       soil_moisture: 'temp_style', system_status: 'temp_style',
       tank_motor: 'temp_style', 'temp2-sensor': 'temp_style', temp_sensor: 'temp_style',
       tep_ana: 'temp_style', text_speech: 'temp_style', touch_sensor: 'temp_style',
@@ -7622,10 +7103,6 @@
         { type: "din_flame", message0: "FLAME %1 %2", args0: [{ type: "field_image", src: "./assets/img/Chips_Chips_Show.png", width: 15, height: 15, alt: "", name: "IMG" }, { type: "field_label", name: "PORTS", text: "" }], style: "control_blocks", output: "Boolean", extensions: ["temp_style", "port_image_click"] },
         { type: "load_cell", message0: "Load Cell %1 %2", args0: [{ type: "field_image", src: "./assets/img/Chips_Chips_Show.png", width: 15, height: 15, alt: "", name: "IMG" }, { type: "field_label", name: "PORTS", text: "" }], style: "control_blocks", output: "Boolean", extensions: ["temp_style", "port_image_click"] },
         { type: "do_led_param", message0: "LED write %1 %2 value %3 time %4", args0: [{ type: "field_image", src: "./assets/img/Chips_Chips_Show.png", width: 15, height: 15, alt: "", name: "IMG" }, { type: "field_label", name: "PORTS", text: "" }, { type: "field_number", name: "VAL" }, { type: "field_number", name: "VAL2" }], colour: "#81d4ed", previousStatement: null, nextStatement: null, extensions: ["led_pin_image_click", "dummy_style"] },
-        { type: "mini_motor", message0: "Mini Motor %1 %2 %3 %4", args0: [{ type: "field_image", src: "./assets/img/Chips_Chips_Show.png", width: 15, height: 15, alt: "", name: "IMG" }, { type: "field_label", name: "MOTORS", text: "" }, { type: "field_number", name: "SPEED", value: 60, min: -100, max: 100, precision: 1 }, { type: "field_label", text: "%" }], colour: "#81d4ed", previousStatement: null, nextStatement: null, extensions: ["motor_image_click", "temp_style"] },
-        { type: "remote_motor", message0: "remote Motor %1 %2 %3 %4", args0: [{ type: "field_image", src: "./assets/img/Chips_Chips_Show.png", width: 15, height: 15, alt: "", name: "IMG" }, { type: "field_label", name: "MOTORS", text: "" }, { type: "field_number", name: "SPEED", value: 10, min: -100, max: 100, precision: 1 }, { type: "field_label", text: "%" }], colour: "#81d4ed", previousStatement: null, nextStatement: null, extensions: ["motor_image_click", "temp_style"] },
-        { type: "water_motor", message0: "water Motor %1 %2 %3 %4", args0: [{ type: "field_image", src: "./assets/img/Chips_Chips_Show.png", width: 15, height: 15, alt: "", name: "IMG" }, { type: "field_label", name: "MOTORS", text: "" }, { type: "field_number", name: "SPEED", value: 40, min: -100, max: 100, precision: 1 }, { type: "field_label", text: "%" }], colour: "#81d4ed", previousStatement: null, nextStatement: null, extensions: ["motor_image_click", "temp_style"] },
-        { type: "tank_motor", message0: "tank Motor %1 %2 %3 %4", args0: [{ type: "field_image", src: "./assets/img/Chips_Chips_Show.png", width: 15, height: 15, alt: "", name: "IMG" }, { type: "field_label", name: "MOTORS", text: "" }, { type: "field_number", name: "SPEED", value: 40, min: -100, max: 100, precision: 1 }, { type: "field_label", text: "%" }], colour: "#81d4ed", previousStatement: null, nextStatement: null, extensions: ["motor_image_click", "temp_style"] },
         { type: "sensor", message0: "ultra sonic %1 %2 %3", args0: [{ type: "field_image", src: "./assets/img/Chips_Chips_Show.png", width: 15, height: 15, alt: "", name: "IMG" }, { type: "field_label", name: "PORTS", text: "" }, { type: "field_dropdown", name: "STATE", options: [["ON", "1"], ["OFF", "0"]] }], colour: "#81d4ed", previousStatement: null, nextStatement: null, extensions: ["port_image_click", "ultra_style"] },
         { type: "tem_sensor", message0: "tem sonic %1 %2 %3", args0: [{ type: "field_image", src: "./assets/img/Chips_Chips_Show.png", width: 15, height: 15, alt: "", name: "IMG" }, { type: "field_label", name: "PORTS", text: "" }, { type: "field_dropdown", name: "STATE", options: [["ON", "1"], ["OFF", "0"]] }], colour: "#81d4ed", previousStatement: null, nextStatement: null, extensions: ["port_image_click", "ultra_style"] },
         { type: "xray_sensor", message0: "xray sonic %1 %2 %3", args0: [{ type: "field_image", src: "./assets/img/Chips_Chips_Show.png", width: 15, height: 15, alt: "", name: "IMG" }, { type: "field_label", name: "PORTS", text: "" }, { type: "field_dropdown", name: "STATE", options: [["ON", "1"], ["OFF", "0"]] }], colour: "#81d4ed", previousStatement: null, nextStatement: null, extensions: ["port_image_click", "ultra_style"] },
@@ -7754,7 +7231,60 @@
           output: "Boolean",
           extensions: ["port_image_click", "servo_color"]
         },
-
+        {
+          type: "peltier",
+          message0: "Peltier %1 %2 %3",
+          args0: [
+            {
+              type: "field_image",
+              src: "./assets/img/Chips_Chips_Show.png",
+              width: 15,
+              height: 15,
+              alt: "",
+              name: "IMG"
+            },
+            {
+              type: "field_label",
+              name: "PORTS",
+              text: ""
+            },
+            {
+              type: "field_dropdown",
+              name: "STATE",
+              options: [
+                ["hot", "hot"],
+                ["cold", "cold"],
+                ["off", "off"]
+              ]
+            }
+          ],
+          colour: "#81d4ed",
+          previousStatement: null,
+          nextStatement: null,
+          extensions: ["port_image_click", "ultra_style"]
+        },
+        {
+          type: "microwave_sensor",
+          message0: "Microwave_sensor %1 %2",
+          args0: [
+            {
+              type: "field_image",
+              src: "./assets/img/Chips_Chips_Show.png",
+              width: 15,
+              height: 15,
+              alt: "",
+              name: "IMG"
+            },
+            {
+              type: "field_label",
+              name: "PORTS",
+              text: ""
+            }],
+          style: "control_blocks",
+          output: "Boolean",
+          extensions: ["temp_style", "port_image_click"]
+        }
+        ,
         { type: "ambient-sen", message0: "Ambient sensor pin", style: "control_blocks", output: "Boolean", extensions: ["temp_style"] },
         { type: "din_ultra", message0: "Ultra Sonic sensor pin %1 %2", args0: [{ type: "field_image", src: "./assets/img/Chips_Chips_Show.png", width: 15, height: 15, alt: "", name: "IMG" }, { type: "field_label", name: "PORTS", text: "" }], style: "control_blocks", output: "Boolean", extensions: ["led_pin_image_click", "temp_style"] },
         { type: "voltage_sensor", message0: "Voltage Sensor %1 %2", args0: [{ type: "field_image", src: "./assets/img/Chips_Chips_Show.png", width: 15, height: 15, alt: "", name: "IMG" }, { type: "field_label", name: "PORTS", text: "" }], style: "control_blocks", output: "Boolean", extensions: ["led_pin_image_click", "temp_style"] },
@@ -7794,6 +7324,39 @@
           previousStatement: null,
           nextStatement: null,
           extensions: ["temp_style", "key_pin_image_click"]
+        },
+        {
+          type: "gps",
+          message0: "GPS ",
+
+          style: "control_blocks",
+          output: "Boolean",
+          extensions: ["temp_style"]
+        },
+        {
+          type: "gsm",
+          message0: "GSM %1 %2",
+          args0: [
+            {
+              type: "field_input",
+              name: "VAL1",
+            },
+            {
+              type: "field_input",
+              name: "VAL2",
+            },],
+          colour: "#81d4ed",
+          previousStatement: null,
+          nextStatement: null,
+          extensions: ["port_image_click", "servo_color"]
+        },
+        {
+          type: "tof",
+          message0: "ToF",
+
+          style: "control_blocks",
+          output: "Boolean",
+          extensions: ["temp_style"]
         },
         {
           type: "compare",
@@ -8078,7 +7641,7 @@
       reg['lp_while'] = b => { const cond = py.valueToCode(b, 'COND', py.ORDER_NONE) || 'False'; const body = py.statementToCode(b, 'DO') || '  pass\n'; return `while ${cond}:\n  await asyncio.sleep(0)\n${body}`; };
       reg['lp_break'] = () => 'break\n';
       reg['lp_start'] = () => '@@START\n';
-      reg['lp_repeat_count'] = b => { const n = +b.getFieldValue('COUNT') || 0; const body = py.statementToCode(b, 'DO') || '  pass\n'; return `for _ in range(${n}):\n${body}`; };
+      reg['lp_repeat_count'] = b => { const n = +b.getFieldValue('COUNT') || 0; const pin = +b.getFieldValue('PIN'); const body = py.statementToCode(b, 'DO') || '  pass\n'; return `for ${pin} in range(${n}):\n${body}`; };
       reg['lp_label'] = b => { const name = py.valueToCode(b, 'NAME', py.ORDER_NONE); return `print(${name || ''})\n`; };
       reg['din_if_else'] = function (b) {
         const cond = py.valueToCode(b, 'COND', py.ORDER_NONE) || 'False';
@@ -8358,6 +7921,49 @@
         // If more than two ports are selected, return the first two only
         return [`await async_touch_sensor("${pins[0]}","${pins[1]}","${pins[2]}")`, py.ORDER_FUNCTION_CALL];
       };
+
+      reg['peltier'] = function (block) {
+        const ports = (block.getFieldValue('PORTS') || '').split(',').map(s => s.trim()).filter(Boolean);
+        const stateVal = block.getFieldValue('STATE');
+
+        if (ports.length === 0) {
+          return ["# No pin selected\n", py.ORDER_NONE];
+        }
+
+        if (ports.length === 1) {
+          return [`await async_peltier("${ports[0]}","${stateVal}")`, py.ORDER_FUNCTION_CALL];
+        }
+        const portList = ports.map(p => `"${p}"`).join(', ');
+        return [`await async_peltier(${portList},"${stateVal}")`, py.ORDER_FUNCTION_CALL];
+      };
+
+      reg['microwave_sensor'] = function (block) {
+        const portsTxt = block.getFieldValue('PORTS') || '';
+
+        // Split ports like "D3,H1"
+        const pins = portsTxt
+          .split(',')
+          .map(p => p.trim())
+          .filter(Boolean);
+
+        // If no ports are selected, show a warning message
+        if (!pins.length) {
+          return ['# Invalid: Please select at least one port', py.ORDER_NONE];
+        }
+
+        // If one port is selected, return code for that port only
+        if (pins.length === 1) {
+          return [`await async_microwave_sensor("${pins[0]}")`, py.ORDER_FUNCTION_CALL];
+        }
+
+        // If two ports are selected, use both for Trig and Echo
+        if (pins.length === 2) {
+          return [`await async_microwave_sensor("${pins[0]}","${pins[1]}")`, py.ORDER_FUNCTION_CALL];
+        }
+
+        // If more than two ports are selected, return the first two only
+        return [`await async_microwave_sensor("${pins[0]}","${pins[1]}","${pins[2]}")`, py.ORDER_FUNCTION_CALL];
+      };
       reg['sensor'] = b => { const ports = (b.getFieldValue('PORTS') || '').split(',').map(s => s.trim()).filter(Boolean); if (!ports.length) return "# no ports\n"; const fn = b.getFieldValue('STATE') === '1' ? 'sensor_on' : 'sensor_off'; return ports.map(p => `${fn}(${p})\n`).join(''); };
       reg['tem_sensor'] = b => { const ports = (b.getFieldValue('PORTS') || '').split(',').map(s => s.trim()).filter(Boolean); if (!ports.length) return "# no ports\n"; const fn = b.getFieldValue('STATE') === '1' ? 'tem_sensor_on' : 'tem_sensor_off'; return ports.map(p => `${fn}(${p})\n`).join(''); };
       reg['xray_sensor'] = b => { const ports = (b.getFieldValue('PORTS') || '').split(',').map(s => s.trim()).filter(Boolean); if (!ports.length) return "# no ports\n"; const fn = b.getFieldValue('STATE') === '1' ? 'xray_sensor_on' : 'xray_sensor_off'; return ports.map(p => `${fn}(${p})\n`).join(''); };
@@ -8370,10 +7976,6 @@
       reg['buzzer'] = b => { const v1 = b.getFieldValue('VAL1') || 0; const v2 = b.getFieldValue('VAL2') || 0; const v3 = b.getFieldValue('VAL3') || 0; const ports = (b.getFieldValue('PORTS') || '').split(',').map(s => s.trim()).filter(Boolean); if (!ports.length) return '# Buzzer: no port\n'; if (ports.length === 1) return `await async_buzzer("${ports[0]}",${v1},${v2},${v3})\n`; return `await async_buzzer(${ports.map(p => `"${p}"`).join(',')},${v1},${v2},${v3})\n`; };
       reg['minifan'] = b => { const state = b.getFieldValue('STATE') || 0; const ports = (b.getFieldValue('PORTS') || '').split(',').map(s => s.trim()).filter(Boolean); if (!ports.length) return '# MINI FAN: no port\n'; if (ports.length === 1) return `mini_fan("${ports[0]}","${state}")\n`; return `mini_fan(${ports.map(p => `"${p}"`).join(',')},"${state}")\n`; };
       reg['loop_end'] = b => `${b.getFieldValue('NAME') || ''}\n`;
-      reg['mini_motor'] = b => { const motors = (b.getFieldValue('MOTORS') || '').split(',').map(s => s.trim()).filter(Boolean); if (!motors.length) return "# No motors\n"; return motors.map(() => `red_blink("F4",1,1)\n`).join(''); };
-      reg['remote_motor'] = b => { const motors = (b.getFieldValue('MOTORS') || '').split(',').map(s => s.trim()).filter(Boolean); if (!motors.length) return "# No motors\n"; return motors.map(() => `yellow_blink("G5",1,1)\n`).join(''); };
-      reg['water_motor'] = b => { const motors = (b.getFieldValue('MOTORS') || '').split(',').map(s => s.trim()).filter(Boolean); if (!motors.length) return "# No motors\n"; return motors.map(() => `green_blink("B15",1,1)\n`).join(''); };
-      reg['tank_motor'] = b => { const speed = b.getFieldValue('SPEED') || 0; const motors = (b.getFieldValue('MOTORS') || '').split(',').map(s => s.trim()).filter(Boolean); if (!motors.length) return "# No motors\n"; return motors.map(m => `tank_motor("${m}",${speed})\n`).join(''); };
       reg['rgb_display'] = b => `displayRGBColors(${b.getFieldValue('RED')},${b.getFieldValue('ORANGE')},${b.getFieldValue('YELLOW')},${b.getFieldValue('GREEN')},${b.getFieldValue('CYAN')});\n`;
       reg['rgb_component'] = b => { const ports = (b.getFieldValue('PORTS') || '').split(',').map(s => s.trim()).filter(Boolean); const freq = b.getFieldValue('freq'); const d1 = b.getFieldValue('Delay1'); const d2 = b.getFieldValue('DELAY2'); if (!ports.length) return "# rgb_component: no ports\n"; return ports.map(p => `rgb("${p}",${freq},${d1},${d2})\n`).join(''); };
       reg['buzzer_component'] = b => { const ports = (b.getFieldValue('PORTS') || '').split(',').map(s => s.trim()).filter(Boolean); const freq = b.getFieldValue('freq'); const d1 = b.getFieldValue('Delay1'); const d2 = b.getFieldValue('DELAY2'); if (!ports.length) return "# buzzer_component: no ports\n"; return ports.map(p => `buzzer("${p}",${freq},${d1},${d2})\n`).join(''); };
@@ -8419,6 +8021,15 @@
         const portList = ports.map(p => `"${p}"`).join(', ');
         return `await async_keypad(${portList})\n`;
       };
+      reg['gps'] = b => [`gps()`, py.ORDER_ATOMIC];
+
+      reg['gsm'] = function (block) {
+        const val1 = block.getFieldValue('VAL1');
+        const val2 = block.getFieldValue('VAL2');
+        // ALWAYS return a STRING
+        return `gsm("${val1}","${val2}")\n`;
+      };
+      reg['tof'] = b => [`tof()`, py.ORDER_ATOMIC];
       reg['compare'] = function (b) {
         var name = py.valueToCode(b, 'NAME', py.ORDER_NONE); // Correct way to get field value
         var name2 = py.valueToCode(b, 'NAME2', py.ORDER_NONE);
@@ -12090,27 +11701,6 @@
             speed: 100,
             dir: block.getFieldValue('STATE') || 'forward',
           };
-        },
-        mini_motor(block) {
-          const raw = parseInt(block.getFieldValue('SPEED'), 10) || 0;
-          return {
-            type: 'motor',
-            motors: block.getFieldValue('MOTORS') || '',
-            speed: Math.abs(raw),
-            dir: raw >= 0 ? 'forward' : 'backward',
-          };
-        },
-        remote_motor(block) {
-          const raw = parseInt(block.getFieldValue('SPEED'), 10) || 0;
-          return { type: 'motor', motors: block.getFieldValue('MOTORS') || '', speed: Math.abs(raw), dir: raw >= 0 ? 'forward' : 'backward' };
-        },
-        water_motor(block) {
-          const raw = parseInt(block.getFieldValue('SPEED'), 10) || 0;
-          return { type: 'motor', motors: block.getFieldValue('MOTORS') || '', speed: Math.abs(raw), dir: raw >= 0 ? 'forward' : 'backward' };
-        },
-        tank_motor(block) {
-          const raw = parseInt(block.getFieldValue('SPEED'), 10) || 0;
-          return { type: 'motor', motors: block.getFieldValue('MOTORS') || '', speed: Math.abs(raw), dir: raw >= 0 ? 'forward' : 'backward' };
         },
         motor_driver(block) {
           return { type: 'motor', motors: block.getFieldValue('MOTORS') || '', speed: parseInt(block.getFieldValue('SPEED'), 10) || 0, dir: block.getFieldValue('STATE') || 'forward' };
