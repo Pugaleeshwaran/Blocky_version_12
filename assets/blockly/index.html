@@ -4012,6 +4012,7 @@
         {
           kind: 'category', name: 'SPI', colour: '#2EB061', id: 'cat_spi', contents: [
             { kind: 'block', type: 'rfid' },
+            { kind: 'block', type: 'tft' },
           ]
         },
 
@@ -7048,6 +7049,20 @@
           extensions: ["temp_style"]
         },
         {
+          type: "tft",
+          message0: "TFT Display %1",
+          args0: [
+            {
+              type: "input_value",
+              name: "TEXT"
+            }
+          ],
+          previousStatement: null,
+          nextStatement: null,
+          style: "control_blocks",
+          extensions: ["servo_color"]
+        },
+        {
           type: "finger_print_enroll",
           message0: "Fingerprint Enroll",
 
@@ -7617,6 +7632,11 @@
         return ports.map(p => `${fn}(${p})\n`).join('');
       };
       reg['rfid'] = b => [`await async_rfid()`, py.ORDER_ATOMIC];
+      reg['tft'] = function (block) {
+        const txt = Blockly.Python.valueToCode(block, 'TEXT', Blockly.Python.ORDER_NONE) || "''";
+        // Example: send text over Bluetooth
+        return `await async_tft(${txt})\n`;
+      };
       reg['bt_send'] = b => { const t = py.valueToCode(b, 'TEXT', py.ORDER_NONE) || "''"; return `robot.bt_send(${t})\n`; };
       reg['sen_ultrasonic'] = b => `distance = robot.ultrasonic_cm(${b.getFieldValue('PORT') || 0})\n`;
       reg['sen_temp'] = b => { const pins = (b.getFieldValue('PORTS') || '').split(',').map(s => s.trim()).filter(Boolean); if (!pins.length) return "# no pins\n"; return pins.map(p => `temp_port(${p})\n`).join(''); };
