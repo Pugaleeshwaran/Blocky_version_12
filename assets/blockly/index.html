@@ -4021,6 +4021,7 @@
           kind: 'category', name: 'Loop', colour: '#FF6347', id: 'cat_loop', contents: [
             { kind: 'block', type: 'lp_while' },
             { kind: 'block', type: 'lp_break' },
+            { kind: 'block', type: 'lp_continue' },
             { kind: 'block', type: 'lp_start' },
             { kind: 'block', type: 'lp_repeat_count' },
             { kind: 'block', type: 'lp_label' },
@@ -4051,6 +4052,7 @@
         // ── LOGIC ────────────────────────────────────────────────────────
         {
           kind: 'category', name: 'Logic', colour: '#4C97FF', id: 'cat_logic', contents: [
+            { kind: 'block', type: 'start' },
             {
               kind: 'block', type: 'controls_if', fields: { BOOL: 'TRUE' }
             },
@@ -6422,7 +6424,7 @@
       ctl_delay: 'dummyshadow', do_led_param: 'dummyshadow',
       green_led: 'dummyshadow', red_led: 'dummyshadow', yellow_led: 'dummyshadow',
       // dcshodow — block_dc (loop)
-      lp_while: 'dcshodow', lp_break: 'dcshodow', lp_repeat_count: 'dcshodow',
+      lp_while: 'dcshodow', lp_break: 'dcshodow', lp_continue: 'dcshodow', lp_repeat_count: 'dcshodow',
       lp_label: 'dcshodow', lp_start: 'dcshodow',
       // ultrashowdow — ultra_style
       sensor: 'ultrashowdow', tem_sensor: 'ultrashowdow', xray_sensor: 'ultrashowdow',
@@ -6485,7 +6487,7 @@
       green_led: 'dummy_block', red_led: 'dummy_block', yellow_led: 'dummy_block',
 
       // block_dc (DC/orange gradient)
-      lp_while: 'block_dc', lp_break: 'block_dc', lp_repeat_count: 'block_dc',
+      lp_while: 'block_dc', lp_break: 'block_dc', lp_continue: 'block_dc', lp_repeat_count: 'block_dc',
       lp_label: 'block_dc', lp_start: 'block_dc',
 
       // block-servo (pink gradient) — actuators, motors, outputs
@@ -7103,6 +7105,7 @@
         { type: "ctl_delay", message0: "Sleep%1 ms", args0: [{ type: "field_number", name: "MS", value: 500, min: 0, max: 600000 }], style: "led_blocks", previousStatement: null, nextStatement: null, extensions: ["dummy_style"] },
         { type: "lp_while", message0: "while %1", args0: [{ type: "input_value", name: "COND", check: "Boolean" }], message1: "do %1", args1: [{ type: "input_statement", name: "DO" }], previousStatement: null, nextStatement: null, extensions: ["dc_color"] },
         { type: "lp_break", message0: "break", previousStatement: null, nextStatement: null, extensions: ["dc_color"] },
+        { type: "lp_continue", message0: "continue", previousStatement: null, nextStatement: null, extensions: ["dc_color"] },
         { type: "lp_start", message0: "@@start", previousStatement: null, nextStatement: null, extensions: ["dc_color"] },
         { type: "lp_repeat_count", message0: "repeat %1 %2 times", args0: [{ type: "field_number", name: "PIN" }, { type: "field_number", name: "COUNT", value: 4, min: 0, max: 100000 }], message1: "do %1", args1: [{ type: "input_statement", name: "DO" }], previousStatement: null, nextStatement: null, extensions: ["dc_color"] },
         { type: "lp_label", message0: "Print %1", args0: [{ type: "input_value", name: "NAME" }], previousStatement: null, nextStatement: null, extensions: ["dc_color"] },
@@ -7660,14 +7663,52 @@
       reg['ctl_delay'] = b => `await asyncio.sleep_ms(${b.getFieldValue('MS') || 0})\n`;
       reg['lp_while'] = b => { const cond = py.valueToCode(b, 'COND', py.ORDER_NONE) || 'False'; const body = py.statementToCode(b, 'DO') || '  pass\n'; return `while ${cond}:\n  await asyncio.sleep(0)\n${body}`; };
       reg['lp_break'] = () => 'break\n';
+      reg['lp_continue'] = () => 'continue\n';
       reg['lp_start'] = () => '@@START\n';
       reg['lp_repeat_count'] = function (block) {
         const n = block.getFieldValue('COUNT') || 0;
         const pin = block.getFieldValue('PIN');
         const body = py.statementToCode(block, 'DO') || '  pass\n';
-        return `for i in range(${pin},${n}):\n${body}`;
+        return `for i in range(${pin},${n}):\n  await asyncio.sleep(0)\n${body}`;
       };
       reg['lp_label'] = b => { const name = py.valueToCode(b, 'NAME', py.ORDER_NONE); return `print(${name || ''})\n`; };
+
+      reg['controls_flow_statements'] = function (block) {
+        var keyword = block.getFieldValue('FLOW') == 'BREAK' ? 'break\n' : 'continue\n';
+        return keyword;
+      };
+
+      reg['controls_repeat_ext'] = function (block) {
+        var repeats = py.valueToCode(block, 'TIMES', py.ORDER_NONE) || '0';
+        var branch = py.statementToCode(block, 'DO') || '  pass\n';
+        return 'for _ in range(' + repeats + '):\n  await asyncio.sleep(0)\n' + branch;
+      };
+
+      reg['controls_whileUntil'] = function (block) {
+        var until = block.getFieldValue('MODE') == 'UNTIL';
+        var argument0 = py.valueToCode(block, 'BOOL', until ? py.ORDER_LOGICAL_NOT : py.ORDER_NONE) || 'False';
+        var branch = py.statementToCode(block, 'DO') || '  pass\n';
+        if (until) {
+          argument0 = 'not ' + argument0;
+        }
+        return 'while ' + argument0 + ':\n  await asyncio.sleep(0)\n' + branch;
+      };
+
+      reg['controls_for'] = function (block) {
+        var variable0 = py.nameDB_ ? py.nameDB_.getName(block.getFieldValue('VAR'), Blockly.Names.NameType.VARIABLE) : block.getFieldValue('VAR');
+        var argument0 = py.valueToCode(block, 'FROM', py.ORDER_NONE) || '0';
+        var argument1 = py.valueToCode(block, 'TO', py.ORDER_NONE) || '0';
+        var step = py.valueToCode(block, 'BY', py.ORDER_NONE) || '1';
+        var branch = py.statementToCode(block, 'DO') || '  pass\n';
+        return 'for ' + variable0 + ' in range(' + argument0 + ', ' + argument1 + ' + 1, ' + step + '):\n  await asyncio.sleep(0)\n' + branch;
+      };
+
+      reg['controls_forEach'] = function (block) {
+        var variable0 = py.nameDB_ ? py.nameDB_.getName(block.getFieldValue('VAR'), Blockly.Names.NameType.VARIABLE) : block.getFieldValue('VAR');
+        var argument0 = py.valueToCode(block, 'LIST', py.ORDER_NONE) || '[]';
+        var branch = py.statementToCode(block, 'DO') || '  pass\n';
+        return 'for ' + variable0 + ' in ' + argument0 + ':\n  await asyncio.sleep(0)\n' + branch;
+      };
       reg['din_if_else'] = function (b) {
         const cond = py.valueToCode(b, 'COND', py.ORDER_NONE) || 'False';
         const doS = py.statementToCode(b, 'DO') || '  pass\n';
@@ -8078,8 +8119,123 @@
         const State = b.getFieldValue('STATE') || 0;
         return [`await async_object_output("${State}")`, py.ORDER_FUNCTION_CALL];
       };
+
+      // Wrap default procedure blocks to be async
+      const orig_defnoreturn = py.forBlock && py.forBlock['procedures_defnoreturn'] || py['procedures_defnoreturn'];
+      if (orig_defnoreturn) {
+        reg['procedures_defnoreturn'] = function (block, generator) {
+          let code = orig_defnoreturn.call(this, block, generator);
+          if (typeof code === 'string') return code.replace(/\bdef\s+/, 'async def ');
+          return code;
+        };
+      }
+      const orig_defreturn = py.forBlock && py.forBlock['procedures_defreturn'] || py['procedures_defreturn'];
+      if (orig_defreturn) {
+        reg['procedures_defreturn'] = function (block, generator) {
+          let code = orig_defreturn.call(this, block, generator);
+          if (typeof code === 'string') return code.replace(/\bdef\s+/, 'async def ');
+          return code;
+        };
+      }
+      const orig_callnoreturn = py.forBlock && py.forBlock['procedures_callnoreturn'] || py['procedures_callnoreturn'];
+      if (orig_callnoreturn) {
+        reg['procedures_callnoreturn'] = function (block, generator) {
+          let code = orig_callnoreturn.call(this, block, generator);
+          if (typeof code === 'string') return 'await ' + code;
+          return code;
+        };
+      }
+      const orig_callreturn = py.forBlock && py.forBlock['procedures_callreturn'] || py['procedures_callreturn'];
+      if (orig_callreturn) {
+        reg['procedures_callreturn'] = function (block, generator) {
+          let code = orig_callreturn.call(this, block, generator);
+          if (Array.isArray(code) && typeof code[0] === 'string') {
+            return ['await ' + code[0], code[1]];
+          }
+          return code;
+        };
+      }
     }
 
+
+    // =====================================================================
+    // BUTTON LOCK / MUTEX SYSTEM
+    // Prevents multiple concurrent operations (upload, play, stop, etc.)
+    // Only one operation can run at a time. All other buttons are disabled
+    // visually and functionally until the active operation completes.
+    // =====================================================================
+    let _operationLock = false;
+
+    /**
+     * The IDs of buttons that participate in the mutex.
+     * upload, playmode, stop, soft_reset, hard_reset are the main ops.
+     */
+    const LOCKABLE_BTN_IDS = ['upload', 'playmode', 'stop', 'soft_reset', 'hard_reset'];
+
+    /**
+     * Acquire the operation lock.
+     * @param {string} activeId - The button ID that is currently running.
+     * @returns {boolean} true if lock was acquired, false if already locked.
+     */
+    function acquireOpLock(activeId) {
+      if (_operationLock) return false;
+      _operationLock = true;
+
+      LOCKABLE_BTN_IDS.forEach(id => {
+        const btn = document.getElementById(id);
+        if (!btn) return;
+        if (id === activeId) {
+          // Show the active button as "busy"
+          btn.dataset._origText = btn.textContent;
+          btn.dataset._origOpacity = btn.style.opacity || '';
+          btn.style.opacity = '0.6';
+          btn.style.cursor = 'not-allowed';
+          btn.disabled = true;
+        } else {
+          // Dim and disable other buttons
+          btn.dataset._origOpacity = btn.style.opacity || '';
+          btn.dataset._origCursor = btn.style.cursor || '';
+          btn.style.opacity = '0.35';
+          btn.style.cursor = 'not-allowed';
+          btn.disabled = true;
+        }
+      });
+      return true;
+    }
+
+    /**
+     * Release the operation lock and restore all buttons.
+     */
+    function releaseOpLock() {
+      _operationLock = false;
+      LOCKABLE_BTN_IDS.forEach(id => {
+        const btn = document.getElementById(id);
+        if (!btn) return;
+        btn.disabled = false;
+        btn.style.opacity = btn.dataset._origOpacity || '';
+        btn.style.cursor = btn.dataset._origCursor || '';
+        delete btn.dataset._origOpacity;
+        delete btn.dataset._origCursor;
+        delete btn.dataset._origText;
+      });
+    }
+
+    /**
+     * Wraps an async operation with the button lock.
+     * Usage: await withOpLock('upload', async () => { ... your code ... });
+     * If already locked, logs a warning and returns without running the op.
+     */
+    async function withOpLock(activeId, asyncFn) {
+      if (!acquireOpLock(activeId)) {
+        handleBoardMessage('⚠️ Another operation is in progress. Please wait.', 'SYS');
+        return;
+      }
+      try {
+        await asyncFn();
+      } finally {
+        releaseOpLock();
+      }
+    }
 
     // =====================================================================
     // APP START
@@ -11064,44 +11220,8 @@
       updateCode();
 
       // ═══════════════════════════════════════════════════════════════════════
-      // SINGLE START BLOCK ENFORCEMENT
-      // Prevents more than one "start" block from existing in the workspace.
-      // If a second start block is dropped/created, it is immediately deleted
-      // and a toast warning is shown to the user.
-      // ═══════════════════════════════════════════════════════════════════════
-      workspace.addChangeListener(function (ev) {
-        if (ev.type !== Blockly.Events.BLOCK_CREATE) return;
-
-        // Find all start-type blocks currently in the workspace
-        const startBlocks = workspace.getAllBlocks(false).filter(
-          b => b.type === 'start'
-        );
-
-        // Only act if there are now more than one
-        if (startBlocks.length <= 1) return;
-
-        // The newly created block is the one whose id matches ev.blockId
-        // (or the first id in ev.ids for group creates)
-        const newIds = ev.ids || (ev.blockId ? [ev.blockId] : []);
-        const toDelete = startBlocks.find(b => newIds.includes(b.id));
-
-        if (toDelete) {
-          // Wrap in Blockly.Events.disable/enable so undo history stays clean
-          Blockly.Events.disable();
-          try {
-            toDelete.dispose(false, false);
-          } finally {
-            Blockly.Events.enable();
-          }
-
-          // Notify the user
-          if (typeof _showToast === 'function') {
-            _showToast('⚠️ Only one Start block is allowed!', 'warn');
-          } else {
-            console.warn('[Blockly] Duplicate start block removed — only one allowed.');
-          }
-        }
-      });
+      // MULTIPLE START BLOCKS ALLOWED
+      // (Single Start block enforcement removed per user request)
 
       // ═══════════════════════════════════════════════════════════════════════
       // LIVE MODE ENGINE — init
@@ -11129,21 +11249,33 @@
       // ── Button Handlers ──
 
       // PLAY
-      document.getElementById("playmode").onclick = async () => { await sendUnifiedCommand("PLAY"); };
+      document.getElementById("playmode").onclick = async () => {
+        await withOpLock("playmode", async () => {
+          await sendUnifiedCommand("PLAY");
+        });
+      };
 
       // STOP
-      document.getElementById("stop").onclick = async () => { await sendUnifiedCommand("STOP"); };
+      document.getElementById("stop").onclick = async () => {
+        await withOpLock("stop", async () => {
+          await sendUnifiedCommand("STOP");
+        });
+      };
 
       // SOFT RESET
       document.getElementById("soft_reset").onclick = async () => {
-        const ok = await sendUnifiedCommand("SOFT_RESET");
-        if (ok) handleBoardMessage("Soft Reset triggered", "SYS");
+        await withOpLock("soft_reset", async () => {
+          const ok = await sendUnifiedCommand("SOFT_RESET");
+          if (ok) handleBoardMessage("Soft Reset triggered", "SYS");
+        });
       };
 
       // HARD RESET
       document.getElementById("hard_reset").onclick = async () => {
-        const ok = await sendUnifiedCommand("HARD_RESET");
-        if (ok) handleBoardMessage("Hardware Rebooting…", "SYS");
+        await withOpLock("hard_reset", async () => {
+          const ok = await sendUnifiedCommand("HARD_RESET");
+          if (ok) handleBoardMessage("Hardware Rebooting…", "SYS");
+        });
       };
 
       // BLUETOOTH button – open scan popup
@@ -11163,19 +11295,21 @@
 
       // UPLOAD button
       document.getElementById("upload").onclick = async () => {
-        const code = pyGen.workspaceToCode(workspace);
-        if (!code.trim()) { alert("Please drag some blocks first!"); return; }
-        const asyncCode = wrapWithAsyncio(code);
+        await withOpLock("upload", async () => {
+          const code = pyGen.workspaceToCode(workspace);
+          if (!code.trim()) { alert("Please drag some blocks first!"); return; }
+          const asyncCode = wrapWithAsyncio(code);
 
-        if (isMobileApp()) {
-          // Mobile: hand off to App.js via bridge
-          handleBoardMessage("Uploading via Bluetooth…", "SYS");
-          window.ReactNativeWebView.postMessage(JSON.stringify({ type: "SEND_DATA", data: asyncCode }));
-          return;
-        }
+          if (isMobileApp()) {
+            // Mobile: hand off to App.js via bridge
+            handleBoardMessage("Uploading via Bluetooth…", "SYS");
+            window.ReactNativeWebView.postMessage(JSON.stringify({ type: "SEND_DATA", data: asyncCode }));
+            return;
+          }
 
-        // Desktop: unified upload (USB or BLE)
-        await unifiedUploadCode(asyncCode);
+          // Desktop: unified upload (USB or BLE)
+          await unifiedUploadCode(asyncCode);
+        });
       };
 
       // BOOT (save user.py via USB)
@@ -11353,7 +11487,7 @@
           Blockly.serialization.workspaces.load({
             blocks: {
               languageVersion: 0,
-              blocks: [{ type: "start", x: 40, y: 40, deletable: false, fields: { NAME: "when Start Button clicked" } }]
+              blocks: [{ type: "start", x: 40, y: 40, deletable: false }]
             }
           }, workspace);
 
@@ -11452,7 +11586,7 @@
             Blockly.serialization.workspaces.load({
               blocks: {
                 languageVersion: 0,
-                blocks: [{ type: "start", x: 40, y: 40, deletable: false, fields: { NAME: "when Start Button clicked" } }]
+                blocks: [{ type: "start", x: 40, y: 40, deletable: false }]
               }
             }, workspace);
             ProjectManager.autoSave();
@@ -11564,7 +11698,7 @@
             Blockly.serialization.workspaces.load({
               blocks: {
                 languageVersion: 0,
-                blocks: [{ type: "start", x: 40, y: 40, deletable: false, fields: { NAME: "when Start Button clicked" } }]
+                blocks: [{ type: "start", x: 40, y: 40, deletable: false }]
               }
             }, workspace);
           }
@@ -11582,7 +11716,7 @@
         Blockly.serialization.workspaces.load({
           blocks: {
             languageVersion: 0,
-            blocks: [{ type: "start", x: 40, y: 40, deletable: false, fields: { NAME: "when Start Button clicked" } }]
+            blocks: [{ type: "start", x: 40, y: 40, deletable: false }]
           }
         }, workspace);
         updateCode();
@@ -11671,7 +11805,7 @@
       Blockly.serialization.workspaces.load({
         blocks: {
           languageVersion: 0,
-          blocks: [{ type: "start", x: 40, y: 40, fields: { NAME: "when Start Button clicked" } }]
+          blocks: [{ type: "start", x: 40, y: 40 }]
         }
       }, workspace);
     }
