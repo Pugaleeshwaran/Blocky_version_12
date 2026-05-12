@@ -276,6 +276,39 @@
       transform: scale(0.95);
     }
 
+    /* ── AI Train button ── */
+    .button-ai-train {
+      padding: 12px 16px;
+      text-align: center;
+      color: white;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      border: 0px;
+      font-weight: 700;
+      font-size: 13px;
+      white-space: nowrap;
+      box-shadow: 0px 0px 14px -7px #a855f7;
+      background-image: linear-gradient(45deg, #7c3aed 0%, #a855f7 51%, #7c3aed 100%);
+      background-size: 200% auto;
+      cursor: pointer;
+      user-select: none;
+      touch-action: manipulation;
+      transition: 0.5s;
+      width: 100%;
+    }
+
+    .button-ai-train:hover {
+      background-position: right center;
+      color: #fff;
+    }
+
+    .button-ai-train:active {
+      transform: scale(0.95);
+    }
+
     .main {
       display: grid;
       grid-template-columns: 75% 23%;
@@ -2891,7 +2924,7 @@
       background: #fff;
       border: 1.5px solid #cbd5e1;
       border-radius: 10px;
-      box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
       padding: 4px;
       flex-direction: column;
       gap: 2px;
@@ -3747,6 +3780,9 @@
       <button class="button-87" id="stop" role="button">Stop</button>
       <button class="button-86" id="soft_reset" role="button">Soft Reset</button>
       <button class="button-86" id="hard_reset" role="button">Hard Reset</button>
+      <button class="button-ai-train" id="openAITrain" role="button" onclick="openAITrainScreen()">
+        🤖 AI Train
+      </button>
     </aside>
 
     <section class="main" style="position:relative;">
@@ -4011,6 +4047,23 @@
           ]
         },
 
+        // ── AI BLOCKS (original dark-red category — always visible) ──────
+        {
+          kind: 'category', name: 'AI blocks', colour: '#9c0000', id: 'cat_ai_blocks',
+          contents: [
+            { kind: 'block', type: 'ai_block' },
+            { kind: 'block', type: 'ai_output' },
+            { kind: 'block', type: 'object_de' },
+            { kind: 'block', type: 'object_out' },
+          ]
+        },
+
+        // ── A.I. VISION (starts empty — blocks injected after Deploy) ────
+        {
+          kind: 'category', name: 'A.I. Vision', colour: '#f54254', id: 'cat_ai_vision',
+          contents: []   // empty until Deploy to Blocks is clicked
+        },
+
         // ── SPI ──────────────────────────────────────────────────────────
         {
           kind: 'category', name: 'SPI', colour: '#2EB061', id: 'cat_spi', contents: [
@@ -4206,18 +4259,6 @@
           ]
         },
 
-        { kind: 'sep' },
-
-        // ── AI BLOCK ────────────────────────────────────────────────
-        {
-          kind: 'category', name: "AI blocks", colour: '#9c0000', id: 'cat_ai',
-          contents: [
-            { kind: 'block', type: 'ai_block' },
-            { kind: 'block', type: 'ai_output' },
-            { kind: 'block', type: 'object_de' },
-            { kind: 'block', type: 'object_out' },
-          ]
-        }
       ]
     };
   </script>
@@ -4723,6 +4764,14 @@
       <block type="procedures_callnoreturn">
         <field name="NAME">doSomething</field>
       </block>
+    </category>
+
+    <!-- A.I. Vision — same id as JSON toolbox; contents injected on Deploy from Training -->
+    <category name="A.I. Vision" colour="#f54254" id="cat_ai_blocks">
+      <block type="ai_block"></block>
+      <block type="ai_output"></block>
+      <block type="object_de"></block>
+      <block type="object_out"></block>
     </category>
   </xml>
 
@@ -7810,21 +7859,21 @@
           nextStatement: null,
           extensions: ["dc_color"]
         },
+        // ── Original AI Blocks (dropdown-based) ─────────────────────────
         {
           type: "ai_block",
           message0: "Ai Blocks %1",
-          args0: [
-            {
-              type: "field_dropdown",
-              name: "STATE", options:
-                [["Face Detection", "face_detection"],
-                ["Color Delection", "color_delection"],
-                ["Multi color Recognition", "multi_color_recognition"],
-                ["Same Color Object counting", "same_color_object_counting"],
-                ["QR Code Recognition", "qr_code_recognition"],
-                ["Live Camera", "live_camera"],
-                ["Train", "Train"]]
-            }],
+          args0: [{
+            type: "field_dropdown",
+            name: "STATE", options: [
+              ["Face Detection", "face_detection"],
+              ["Color Detection", "color_detection"],
+              ["Multi color Recognition", "multi_color_recognition"],
+              ["Same Color Object counting", "same_color_object_counting"],
+              ["QR Code Recognition", "qr_code_recognition"],
+              ["Live Camera", "live_camera"],
+              ["Train", "Train"]]
+          }],
           colour: "#FF69B4",
           previousStatement: null,
           nextStatement: null,
@@ -7833,18 +7882,17 @@
         {
           type: "ai_output",
           message0: "Ai Output %1",
-          args0: [
-            {
-              type: "field_dropdown",
-              name: "STATE", options:
-                [["Face Detection", "face_detection"],
-                ["Color Delection", "color_delection"],
-                ["Multi color Recognition", "multi_color_recognition"],
-                ["Same Color Object counting", "same_color_object_counting"],
-                ["QR Code Recognition", "qr_code_recognition"],
-                ["Live Camera", "live_camera"],
-                ["Train", "Train"]]
-            }],
+          args0: [{
+            type: "field_dropdown",
+            name: "STATE", options: [
+              ["Face Detection", "face_detection"],
+              ["Color Detection", "color_detection"],
+              ["Multi color Recognition", "multi_color_recognition"],
+              ["Same Color Object counting", "same_color_object_counting"],
+              ["QR Code Recognition", "qr_code_recognition"],
+              ["Live Camera", "live_camera"],
+              ["Train", "Train"]]
+          }],
           colour: "#FF69B4",
           output: "Boolean",
           extensions: ["servo_color"]
@@ -7852,26 +7900,16 @@
         {
           type: "object_de",
           message0: "Object Detection %1",
-          args0: [
-            {
-              type: "field_dropdown",
-              name: "STATE", options:
-                [["Person", "person"],
-                ["Bicycle", "bicycle"],
-                ["Car", "car"],
-                ["Motorcycle", "motorcycle"],
-                ["Airplane", "airplane"],
-                ["Bus", "bus"],
-                ["Train", "train"],
-                ["Truck", "truck"],
-                ["Boat", "boat"],
-                ["Traffic light", "traffic_light"],
-                ["Sports Ball", "sports_ball"],
-                ["Cup", "cup"],
-                ["Toothbrush", "toothbrush"],
-                ["Book", "book"],
-                ["Keyboard", "keyboard"]]
-            }],
+          args0: [{
+            type: "field_dropdown",
+            name: "STATE", options: [
+              ["Person", "person"], ["Bicycle", "bicycle"], ["Car", "car"],
+              ["Motorcycle", "motorcycle"], ["Airplane", "airplane"], ["Bus", "bus"],
+              ["Train", "train"], ["Truck", "truck"], ["Boat", "boat"],
+              ["Traffic light", "traffic_light"], ["Sports Ball", "sports_ball"],
+              ["Cup", "cup"], ["Toothbrush", "toothbrush"],
+              ["Book", "book"], ["Keyboard", "keyboard"]]
+          }],
           colour: "#FF69B4",
           previousStatement: null,
           nextStatement: null,
@@ -7879,30 +7917,82 @@
         },
         {
           type: "object_out",
-          message0: "Object Detection %1",
-          args0: [
-            {
-              type: "field_dropdown",
-              name: "STATE", options:
-                [["Person", "person"],
-                ["Bicycle", "bicycle"],
-                ["Car", "car"],
-                ["Motorcycle", "motorcycle"],
-                ["Airplane", "airplane"],
-                ["Bus", "bus"],
-                ["Train", "train"],
-                ["Truck", "truck"],
-                ["Boat", "boat"],
-                ["Traffic light", "traffic_light"],
-                ["Sports Ball", "sports_ball"],
-                ["Cup", "cup"],
-                ["Toothbrush", "toothbrush"],
-                ["Book", "book"],
-                ["Keyboard", "keyboard"]]
-            }],
+          message0: "Object Output %1",
+          args0: [{
+            type: "field_dropdown",
+            name: "STATE", options: [
+              ["Person", "person"], ["Bicycle", "bicycle"], ["Car", "car"],
+              ["Motorcycle", "motorcycle"], ["Airplane", "airplane"], ["Bus", "bus"],
+              ["Train", "train"], ["Truck", "truck"], ["Boat", "boat"],
+              ["Traffic light", "traffic_light"], ["Sports Ball", "sports_ball"],
+              ["Cup", "cup"], ["Toothbrush", "toothbrush"],
+              ["Book", "book"], ["Keyboard", "keyboard"]]
+          }],
           colour: "#FF69B4",
           output: "Boolean",
           extensions: ["servo_color"]
+        },
+
+        // ── A.I. Vision Blocks ───────────────────────────────────────────
+        {
+          type: 'ai_open_train',
+          message0: '🤖 Open AI Training Studio',
+          args0: [],
+          colour: '#7c3aed',
+          previousStatement: null,
+          nextStatement: null,
+          tooltip: 'Open the AI camera training screen to train your model.',
+          helpUrl: ''
+        },
+        {
+          type: 'ai_export_model',
+          message0: '📤 Export AI Model to Board',
+          args0: [],
+          colour: '#0ea5e9',
+          previousStatement: null,
+          nextStatement: null,
+          tooltip: 'Export the trained AI model to the connected board.',
+          helpUrl: ''
+        },
+        {
+          type: 'ai_classify_image',
+          message0: 'classify image → result %1',
+          args0: [{
+            type: 'field_dropdown',
+            name: 'CLASS',
+            options: [['Class1', 'Class1'], ['Class2', 'Class2']]
+          }],
+          colour: '#f54254',
+          previousStatement: null,
+          nextStatement: null,
+          tooltip: 'Run AI classification on camera feed.',
+          helpUrl: ''
+        },
+        {
+          type: 'ai_class_result',
+          message0: 'classifying result is %1',
+          args0: [{
+            type: 'field_dropdown',
+            name: 'CLASS',
+            options: [['Class1', 'Class1'], ['Class2', 'Class2']]
+          }],
+          colour: '#7c3aed',
+          output: 'Boolean',
+          tooltip: 'Returns true if the camera sees this class.',
+          helpUrl: ''
+        },
+        {
+          type: 'ai_class_reliability',
+          message0: 'reliability of %1',
+          args0: [{
+            type: 'field_dropdown',
+            name: 'CLASS',
+            options: [['Class1', 'Class1'], ['Class2', 'Class2']]
+          }],
+          colour: '#7c3aed',
+          output: 'Number',
+          tooltip: 'Returns 0–100 confidence score for this class.',
+          helpUrl: ''
         },
       ]);
 
@@ -8433,7 +8523,6 @@
         const State = b.getFieldValue('STATE') || 0;
         return [`await async_ai_output("${State}")`, py.ORDER_FUNCTION_CALL];
       };
-
       reg['object_de'] = b => {
         const State = b.getFieldValue('STATE') || 0;
         return `await async_object_detection("${State}")\n`;
@@ -8442,6 +8531,16 @@
         const State = b.getFieldValue('STATE') || 0;
         return [`await async_object_output("${State}")`, py.ORDER_FUNCTION_CALL];
       };
+
+      reg['ai_open_train'] = b => `await async_open_ai_training()  # opens AI Training Studio\n`;
+      reg['ai_export_model'] = b => `await async_export_ai_model()  # exports trained model to board\n`;
+      reg['ai_classify_image'] = b => {
+        const cls = b.getFieldValue('CLASS') || 'Class1';
+        return `await async_get_ai_classify_image("${cls}")\n`;
+      };
+      reg['ai_class_result'] = b => [`await async_result("${b.getFieldValue('CLASS')}")`, py.ORDER_RELATIONAL];
+      reg['ai_class_reliability'] = b => [`await async_get_reliability("${b.getFieldValue('CLASS')}")`, py.ORDER_FUNCTION_CALL];
+      reg['ai_infer'] = () => `await async_run_inference()\n`;
     }
 
 
@@ -9907,6 +10006,35 @@
         move: { scrollbars: true, drag: true, wheel: true },
         sound: true
       });
+
+      // ── AI Vision: inline custom blocks (not JSON-definable) ──────────────
+      Blockly.Blocks['ai_infer'] = {
+        init: function () {
+          this.appendDummyInput().appendField('🧠 Run AI Inference');
+          this.setPreviousStatement(true, null);
+          this.setNextStatement(true, null);
+          this.setColour('#f54254');
+          this.setTooltip('Trigger the AI inference loop on K230 KPU.');
+          this.setHelpUrl('');
+        }
+      };
+      Blockly.Python['ai_infer'] = () => 'run_inference()\n';
+
+      // ── AI block click handlers ────────────────────────────────────────
+      // When user clicks ai_open_train block → open training screen
+      Blockly.Blocks['ai_open_train'].onchange = function (e) {
+        if (e.type === Blockly.Events.BLOCK_CLICK && e.blockId === this.id) {
+          openAITrainScreen();
+        }
+      };
+      // When user clicks ai_export_model block → send export message
+      Blockly.Blocks['ai_export_model'].onchange = function (e) {
+        if (e.type === Blockly.Events.BLOCK_CLICK && e.blockId === this.id) {
+          const payload = JSON.stringify({ type: 'EXPORT_AI_MODEL' });
+          if (window.ReactNativeWebView) window.ReactNativeWebView.postMessage(payload);
+          else window.parent?.postMessage(payload, '*');
+        }
+      };
 
       // ─── FIX: Force correct height on Android WebView ──────────────────────
       // Android WebView often reports window.innerHeight incorrectly at load time
@@ -12604,6 +12732,141 @@
     });
 
     window.addEventListener('load', start);
+
+    // ── AI Train screen integration ────────────────────────────────────────
+    /**
+     * Opens the AI Training screen.
+     * - On mobile (React Native WebView): sends OPEN_AI_TRAIN to App.js
+     * - On web (expo web / browser): sends postMessage to parent iframe host
+     */
+    function openAITrainScreen() {
+      const payload = JSON.stringify({ type: 'OPEN_AI_TRAIN' });
+      if (window.ReactNativeWebView) {
+        window.ReactNativeWebView.postMessage(payload);
+      } else {
+        window.parent?.postMessage(payload, '*');
+        window.postMessage(payload, '*');
+      }
+    }
+
+    // ── AI_MODEL_TRAINED — inject trained blocks into A.I. Vision category ─
+    window.addEventListener('message', function (event) {
+      try {
+        const msg = typeof event.data === 'string' ? JSON.parse(event.data) : event.data;
+        if (!msg || msg.type !== 'AI_MODEL_TRAINED') return;
+
+        const classes = msg.classes;
+        if (!classes || classes.length < 1) return;
+
+        window._aiTrainedClasses = classes;
+        const opts = classes.map(c => [c, c]);
+
+        // 1. Re-define ai_class_result with trained dropdown
+        if (Blockly.Blocks['ai_class_result']) delete Blockly.Blocks['ai_class_result'];
+        Blockly.defineBlocksWithJsonArray([{
+          type: 'ai_class_result',
+          message0: 'classifying result is %1',
+          args0: [{ type: 'field_dropdown', name: 'CLASS', options: opts }],
+          colour: '#7c3aed', output: 'Boolean',
+          tooltip: 'Returns true if the camera sees this class.',
+        }]);
+
+        // 2. Re-define ai_class_reliability with trained dropdown
+        if (Blockly.Blocks['ai_class_reliability']) delete Blockly.Blocks['ai_class_reliability'];
+        Blockly.defineBlocksWithJsonArray([{
+          type: 'ai_class_reliability',
+          message0: 'reliability of %1',
+          args0: [{ type: 'field_dropdown', name: 'CLASS', options: opts }],
+          colour: '#7c3aed', output: 'Number',
+          tooltip: 'Returns 0–100 confidence score for this class.',
+        }]);
+
+        // 3. Re-define ai_classify_image with trained dropdown
+        if (Blockly.Blocks['ai_classify_image']) delete Blockly.Blocks['ai_classify_image'];
+        Blockly.defineBlocksWithJsonArray([{
+          type: 'ai_classify_image',
+          message0: 'classify image → result %1',
+          args0: [{ type: 'field_dropdown', name: 'CLASS', options: opts }],
+          colour: '#f54254', previousStatement: null, nextStatement: null,
+          tooltip: 'Run AI classification on camera feed.',
+        }]);
+
+        // 4. Patch existing workspace blocks
+        if (typeof workspace !== 'undefined' && workspace) {
+          workspace.getAllBlocks(false).forEach(function (block) {
+            if (['ai_class_result', 'ai_class_reliability', 'ai_classify_image'].includes(block.type)) {
+              const field = block.getField('CLASS');
+              if (field) {
+                field.menuGenerator_ = opts;
+                const cur = field.getValue();
+                if (!opts.some(o => o[1] === cur)) field.setValue(opts[0][1]);
+                field.forceRerender();
+              }
+            }
+          });
+        }
+
+        // 5. Update A.I. Vision category in the JS toolboxConfig directly
+        //    This avoids switching from JS config to XML config (which breaks layout)
+        try {
+          if (typeof workspace !== 'undefined' && workspace && window.toolboxConfig) {
+            // Build the trained contents array
+            var trainedContents = [
+              { kind: 'block', type: 'ai_open_train' },
+              { kind: 'block', type: 'ai_export_model' },
+              { kind: 'block', type: 'ai_infer' },
+              { kind: 'block', type: 'ai_classify_image' },
+              { kind: 'block', type: 'ai_class_result' },
+              { kind: 'block', type: 'ai_class_reliability' },
+            ];
+
+            // Walk the JS toolboxConfig contents tree and find cat_ai_vision
+            function findAndUpdate(items) {
+              if (!items) return false;
+              for (var i = 0; i < items.length; i++) {
+                var item = items[i];
+                if (item.id === 'cat_ai_vision') {
+                  item.contents = trainedContents;
+                  return true;
+                }
+                if (item.contents && findAndUpdate(item.contents)) return true;
+              }
+              return false;
+            }
+            findAndUpdate(window.toolboxConfig.contents);
+
+            // Update Blockly with the modified JS config — keeps original layout
+            workspace.updateToolbox(window.toolboxConfig);
+
+            // Open the A.I. Vision category so user sees new blocks immediately
+            setTimeout(function () {
+              try {
+                var tb = workspace.getToolbox();
+                var aiItem = tb.getToolboxItems().find(function (item) {
+                  return item.getName && item.getName() === 'A.I. Vision';
+                });
+                if (aiItem) tb.setSelectedItem(aiItem);
+              } catch (e) { }
+            }, 150);
+          }
+        } catch (e) {
+          console.warn('Toolbox update error:', e);
+        }
+
+        // 6. Toast notification
+        const toast = document.getElementById('liveModeToast');
+        if (toast) {
+          toast.textContent = '🧠 AI blocks ready! Classes: ' + classes.join(', ');
+          toast.style.display = 'block'; toast.style.opacity = '1';
+          setTimeout(() => { toast.style.opacity = '0'; setTimeout(() => { toast.style.display = 'none'; }, 500); }, 3500);
+        }
+
+        console.log('[AI Train] Toolbox updated for classes:', classes);
+
+      } catch (e) {
+        console.warn('[AI Train] message parse error:', e);
+      }
+    });
 
   </script>
   <div id="liveModeToast" class="live-toast"></div>

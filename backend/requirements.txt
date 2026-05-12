@@ -1,0 +1,12 @@
+fastapi
+uvicorn
+python-multipart
+tensorflow==2.13.0
+tensorflowjs==4.2.0
+tf2onnx==1.15.1
+onnx==1.14.1
+protobuf==3.20.3
+numpy
+nncase-kpu
+httpx
+tensorflow-hub

@@ -1,0 +1,2273 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Model Training — MobileNet V3</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.10.0/dist/tf.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"></script>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: system-ui, -apple-system, sans-serif;
+            background: #f8fafc;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        /* ── Header ─────────────────────────────────────────────── */
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: #fff;
+            padding: 12px 20px;
+            border-bottom: 1px solid #e2e8f0;
+            box-shadow: 0 1px 4px rgba(0, 0, 0, .06);
+            flex-shrink: 0;
+        }
+
+        .back-btn {
+            padding: 8px 14px;
+            background: #f1f5f9;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 600;
+            color: #475569;
+        }
+
+        .back-btn:hover {
+            background: #e2e8f0;
+        }
+
+        .header h1 {
+            font-size: 18px;
+            font-weight: 700;
+            color: #1e293b;
+        }
+
+        .deploy-btn {
+            padding: 8px 16px;
+            background: #f54254;
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 700;
+            transition: opacity .2s;
+        }
+
+        .deploy-btn:disabled {
+            opacity: .4;
+            cursor: not-a /llowed;
+        }
+
+        .deploy-btn:not(:disabled):hover {
+            opacity: .85;
+        }
+
+        .reset-btn {
+            padding: 8px 14px;
+            background: #fef3c7;
+            border: 1.5px solid #fcd34d;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 13px;6
+            font-weight: 600;
+            color: #92400e;
+            transition: background .15s;
+        }
+
+        .reset-btn:hover {
+            background: #fde68a;
+        }
+
+        /* ── Status bar ─────────────────────────────────────────── */
+        .status-bar {
+            background: #f1f5f9;
+            padding: 6px 20px;
+            font-size: 13px;
+            color: #475569;
+            min-height: 30px;
+            flex-shrink: 0;
+        }
+
+        /* ── Layout ─────────────────────────────────────────────── */
+        .columns {
+            display: flex;
+            flex-direction: row;
+            gap: 16px;
+            padding: 16px;
+            overflow-x: auto;
+            overflow-y: auto;
+            flex: 1;
+            align-items: flex-start;
+        }
+
+        .col {
+            width: 340px;
+            flex-shrink: 0;
+        }
+
+        .col-title {
+            font-size: 15px;
+            font-weight: 700;
+            color: #374151;
+            margin-bottom: 12px;
+        }
+
+        .arrow {
+            display: flex;
+            align-items: flex-start;
+            padding-top: 180px;
+            font-size: 28px;
+            color: #cbd5e1;
+            flex-shrink: 0;
+        }
+
+        /* ── Crop Size ──────────────────────────────────────────── */
+        .crop-size-bar {
+            background: #fff;
+            border-radius: 12px;
+            padding: 12px 14px;
+            margin-bottom: 12px;
+            box-shadow: 0 1px 4px rgba(0, 0, 0, .06);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .crop-size-label {
+            font-size: 13px;
+            font-weight: 600;
+            color: #374151;
+            white-space: nowrap;
+        }
+
+        .crop-size-select {
+            flex: 1;
+            padding: 6px 10px;
+            border: 1.5px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 700;
+            color: #1e293b;
+            background: #f8fafc;
+            cursor: pointer;
+            outline: none;
+            transition: border-color .15s;
+        }
+
+        .crop-size-select:focus {
+            border-color: #f54254;
+        }
+
+        .crop-size-badge {
+            font-size: 10px;
+            font-weight: 700;
+            padding: 3px 8px;
+            border-radius: 10px;
+            white-space: nowrap;
+        }
+
+        .badge-224 {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .badge-320 {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+
+        .badge-480 {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .crop-size-hint {
+            font-size: 11px;
+            color: #94a3b8;
+            margin-top: 6px;
+            line-height: 1.5;
+        }
+
+        /* ── Class Cards ────────────────────────────────────────── */
+        .class-card {
+            background: #fff;
+            border-radius: 12px;
+            padding: 14px;
+            margin-bottom: 12px;
+            box-shadow: 0 1px 4px rgba(0, 0, 0, .06);
+            border-left: 4px solid #ccc;
+        }
+
+        .class-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 10px;
+        }
+
+        .class-name {
+            flex: 1;
+            font-size: 15px;
+            font-weight: 700;
+            border: none;
+            border-bottom: 1.5px solid #e2e8f0;
+            outline: none;
+            background: transparent;
+            padding-bottom: 2px;
+        }
+
+        .sample-count {
+            font-size: 12px;
+            color: #94a3b8;
+            white-space: nowrap;
+        }
+
+        .remove-btn {
+            background: none;
+            border: none;
+            color: #94a3b8;
+            cursor: pointer;
+            font-size: 14px;
+            padding: 2px 4px;
+        }
+
+        .remove-btn:hover {
+            color: #ef4444;
+        }
+
+        .cam-area {
+            margin-bottom: 8px;
+        }
+
+        .add-btns {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 4px;
+        }
+
+        .add-btn {
+            flex: 1;
+            padding: 10px;
+            border-radius: 8px;
+            border: 1.5px solid;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 600;
+            background: transparent;
+            transition: opacity .15s;
+        }
+
+        .add-btn:hover {
+            opacity: .75;
+        }
+
+        .video-wrap {
+            position: relative;
+            margin-bottom: 8px;
+        }
+
+        .live-video {
+            width: 100%;
+            height: 160px;
+            object-fit: cover;
+            border-radius: 8px;
+            background: #000;
+            display: block;
+        }
+
+        .crop-overlay {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 70%;
+            height: 70%;
+            border: 2px dashed rgba(255, 255, 255, .7);
+            border-radius: 8px;
+            pointer-events: none;
+        }
+
+        .cam-btns {
+            display: flex;
+            gap: 8px;
+            margin-top: 8px;
+        }
+
+        .hold-btn {
+            flex: 1;
+            padding: 10px;
+            border: none;
+            border-radius: 8px;
+            color: #fff;
+            font-weight: 700;
+            cursor: pointer;
+            font-size: 13px;
+            user-select: none;
+            -webkit-user-select: none;
+        }
+
+        .stop-cam-btn {
+            padding: 10px 14px;
+            border: none;
+            border-radius: 8px;
+            background: #f1f5f9;
+            color: #64748b;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .thumbs {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+            margin-top: 8px;
+        }
+
+        .thumb-wrap {
+            position: relative;
+        }
+
+        .thumb-wrap img {
+            width: 54px;
+            height: 54px;
+            object-fit: cover;
+            border-radius: 6px;
+            display: block;
+        }
+
+        .thumb-del {
+            position: absolute;
+            top: -4px;
+            right: -4px;
+            width: 16px;
+            height: 16px;
+            background: #ef4444;
+            color: #fff;
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 9px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            line-height: 1;
+        }
+
+        .add-class-btn {
+            border: 2px dashed #e2e8f0;
+            border-radius: 10px;
+            padding: 14px;
+            text-align: center;
+            color: #94a3b8;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 14px;
+            background: none;
+            width: 100%;
+            margin-top: 4px;
+            transition: border-color .15s;
+        }
+
+        .add-class-btn:hover {
+            border-color: #94a3b8;
+        }
+
+        .add-bg-btn {
+            border: 2px dashed #f59e0b;
+            border-radius: 10px;
+            padding: 10px 14px;
+            text-align: center;
+            color: #92400e;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 13px;
+            background: #fffbeb;
+            width: 100%;
+            margin-top: 8px;
+            transition: all .15s;
+        }
+
+        .add-bg-btn:hover {
+            background: #fef3c7;
+        }
+
+        .tips-box {
+            background: #f0fdf4;
+            border: 1px solid #86efac;
+            border-radius: 8px;
+            padding: 10px 14px;
+            margin-top: 12px;
+            font-size: 12px;
+            color: #166534;
+            line-height: 1.7;
+        }
+
+        .warn-box {
+            background: #fffbeb;
+            border: 1px solid #fcd34d;
+            border-radius: 8px;
+            padding: 10px 14px;
+            margin-top: 8px;
+            font-size: 12px;
+            color: #92400e;
+            line-height: 1.7;
+        }
+
+        /* ── Train Card ─────────────────────────────────────────── */
+        .train-card {
+            background: #fff;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 1px 4px rgba(0, 0, 0, .06);
+        }
+
+        .state-ready {
+            text-align: center;
+            padding: 20px 0;
+        }
+
+        .state-ready .icon {
+            font-size: 36px;
+            margin-bottom: 8px;
+        }
+
+        .state-ready h3 {
+            font-size: 15px;
+            font-weight: 600;
+            color: #374151;
+            margin-bottom: 4px;
+        }
+
+        .state-ready p {
+            font-size: 12px;
+            color: #94a3b8;
+        }
+
+        .state-progress {
+            text-align: center;
+            padding: 20px 0;
+        }
+
+        .progress-pct {
+            font-size: 32px;
+            font-weight: 800;
+            color: #f54254;
+            margin-bottom: 8px;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 6px;
+            background: #f1f5f9;
+            border-radius: 3px;
+            overflow: hidden;
+            margin-bottom: 8px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: #f54254;
+            border-radius: 3px;
+            transition: width .2s ease;
+        }
+
+        .progress-label {
+            font-size: 13px;
+            color: #94a3b8;
+        }
+
+        .state-done {
+            text-align: center;
+            padding: 16px 0;
+        }
+
+        .state-done .icon {
+            font-size: 36px;
+            margin-bottom: 8px;
+        }
+
+        .state-done h3 {
+            font-size: 17px;
+            font-weight: 700;
+            color: #10b981;
+            margin-bottom: 4px;
+        }
+
+        .state-done p {
+            font-size: 13px;
+            color: #94a3b8;
+        }
+
+        .retrain-btn {
+            margin-top: 8px;
+            padding: 6px 16px;
+            background: #f1f5f9;
+            border: none;
+            border-radius: 6px;
+            color: #64748b;
+            font-weight: 600;
+            font-size: 13px;
+            cursor: pointer;
+        }
+
+        .train-btn {
+            width: 100%;
+            padding: 14px;
+            background: #f54254;
+            color: #fff;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 800;
+            cursor: pointer;
+            margin-top: 16px;
+            transition: opacity .2s;
+        }
+
+        .train-btn:disabled {
+            opacity: .4;
+            cursor: not-allowed;
+        }
+
+        .train-btn:not(:disabled):hover {
+            opacity: .85;
+        }
+
+        .stats {
+            margin-top: 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .stat-row {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .stat-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            flex-shrink: 0;
+        }
+
+        .stat-name {
+            flex: 1;
+            font-size: 13px;
+            color: #374151;
+            font-weight: 500;
+        }
+
+        .stat-count {
+            font-size: 13px;
+            color: #94a3b8;
+            font-weight: 600;
+        }
+
+        /* ── Preview Card ───────────────────────────────────────── */
+        .preview-card {
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 1px 4px rgba(0, 0, 0, .06);
+            overflow: hidden;
+        }
+
+        .preview-header {
+            padding: 14px 16px 10px;
+            border-bottom: 1px solid #f1f5f9;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .preview-title {
+            font-size: 14px;
+            font-weight: 700;
+            color: #374151;
+        }
+
+        .model-badge {
+            font-size: 10px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #7c3aed, #0ea5e9);
+            color: #fff;
+            padding: 2px 8px;
+            border-radius: 10px;
+        }
+
+        .test-video {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            background: #0f172a;
+            display: none;
+        }
+
+        .no-cam-placeholder {
+            width: 100%;
+            height: 200px;
+            background: #0f172a;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: #475569;
+            font-size: 13px;
+            gap: 8px;
+        }
+
+        .no-cam-placeholder .cam-icon {
+            font-size: 32px;
+        }
+
+        .detect-status {
+            padding: 12px 16px;
+            border-bottom: 1px solid #f1f5f9;
+            min-height: 56px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: all .2s;
+        }
+
+        .output-section {
+            padding: 14px 16px;
+        }
+
+        .output-title {
+            font-size: 11px;
+            font-weight: 700;
+            color: #94a3b8;
+            text-transform: uppercase;
+            letter-spacing: .05em;
+            margin-bottom: 12px;
+        }
+
+        .output-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 12px;
+        }
+
+        .output-label {
+            width: 80px;
+            font-size: 13px;
+            font-weight: 700;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
+
+        .output-bar-wrap {
+            flex: 1;
+            height: 28px;
+            background: #f1f5f9;
+            border-radius: 6px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .output-bar-fill {
+            height: 100%;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            padding-right: 8px;
+            min-width: 0;
+            transition: width .15s ease;
+        }
+
+        .output-bar-pct {
+            font-size: 12px;
+            font-weight: 800;
+            color: #fff;
+            white-space: nowrap;
+        }
+
+        .output-bar-pct-outside {
+            position: absolute;
+            right: 8px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 12px;
+            font-weight: 700;
+            color: #94a3b8;
+        }
+
+        .threshold-wrap {
+            padding: 10px 16px;
+            background: #fafafa;
+            border-top: 1px solid #f1f5f9;
+        }
+
+        .threshold-label {
+            display: flex;
+            justify-content: space-between;
+            font-size: 11px;
+            font-weight: 600;
+            color: #64748b;
+            margin-bottom: 5px;
+        }
+
+        .threshold-slider {
+            width: 100%;
+            accent-color: #f54254;
+            cursor: pointer;
+        }
+
+        /* ── Action buttons ─────────────────────────────────────── */
+        .action-wrap {
+            padding: 12px 16px 16px;
+        }
+
+        .action-btn {
+            width: 100%;
+            padding: 14px;
+            border: none;
+            border-radius: 10px;
+            font-size: 15px;
+            font-weight: 800;
+            cursor: pointer;
+            margin-top: 8px;
+            color: #fff;
+            transition: opacity .2s;
+        }
+
+        .action-btn:disabled {
+            opacity: .4;
+            cursor: not-allowed;
+        }
+
+        .action-btn:not(:disabled):hover {
+            opacity: .85;
+        }
+
+        .btn-test {
+            background: #0ea5e9;
+        }
+
+        .btn-deploy {
+            background: #7c3aed;
+        }
+
+        .btn-export {
+            background: #10b981;
+        }
+
+        .btn-deploy-k230 {
+            background: #f59e0b;
+        }
+
+        /* ── K230 Settings Panel ────────────────────────────────── */
+        .k230-settings {
+            margin-top: 12px;
+            font-size: 12px;
+            color: #64748b;
+            background: #f8fafc;
+            padding: 10px;
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+            display: flex;
+            flex-direction: column;
+            gap: 7px;
+        }
+
+        .k230-row {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            flex-wrap: wrap;
+        }
+
+        .k230-input {
+            border: 1px solid #cbd5e1;
+            border-radius: 4px;
+            padding: 4px 6px;
+            font-size: 12px;
+            outline: none;
+            color: #1e293b;
+            font-weight: 600;
+            background: #fff;
+        }
+
+        .k230-input:focus {
+            border-color: #f59e0b;
+        }
+
+        .k230-select {
+            border: 1px solid #cbd5e1;
+            border-radius: 4px;
+            padding: 4px 6px;
+            font-size: 12px;
+            font-weight: 600;
+            color: #1e293b;
+            background: #fff;
+            cursor: pointer;
+            outline: none;
+        }
+
+        .k230-select:focus {
+            border-color: #f59e0b;
+        }
+
+        /* ── USB Transfer Progress Panel ────────────────────────── */
+        .usb-progress-panel {
+            display: none;
+            background: #0f172a;
+            border-radius: 8px;
+            padding: 12px 14px;
+            margin-top: 10px;
+            border: 1px solid #1e293b;
+        }
+
+        .usb-progress-panel.visible {
+            display: block;
+        }
+
+        .usb-progress-title {
+            font-size: 11px;
+            font-weight: 700;
+            color: #64748b;
+            text-transform: uppercase;
+            letter-spacing: .06em;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .usb-file-row {
+            margin-bottom: 8px;
+        }
+
+        .usb-file-label {
+            font-size: 11px;
+            font-weight: 600;
+            color: #94a3b8;
+            margin-bottom: 4px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .usb-file-label span:last-child {
+            color: #f59e0b;
+            font-family: monospace;
+        }
+
+        .usb-file-bar {
+            width: 100%;
+            height: 5px;
+            background: #1e293b;
+            border-radius: 3px;
+            overflow: hidden;
+        }
+
+        .usb-file-fill {
+            height: 100%;
+            border-radius: 3px;
+            transition: width .1s linear;
+            width: 0%;
+        }
+
+        .usb-log {
+            font-family: 'Courier New', monospace;
+            font-size: 10px;
+            color: #475569;
+            margin-top: 8px;
+            line-height: 1.7;
+            max-height: 60px;
+            overflow-y: auto;
+        }
+
+        .usb-log .ok {
+            color: #10b981;
+        }
+
+        .usb-log .err {
+            color: #ef4444;
+        }
+
+        .usb-log .warn {
+            color: #f59e0b;
+        }
+
+        .usb-log .info {
+            color: #38bdf8;
+        }
+
+        /* ── WebSerial unsupported notice ───────────────────────── */
+        .serial-warn {
+            display: none;
+            background: #fff7ed;
+            border: 1px solid #fed7aa;
+            border-radius: 6px;
+            padding: 8px 12px;
+            font-size: 11px;
+            color: #9a3412;
+            margin-top: 8px;
+            line-height: 1.6;
+        }
+
+        .serial-warn.show {
+            display: block;
+        }
+
+        /* ── Misc ───────────────────────────────────────────────── */
+        .hint {
+            font-size: 11px;
+            color: #94a3b8;
+            text-align: center;
+            margin-top: 10px;
+            line-height: 1.6;
+        }
+
+        .spinner {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            border: 2px solid rgba(255, 255, 255, .4);
+            border-top-color: #fff;
+            border-radius: 50%;
+            animation: spin .7s linear infinite;
+            vertical-align: middle;
+            margin-right: 6px;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .pulse-dot {
+            display: inline-block;
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: #f59e0b;
+            animation: pulseD 1.4s ease infinite;
+        }
+
+        @keyframes pulseD {
+
+            0%,
+            100% {
+                opacity: 1;
+                transform: scale(1)
+            }
+
+            50% {
+                opacity: .3;
+                transform: scale(.7)
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="header">
+        <button class="back-btn" onclick="goBack()">← Workspace</button>
+        <h1>Model Training</h1>
+        <div style="display:flex;gap:8px;align-items:center;">
+            <button class="reset-btn" id="resetPageBtn" onclick="resetPage()"
+                title="Reset everything — clear all images and model">🔄 Reset</button>
+            <button class="deploy-btn" id="deployHeaderBtn" onclick="deployToBlockly()" disabled>
+                Deploy to Blocks →
+            </button>
+        </div>
+    </div>
+
+    <div class="status-bar" id="statusBar"></div>
+
+    <div class="columns">
+
+        <!-- ── Column 1: Collect ── -->
+        <div class="col">
+            <div class="col-title">1. Collect Images</div>
+            <div class="crop-size-bar">
+                <span class="crop-size-label">📐 Crop Size</span>
+                <select class="crop-size-select" id="cropSizeSelect" onchange="updateCropSize(this.value)">
+                    <option value="224">224 px — Fast</option>
+                    <option value="320" selected>320 px — Balanced</option>
+                    <option value="480">480 px — Sharp</option>
+                </select>
+                <span class="crop-size-badge badge-320" id="cropSizeBadge">Balanced</span>
+            </div>
+            <div class="crop-size-hint" style="margin-bottom:12px;padding:0 2px;">
+                Controls the intermediate capture canvas before the model's 224×224 resize.
+                Larger = more detail preserved during crop.
+            </div>
+            <div id="classList"></div>
+            <button class="add-class-btn" onclick="addClass()">+ Add a Class</button>
+            <button class="add-bg-btn" onclick="addBackgroundClass()">
+                🌄 + Add Background Class (recommended)
+            </button>
+            <div class="tips-box">
+                💡 <b>Tips for specific object detection:</b><br>
+                • Fill frame with your object (60%+)<br>
+                • Capture from 5 different locations<br>
+                • Different angles and distances<br>
+                • Always add a Background class<br>
+                • 50+ images per class minimum
+            </div>
+            <div class="warn-box">
+                ⚠️ <b>Avoid background issues:</b><br>
+                • Never capture all images in same spot<br>
+                • Move to different rooms/walls<br>
+                • Background class teaches "nothing here"
+            </div>
+        </div>
+
+        <div class="arrow">→</div>
+
+        <!-- ── Column 2: Train ── -->
+        <div class="col">
+            <div class="col-title">2. Train Model</div>
+            <div class="train-card">
+                <div id="trainStateBox">
+                    <div class="state-ready">
+                        <div class="icon">🧠</div>
+                        <h3>Ready to train.</h3>
+                        <p>Add at least 10 images per class<br>then press Train.</p>
+                    </div>
+                </div>
+                <button class="train-btn" id="trainBtn" onclick="trainModel()">Train Model</button>
+                <div class="stats" id="statsList"></div>
+            </div>
+        </div>
+
+        <div class="arrow">→</div>
+
+        <!-- ── Column 3: Preview & Deploy ── -->
+        <div class="col">
+            <div class="col-title">3. Preview &amp; Deploy</div>
+            <div class="preview-card">
+
+                <div class="preview-header">
+                    <div style="display:flex;align-items:center;gap:8px;">
+                        <span class="preview-title">Preview</span>
+                        <span class="model-badge">MobileNet V3</span>
+                    </div>
+                    <button class="action-btn btn-test" id="testBtn" onclick="toggleTestWebcam()" disabled
+                        style="width:auto;padding:6px 14px;font-size:12px;margin-top:0">
+                        Start Webcam
+                    </button>
+                </div>
+
+                <div id="videoWrap">
+                    <div class="no-cam-placeholder" id="camPlaceholder">
+                        <div class="cam-icon">📷</div>
+                        <div>Start webcam to preview</div>
+                        <div style="font-size:11px;color:#334155;">Using MobileNet V3 — best accuracy</div>
+                    </div>
+                    <video id="testVideo" class="test-video" autoplay playsinline muted></video>
+                </div>
+
+                <div class="detect-status" id="detectStatus">
+                    <div style="width:36px;height:36px;border-radius:50%;background:#f1f5f9;
+                     display:flex;align-items:center;justify-content:center;
+                     font-size:18px;flex-shrink:0;">🔍</div>
+                    <div>
+                        <div style="font-size:13px;font-weight:700;color:#94a3b8;">Not Detected</div>
+                        <div style="font-size:11px;color:#cbd5e1;margin-top:1px;">Train model and start webcam</div>
+                    </div>
+                </div>
+
+                <div class="output-section">
+                    <div class="output-title">Output</div>
+                    <div id="outputBars"></div>
+                </div>
+
+                <div class="threshold-wrap">
+                    <div class="threshold-label">
+                        <span>Detection Threshold</span>
+                        <span id="thresholdValue">85%</span>
+                    </div>
+                    <input type="range" class="threshold-slider" id="thresholdSlider" min="50" max="99" value="85"
+                        oninput="updateThreshold(this.value)" />
+                </div>
+
+                <div class="action-wrap">
+                    <button class="action-btn btn-deploy" id="deployCardBtn" onclick="deployToBlockly()" disabled>
+                        Deploy to Blockly
+                    </button>
+                    <button class="action-btn btn-deploy-k230" id="deployK230Btn" onclick="deployToK230()" disabled>
+                        🚀 Deploy to K230
+                    </button>
+                    <button class="action-btn btn-export" id="exportBtn" onclick="exportKmodel()" disabled>
+                        Export .kmodel (Local)
+                    </button>
+
+                    <!-- ── K230 Settings ── -->
+                    <div class="k230-settings">
+                        <div class="k230-row">
+                            <span>Method:</span>
+                            <select class="k230-select" id="deployMethodInput"
+                                onchange="onDeployMethodChange(this.value)">
+                                <option value="wifi" selected>Wi-Fi</option>
+                                <option value="usb">USB (WebSerial)</option>
+                            </select>
+                        </div>
+                        <!-- Wi-Fi settings -->
+                        <div class="k230-row" id="wifiRow">
+                            <span>K230 IP:</span>
+                            <input type="text" class="k230-input" id="k230IpInput" value="192.168.4.1"
+                                style="width:110px;">
+                            <span>Port:</span>
+                            <input type="text" class="k230-input" id="k230PortInput" value="8080" style="width:50px;">
+                        </div>
+                        <!-- USB baud rate (hidden by default) -->
+                        <div class="k230-row" id="usbBaudRow" style="display:none;">
+                            <span>Baud:</span>
+                            <select class="k230-select" id="usbBaudSelect">
+                                <option value="115200">115200 — safe</option>
+                                <option value="921600" selected>921600 — fast</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- WebSerial not-supported warning -->
+                    <div class="serial-warn" id="serialWarn">
+                        ⚡ <b>USB requires Chrome / Edge v89+</b> on desktop.<br>
+                        Switch to Wi-Fi or open in a supported browser.
+                    </div>
+
+                    <!-- USB live progress panel -->
+                    <div class="usb-progress-panel" id="usbProgressPanel">
+                        <div class="usb-progress-title">
+                            <span class="pulse-dot"></span> USB Transfer
+                        </div>
+                        <div class="usb-file-row">
+                            <div class="usb-file-label">
+                                <span>model.kmodel</span><span id="usbFile1Pct">0%</span>
+                            </div>
+                            <div class="usb-file-bar">
+                                <div class="usb-file-fill" id="usbFile1Fill" style="background:#f59e0b;"></div>
+                            </div>
+                        </div>
+                        <div class="usb-file-row">
+                            <div class="usb-file-label">
+                                <span>labels.txt</span><span id="usbFile2Pct">0%</span>
+                            </div>
+                            <div class="usb-file-bar">
+                                <div class="usb-file-fill" id="usbFile2Fill" style="background:#38bdf8;"></div>
+                            </div>
+                        </div>
+                        <div class="usb-log" id="usbLog"></div>
+                    </div>
+
+                    <p class="hint">
+                        <b>Deploy to Blockly</b> adds AI blocks.<br>
+                        <b>Deploy to K230</b> pushes model directly to board.<br>
+                        <b>Export</b> downloads model locally.
+                    </p>
+                </div>
+
+            </div>
+        </div>
+
+    </div><!-- /columns -->
+
+    <script>
+        'use strict';
+
+        // ══════════════════════════════════════════════════════════════
+        // CONFIG
+        // ══════════════════════════════════════════════════════════════
+        const CONVERT_SERVER = 'https://merge-content-convicted-introduce.trycloudflare.com';
+
+        const MOBILENET_V3_URL =
+            'https://tfhub.dev/google/tfjs-model/imagenet/' +
+            'mobilenet_v3_small_100_224/feature_vector/5/default/1';
+
+        // Raw-REPL chunk size: 192 bytes → 384 hex chars, safe for line buffer
+        const CHUNK_BYTES = 512;
+
+        // WebSerial availability
+        const SERIAL_SUPPORTED = 'serial' in navigator;
+
+        // ══════════════════════════════════════════════════════════════
+        // WEBSERIAL STATE
+        // ══════════════════════════════════════════════════════════════
+        const ENC = new TextEncoder();
+        const DEC = new TextDecoder();
+        let port = null, portReader = null, portWriter = null;
+        let connected = false, rxBuf = '';
+        const rxHooks = [];
+
+        // ── USB log ──────────────────────────────────────────────────
+        function usbLog(msg, cls = '') {
+            const el = document.getElementById('usbLog');
+            if (!el) return;
+            const line = document.createElement('div');
+            if (cls) line.className = cls;
+            line.textContent = msg;
+            el.appendChild(line);
+            el.scrollTop = el.scrollHeight;
+        }
+        function usbLogClear() { const el = document.getElementById('usbLog'); if (el) el.innerHTML = ''; }
+
+        // ── USB progress ─────────────────────────────────────────────
+        function usbSetProgress(idx, pct) {
+            const p = Math.round(pct * 100);
+            const pEl = document.getElementById(`usbFile${idx}Pct`);
+            const fEl = document.getElementById(`usbFile${idx}Fill`);
+            if (pEl) pEl.textContent = p + '%';
+            if (fEl) fEl.style.width = p + '%';
+        }
+        function showUsbPanel(v) { document.getElementById('usbProgressPanel')?.classList.toggle('visible', v); }
+        function resetUsbPanel() { usbSetProgress(1, 0); usbSetProgress(2, 0); usbLogClear(); showUsbPanel(false); }
+
+        // ── Port lifecycle ───────────────────────────────────────────
+        async function cleanupPort() {
+            connected = false;
+            try { portReader && await portReader.cancel(); } catch { }
+            try { portReader && portReader.releaseLock(); } catch { }
+            try { portWriter && await portWriter.close(); } catch { }
+            try { portWriter && portWriter.releaseLock(); } catch { }
+            try { port && await port.close(); } catch { }
+            port = portReader = portWriter = null;
+        }
+
+        async function rxPump() {
+            rxBuf = '';
+            try {
+                while (connected) {
+                    const { value, done } = await portReader.read();
+                    if (done) break;
+                    if (value?.length) {
+                        const text = DEC.decode(value, { stream: true });
+                        rxBuf += text;
+                        for (const h of rxHooks) h(text);
+                    }
+                }
+            } catch (e) { if (connected) usbLog('RX error: ' + e.message, 'err'); }
+        }
+
+        function sleep(ms) { return new Promise(r => setTimeout(r, ms)); }
+
+        async function write(data) {
+            if (!portWriter) return;
+            await portWriter.write(typeof data === 'string' ? ENC.encode(data) : data);
+        }
+
+        // ── Raw REPL (two-attempt, handles slow K230 firmware) ───────
+        async function enterRawREPL() {
+            usbLog('Entering Raw REPL...', 'info');
+            await write('\x03'); await sleep(200);
+            await write('\x03'); await sleep(200);
+            rxBuf = '';
+            await write('\x01'); await sleep(300);
+
+            let banner = '', t = Date.now() + 4000;
+            while (Date.now() < t) {
+                banner += rxBuf; rxBuf = '';
+                if (banner.includes('raw REPL')) { usbLog('Raw REPL ready ✓', 'ok'); rxBuf = ''; return; }
+                await sleep(50);
+            }
+            await write('\x01'); await sleep(500);
+            banner += rxBuf; rxBuf = '';
+            if (banner.includes('raw REPL')) { usbLog('Raw REPL ready ✓', 'ok'); }
+            else { usbLog('Raw REPL banner not seen — try resetting board', 'warn'); }
+            rxBuf = '';
+        }
+
+        async function exitRawREPL() { await write('\x02'); await sleep(200); }
+
+        // ── execPy: send code → Ctrl+D → read OK+stdout\x04+stderr\x04 ─
+        async function execPy(code) {
+            rxBuf = '';
+            await write(code);
+            await write('\x04');
+            let full = '';
+            const dl = Date.now() + 10000;
+            while (Date.now() < dl) {
+                if (rxBuf.length) {
+                    full += rxBuf; rxBuf = '';
+                    const oi = full.indexOf('OK');
+                    if (oi >= 0) {
+                        const after = full.slice(oi + 2);
+                        const e1 = after.indexOf('\x04');
+                        if (e1 >= 0) {
+                            const e2 = after.indexOf('\x04', e1 + 1);
+                            if (e2 >= 0) {
+                                const stderr = after.slice(e1 + 1, e2).trim();
+                                if (stderr) usbLog('stderr: ' + stderr, 'warn');
+                                return after.slice(0, e1).trim();
+                            }
+                        }
+                    }
+                    if (full.includes('\r\n>') || full === '>') {
+                        await write('\x03'); await sleep(100); rxBuf = '';
+                        throw new Error('REPL continuation mode — code rejected');
+                    }
+                }
+                await sleep(10);
+            }
+            throw new Error('Timeout. Last rx: ' + full.slice(-40).replace(/\x04/g, '<EOT>'));
+        }
+
+        // ── Board helpers (single-line Python, no multiline issues) ──
+        async function ensureDir(path) {
+            const p = path.replace(/\/$/, '');
+            await execPy(`import os\r\ntry:\r\n os.mkdir('${p}')\r\nexcept:pass`);
+        }
+
+        async function writeFileOnBoard(dest, arr, onPct) {
+            await execPy(`_f=open('${dest}','wb')`);
+            let off = 0;
+            while (off < arr.length) {
+                const sl = arr.slice(off, off + CHUNK_BYTES);
+                const hex = Array.from(sl).map(b => b.toString(16).padStart(2, '0')).join('');
+                await execPy(`_f.write(bytes.fromhex('${hex}'))`);
+                off += sl.length;
+                if (onPct) onPct(off / arr.length);
+            }
+            await execPy(`_f.close();del _f`);
+        }
+
+        // ══════════════════════════════════════════════════════════════
+        // DEPLOY METHOD TOGGLE
+        // ══════════════════════════════════════════════════════════════
+        function onDeployMethodChange(val) {
+            document.getElementById('wifiRow').style.display = val === 'wifi' ? 'flex' : 'none';
+            document.getElementById('usbBaudRow').style.display = val === 'usb' ? 'flex' : 'none';
+            document.getElementById('serialWarn').classList.toggle('show', val === 'usb' && !SERIAL_SUPPORTED);
+            if (val !== 'usb') showUsbPanel(false);
+        }
+
+        // ══════════════════════════════════════════════════════════════
+        // CROP SIZE
+        // ══════════════════════════════════════════════════════════════
+        let CROP_SIZE = 320;
+        const CROP_BADGE_MAP = {
+            224: { label: 'Fast', cls: 'badge-224' },
+            320: { label: 'Balanced', cls: 'badge-320' },
+            480: { label: 'Sharp', cls: 'badge-480' },
+        };
+        function updateCropSize(val) {
+            CROP_SIZE = parseInt(val);
+            const info = CROP_BADGE_MAP[CROP_SIZE];
+            const b = document.getElementById('cropSizeBadge');
+            b.textContent = info.label; b.className = 'crop-size-badge ' + info.cls;
+            setStatus(`Crop size set to ${CROP_SIZE}×${CROP_SIZE}px — affects new captures.`);
+        }
+
+        // ══════════════════════════════════════════════════════════════
+        // APP STATE
+        // ══════════════════════════════════════════════════════════════
+        let classes = [
+            { id: 1, name: 'Class1', images: [], color: '#f54254' },
+            { id: 2, name: 'Class2', images: [], color: '#7c3aed' },
+        ];
+        let nextClassId = 3;
+        const CLASS_COLORS = ['#f54254', '#7c3aed', '#0ea5e9', '#10b981', '#f59e0b', '#ec4899', '#8b5cf6', '#06b6d4', '#84cc16'];
+
+        let mobileNetV3 = null, headModel = null, classNamesCopy = [], trained = false;
+        let activeCamIdx = null, activeCamStream = null, captureTimer = null;
+        let testWebcamActive = false, testTimer = null;
+        let THRESHOLD = 0.85;
+
+        // ── K230 USB Camera state ──────────────────────────────────────
+        let k230CamPort = null, k230CamRdr = null, k230CamWtr = null;
+        let k230CamOk = false, k230CamRxBuf = '', k230Capturing = false;
+        let k230CamIdx = null, k230CamLiveTimer = null, k230HoldTimer = null;
+        let k230LastErr = '';
+        const K230_ENC = new TextEncoder(), K230_DEC = new TextDecoder();
+
+        // ══════════════════════════════════════════════════════════════
+        // HELPERS
+        // ══════════════════════════════════════════════════════════════
+        function updateThreshold(val) { THRESHOLD = parseInt(val) / 100; document.getElementById('thresholdValue').textContent = val + '%'; }
+        function setStatus(msg) { document.getElementById('statusBar').textContent = msg; }
+        function updateButtons() {
+            ['deployHeaderBtn', 'deployCardBtn', 'deployK230Btn', 'exportBtn', 'testBtn'].forEach(id => {
+                const el = document.getElementById(id); if (el) el.disabled = !trained;
+            });
+        }
+        function downloadBlob(blob, name) {
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a'); a.href = url; a.download = name;
+            document.body.appendChild(a); a.click(); document.body.removeChild(a);
+            setTimeout(() => URL.revokeObjectURL(url), 1000);
+        }
+        function isBgClass(name) {
+            const n = name.toLowerCase();
+            return n.includes('background') || n.includes('bg') || n.includes('nothing') || n.includes('empty');
+        }
+
+        // ══════════════════════════════════════════════════════════════
+        // IMAGE PROCESSING
+        // ══════════════════════════════════════════════════════════════
+        function applyBackgroundFade(canvas) {
+            const ctx = canvas.getContext('2d'), size = canvas.width, data = ctx.getImageData(0, 0, size, size), px = data.data;
+            const cx = size / 2, cy = size / 2, innerR = size * 0.3125, outerR = size / 2;
+            for (let y = 0; y < size; y++) for (let x = 0; x < size; x++) {
+                const idx = (y * size + x) * 4, dist = Math.sqrt((x - cx) ** 2 + (y - cy) ** 2);
+                if (dist > innerR) {
+                    const t = Math.min(1, (dist - innerR) / (outerR - innerR));
+                    px[idx] = Math.round(px[idx] * (1 - t) + 128 * t);
+                    px[idx + 1] = Math.round(px[idx + 1] * (1 - t) + 128 * t);
+                    px[idx + 2] = Math.round(px[idx + 2] * (1 - t) + 128 * t);
+                }
+            }
+            ctx.putImageData(data, 0, 0);
+        }
+
+        function centerCropToCanvas(src, canvas) {
+            const ctx = canvas.getContext('2d');
+            let srcW, srcH;
+            if (src instanceof HTMLVideoElement) { srcW = src.videoWidth || CROP_SIZE; srcH = src.videoHeight || CROP_SIZE; }
+            else { srcW = src.naturalWidth || src.width || CROP_SIZE; srcH = src.naturalHeight || src.height || CROP_SIZE; }
+            const cs = Math.min(srcW, srcH) * 0.70, sx = (srcW - cs) / 2, sy = (srcH - cs) / 2;
+            ctx.drawImage(src, sx, sy, cs, cs, 0, 0, canvas.width, canvas.height);
+        }
+
+        function prepareCanvas(src) {
+            const c = document.createElement('canvas'); c.width = c.height = CROP_SIZE;
+            centerCropToCanvas(src, c); applyBackgroundFade(c); return c;
+        }
+
+        function canvasToV3Tensor(canvas) {
+            return tf.tidy(() => tf.browser.fromPixels(canvas).resizeBilinear([224, 224]).toFloat().div(255.0).expandDims(0));
+        }
+
+        // ══════════════════════════════════════════════════════════════
+        // MOBILENET V3
+        // ══════════════════════════════════════════════════════════════
+        async function extractFeaturesAsync(src) {
+            if (!mobileNetV3) return null;
+            const c = prepareCanvas(src), t = canvasToV3Tensor(c), f = mobileNetV3.execute(t);
+            t.dispose(); const fl = f.flatten(); f.dispose(); return fl;
+        }
+
+        async function predictFromElement(el) {
+            if (!mobileNetV3 || !headModel) return null;
+            const c = prepareCanvas(el), t = canvasToV3Tensor(c), f = mobileNetV3.execute(t);
+            t.dispose(); const fl = f.flatten().expandDims(0); f.dispose();
+            const probs = headModel.predict(fl).dataSync(); fl.dispose();
+            return classNamesCopy.map((name, i) => ({ className: name, probability: probs[i] }));
+        }
+
+        // ══════════════════════════════════════════════════════════════
+        // OUTPUT BARS
+        // ══════════════════════════════════════════════════════════════
+        function initOutputBars() {
+            document.getElementById('outputBars').innerHTML = classes.map((cls, i) => `
+        <div class="output-row" id="output-row-${i}">
+            <span class="output-label" style="color:${cls.color}" id="output-label-${i}">${cls.name}</span>
+            <div class="output-bar-wrap">
+                <div class="output-bar-fill" id="output-bar-${i}" style="width:0%;background:${cls.color}">
+                    <span class="output-bar-pct" id="output-pct-${i}"></span>
+                </div>
+                <span class="output-bar-pct-outside" id="output-pct-out-${i}">0%</span>
+            </div>
+        </div>`).join('');
+        }
+
+        function updateOutputBars(predictions) {
+            const best = predictions.reduce((a, b) => a.probability > b.probability ? a : b);
+            const isAbove = best.probability >= THRESHOLD, isBg = isBgClass(best.className);
+            predictions.forEach((p, i) => {
+                const pct = Math.round(p.probability * 100);
+                const bEl = document.getElementById(`output-bar-${i}`);
+                const pEl = document.getElementById(`output-pct-${i}`);
+                const oEl = document.getElementById(`output-pct-out-${i}`);
+                const lEl = document.getElementById(`output-label-${i}`);
+                if (!bEl) return;
+                const color = classes.find(c => c.name === p.className)?.color || CLASS_COLORS[i % CLASS_COLORS.length];
+                bEl.style.width = pct + '%'; bEl.style.background = color;
+                if (pct > 20) { pEl.textContent = pct + '%'; oEl.textContent = ''; }
+                else { pEl.textContent = ''; oEl.textContent = pct + '%'; }
+                if (lEl) { lEl.textContent = p.className; lEl.style.color = color; }
+            });
+            updateDetectStatus(best, isAbove && !isBg, isBg && isAbove);
+        }
+
+        function updateDetectStatus(best, isDetected, isBgDetected) {
+            const el = document.getElementById('detectStatus');
+            const pct = (best.probability * 100).toFixed(1);
+            const color = classes.find(c => c.name === best.className)?.color || '#f54254';
+            if (isDetected) {
+                el.style.background = color + '14'; el.style.borderBottom = `2px solid ${color}30`;
+                el.innerHTML = `<div style="width:36px;height:36px;border-radius:50%;background:${color};
+            display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;">✅</div>
+            <div style="flex:1;min-width:0;">
+                <div style="font-size:15px;font-weight:800;color:${color};white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${best.className}</div>
+                <div style="font-size:11px;color:#64748b;margin-top:1px;">Detected — ${pct}% confidence</div>
+            </div>
+            <div style="font-size:22px;font-weight:900;color:${color};flex-shrink:0;">${Math.round(best.probability * 100)}%</div>`;
+            } else if (isBgDetected) {
+                el.style.background = '#fafafa'; el.style.borderBottom = '2px dashed #e2e8f0';
+                el.innerHTML = `<div style="width:36px;height:36px;border-radius:50%;background:#f1f5f9;
+            display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;">🌄</div>
+            <div style="flex:1;"><div style="font-size:14px;font-weight:700;color:#64748b;">No Object Detected</div>
+            <div style="font-size:11px;color:#94a3b8;margin-top:1px;">Background — ${pct}%</div></div>`;
+            } else {
+                el.style.background = '#fafafa'; el.style.borderBottom = '1px solid #f1f5f9';
+                el.innerHTML = `<div style="width:36px;height:36px;border-radius:50%;background:#f1f5f9;
+            display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;">🔍</div>
+            <div style="flex:1;"><div style="font-size:14px;font-weight:700;color:#94a3b8;">Not Detected</div>
+            <div style="font-size:11px;color:#cbd5e1;margin-top:1px;">Best: ${best.className} at ${pct}% (need ${Math.round(THRESHOLD * 100)}%)</div></div>`;
+            }
+        }
+
+        function resetDetectStatus() {
+            const el = document.getElementById('detectStatus');
+            el.style.background = '#fafafa'; el.style.borderBottom = '1px solid #f1f5f9';
+            el.innerHTML = `<div style="width:36px;height:36px;border-radius:50%;background:#f1f5f9;
+        display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0;">🔍</div>
+        <div><div style="font-size:13px;font-weight:700;color:#94a3b8;">Not Detected</div>
+        <div style="font-size:11px;color:#cbd5e1;margin-top:1px;">Start webcam to preview</div></div>`;
+            classes.forEach((_, i) => {
+                const b = document.getElementById(`output-bar-${i}`);
+                const p = document.getElementById(`output-pct-${i}`);
+                const o = document.getElementById(`output-pct-out-${i}`);
+                if (b) b.style.width = '0%'; if (p) p.textContent = ''; if (o) o.textContent = '0%';
+            });
+        }
+
+        // ══════════════════════════════════════════════════════════════
+        // RENDER
+        // ══════════════════════════════════════════════════════════════
+        function render() { renderClasses(); renderStats(); initOutputBars(); }
+
+        function renderClasses() {
+            const container = document.getElementById('classList'); container.innerHTML = '';
+            classes.forEach((cls, idx) => {
+                const card = document.createElement('div'); card.className = 'class-card'; card.style.borderLeftColor = cls.color;
+                const isBg = isBgClass(cls.name);
+                const thumbsHtml = cls.images.map((img, ii) => `
+            <div class="thumb-wrap"><img src="${img.url}" alt="sample"/>
+            <button class="thumb-del" onclick="removeImage(${idx},${ii})">✕</button></div>`).join('');
+                let camHtml;
+                if (activeCamIdx === idx) {
+                    camHtml = `
+            <div class="video-wrap"><video id="liveVideo" class="live-video" autoplay playsinline muted></video>
+            <div class="crop-overlay"></div></div>
+            <div style="font-size:11px;color:#64748b;text-align:center;margin-bottom:6px;">
+                📐 Dashed box = capture area &nbsp;·&nbsp; <b>${CROP_SIZE}×${CROP_SIZE}px</b> crop</div>
+            <div class="cam-btns">
+                <button class="hold-btn" style="background:${cls.color}"
+                    onmousedown="startHold(${idx})" onmouseup="stopHold()"
+                    onmouseleave="stopHold()" ontouchstart="startHold(${idx})"
+                    ontouchend="stopHold()">Hold to Capture</button>
+                <button class="stop-cam-btn" onclick="stopCapture()">Stop</button>
+            </div>`;
+                } else if (k230CamIdx === idx) {
+                    camHtml = `
+            <div class="video-wrap">
+                <img id="k230LivePreview" class="live-video" style="object-fit:cover;background:#000;" alt="K230 preview"/>
+                <div class="crop-overlay"></div>
+            </div>
+            <div style="font-size:11px;color:#64748b;text-align:center;margin-bottom:6px;">
+                📹 K230 Camera · Live preview (2 s) &nbsp;·&nbsp; <b>${CROP_SIZE}×${CROP_SIZE}px</b> crop</div>
+            <div class="cam-btns">
+                <button class="hold-btn" style="background:${cls.color}"
+                    onmousedown="startK230Hold(${idx})" onmouseup="stopK230Hold()"
+                    onmouseleave="stopK230Hold()" ontouchstart="startK230Hold(${idx})"
+                    ontouchend="stopK230Hold()">Hold to Capture</button>
+                <button class="stop-cam-btn" onclick="stopK230Cam()">Stop</button>
+            </div>`;
+                } else {
+                    camHtml = `
+            <div class="add-btns">
+                <button class="add-btn" style="color:${cls.color};border-color:${cls.color};background:${cls.color}18"
+                    onclick="startCapture(${idx})">📷 Webcam</button>
+                <button class="add-btn" style="color:${cls.color};border-color:${cls.color};background:${cls.color}18"
+                    onclick="uploadImages(${idx})">⬆ Upload</button>
+                <button class="add-btn" style="color:#0ea5e9;border-color:#0ea5e9;background:#0ea5e918"
+                    onclick="startK230Cam(${idx})">📹 K230</button>
+            </div>
+            ${isBg ? `<div style="font-size:11px;color:#92400e;background:#fffbeb;border-radius:6px;padding:6px 10px;margin-top:4px;">
+                🌄 Point at empty room — no objects in frame</div>` : ''}`;
+                }
+                card.innerHTML = `
+            <div class="class-header">
+                <input class="class-name" style="color:${cls.color}" value="${cls.name}"
+                    onchange="renameClass(${idx},this.value)" oninput="renameClass(${idx},this.value)"/>
+                <span class="sample-count" id="count-${idx}">${cls.images.length} samples</span>
+                <button class="remove-btn" onclick="removeClass(${idx})">✕</button>
+            </div>
+            ${isBg ? `<div style="display:flex;align-items:center;gap:4px;margin-bottom:8px;">
+                <span style="font-size:10px;font-weight:700;color:#92400e;background:#fef3c7;padding:2px 8px;border-radius:10px;">
+                🌄 BACKGROUND CLASS</span></div>`: ''}
+            ${camHtml}
+            <div class="thumbs" id="thumbs-${idx}">${thumbsHtml}</div>`;
+                container.appendChild(card);
+                if (activeCamIdx === idx && activeCamStream) requestAnimationFrame(() => {
+                    const v = document.getElementById('liveVideo');
+                    if (v && !v.srcObject) { v.srcObject = activeCamStream; v.play().catch(() => { }); }
+                });
+            });
+        }
+
+        function renderStats() {
+            document.getElementById('statsList').innerHTML = classes.map(cls => `
+        <div class="stat-row"><div class="stat-dot" style="background:${cls.color}"></div>
+        <span class="stat-name">${cls.name}</span>
+        <span class="stat-count">${cls.images.length}</span></div>`).join('');
+        }
+
+        // ══════════════════════════════════════════════════════════════
+        // CLASS MANAGEMENT
+        // ══════════════════════════════════════════════════════════════
+        function addClass() {
+            const id = nextClassId++;
+            classes.push({ id, name: `Class${id}`, images: [], color: CLASS_COLORS[(id - 1) % CLASS_COLORS.length] });
+            render();
+        }
+        function addBackgroundClass() {
+            if (classes.find(c => isBgClass(c.name))) { alert('Background class already exists!'); return; }
+            classes.push({ id: nextClassId++, name: 'Background', images: [], color: '#94a3b8' });
+            render(); setStatus('Background class added! Point camera at empty room and capture 100+ images.');
+        }
+        function removeClass(idx) {
+            if (classes.length <= 2) { alert('Need at least 2 classes'); return; }
+            if (activeCamIdx === idx) stopCapture();
+            classes.splice(idx, 1); render();
+        }
+        function renameClass(idx, name) {
+            classes[idx].name = name; renderStats();
+            const el = document.getElementById(`output-label-${idx}`); if (el) el.textContent = name;
+        }
+        function removeImage(ci, ii) {
+            classes[ci].images.splice(ii, 1);
+            const c = document.getElementById(`count-${ci}`); if (c) c.textContent = `${classes[ci].images.length} samples`;
+            document.getElementById(`thumbs-${ci}`)?.children[ii]?.remove();
+            renderStats();
+        }
+
+        // ══════════════════════════════════════════════════════════════
+        // WEBCAM CAPTURE
+        // ══════════════════════════════════════════════════════════════
+        async function startCapture(idx) {
+            try {
+                if (k230CamIdx !== null) await stopK230Cam();
+                if (activeCamStream) { activeCamStream.getTracks().forEach(t => t.stop()); activeCamStream = null; }
+                const stream = await navigator.mediaDevices.getUserMedia({ video: { width: 320, height: 320, facingMode: 'user' } });
+                activeCamStream = stream; activeCamIdx = idx; render();
+                requestAnimationFrame(() => { const v = document.getElementById('liveVideo'); if (v) { v.srcObject = stream; v.play().catch(e => console.warn('play:', e)); } });
+            } catch (e) { alert('Camera Error: ' + e.message); }
+        }
+
+        function captureFrame(idx) {
+            const video = document.getElementById('liveVideo');
+            if (!video || video.readyState < 2) return;
+            const c = document.createElement('canvas'); c.width = c.height = CROP_SIZE;
+            centerCropToCanvas(video, c); applyBackgroundFade(c);
+            const ss = Math.min(8, CROP_SIZE), px = c.getContext('2d').getImageData(0, 0, ss, ss).data;
+            if (Array.from(px).every(v => v < 15)) return;
+            const url = c.toDataURL('image/jpeg', 0.8); classes[idx].images.push({ url });
+            const thumbs = document.getElementById(`thumbs-${idx}`);
+            if (thumbs) {
+                const ii = classes[idx].images.length - 1; const w = document.createElement('div'); w.className = 'thumb-wrap';
+                w.innerHTML = `<img src="${url}" alt="sample"/><button class="thumb-del" onclick="removeImage(${idx},${ii})">✕</button>`;
+                thumbs.appendChild(w);
+            }
+            const ce = document.getElementById(`count-${idx}`); if (ce) ce.textContent = `${classes[idx].images.length} samples`;
+            renderStats();
+        }
+
+        function startHold(idx) { captureFrame(idx); captureTimer = setInterval(() => captureFrame(idx), 120); }
+        function stopHold() { clearInterval(captureTimer); captureTimer = null; }
+        function stopCapture() {
+            stopHold();
+            if (activeCamStream) { activeCamStream.getTracks().forEach(t => t.stop()); activeCamStream = null; }
+            activeCamIdx = null; render();
+        }
+        function uploadImages(idx) {
+            const input = document.createElement('input'); input.type = 'file'; input.accept = 'image/*'; input.multiple = true;
+            input.onchange = e => { Array.from(e.target.files).forEach(f => { classes[idx].images.push({ url: URL.createObjectURL(f) }); }); render(); };
+            input.click();
+        }
+
+        // ══════════════════════════════════════════════════════════════
+        // K230 USB CAMERA
+        // ══════════════════════════════════════════════════════════════
+        async function k230CamWrite(data) {
+            if (!k230CamWtr) return;
+            await k230CamWtr.write(typeof data === 'string' ? K230_ENC.encode(data) : data);
+        }
+
+        async function k230CamRxPump() {
+            k230CamRxBuf = '';
+            try {
+                while (k230CamOk) {
+                    const { value, done } = await k230CamRdr.read();
+                    if (done) break;
+                    if (value?.length) k230CamRxBuf += K230_DEC.decode(value, { stream: true });
+                }
+            } catch { }
+        }
+
+        async function k230CamExec(code, timeout = 15000) {
+            k230CamRxBuf = ''; k230LastErr = '';
+            await k230CamWrite(code + '\x04');
+            let full = '', dl = Date.now() + timeout;
+            while (Date.now() < dl) {
+                if (k230CamRxBuf.length) {
+                    full += k230CamRxBuf; k230CamRxBuf = '';
+                    const oi = full.indexOf('OK');
+                    if (oi >= 0) {
+                        const after = full.slice(oi + 2);
+                        const e1 = after.indexOf('\x04');
+                        if (e1 >= 0) {
+                            const e2 = after.indexOf('\x04', e1 + 1);
+                            if (e2 >= 0) {
+                                k230LastErr = after.slice(e1 + 1, e2).trim();
+                                if (k230LastErr) console.warn('K230 stderr:', k230LastErr);
+                                return after.slice(0, e1).trim();
+                            }
+                        }
+                    }
+                }
+                await sleep(10);
+            }
+            throw new Error('K230 cam timeout. rx: ' + full.slice(-60).replace(/\x04/g, '<EOT>'));
+        }
+
+        async function k230CamEnterREPL() {
+            setStatus('K230: entering raw REPL...');
+            await k230CamWrite('\x03'); await sleep(200);
+            await k230CamWrite('\x03'); await sleep(200);
+            k230CamRxBuf = '';
+            await k230CamWrite('\x01'); await sleep(300);
+            let banner = '', t = Date.now() + 4000;
+            while (Date.now() < t) {
+                banner += k230CamRxBuf; k230CamRxBuf = '';
+                if (banner.includes('raw REPL')) { k230CamRxBuf = ''; return; }
+                await sleep(50);
+            }
+            await k230CamWrite('\x01'); await sleep(500);
+            banner += k230CamRxBuf; k230CamRxBuf = '';
+            if (!banner.includes('raw REPL')) console.warn('K230: raw REPL banner not seen — continuing');
+            k230CamRxBuf = '';
+        }
+
+        async function k230CamDisconnect() {
+            k230CamOk = false;
+            try { k230CamRdr && await k230CamRdr.cancel(); } catch { }
+            try { k230CamRdr && k230CamRdr.releaseLock(); } catch { }
+            try { k230CamWtr && k230CamWtr.releaseLock(); } catch { }
+            try { k230CamPort && await k230CamPort.close(); } catch { }
+            k230CamPort = k230CamRdr = k230CamWtr = null;
+        }
+
+        // Init camera — tries maix (MaixCAM/MaixPy4) then sensor (OpenMV/K210/MicroPython)
+        // _k230api persists as a global in raw REPL between exec calls
+        const K230_INIT_SCRIPT =
+            'import binascii\r\n' +
+            '_k230api="maix"\r\n' +
+            'try:\r\n' +
+            ' from maix import camera as _cm\r\n' +
+            ' _k230c=_cm.Camera(320,240)\r\n' +
+            ' print("K230_READY:maix")\r\n' +
+            'except:\r\n' +
+            ' try:\r\n' +
+            '  import sensor\r\n' +
+            '  sensor.reset()\r\n' +
+            '  sensor.set_pixformat(sensor.RGB565)\r\n' +
+            '  sensor.set_framesize(sensor.QVGA)\r\n' +
+            '  sensor.skip_frames(time=500)\r\n' +
+            '  _k230c=sensor\r\n' +
+            '  _k230api="sensor"\r\n' +
+            '  print("K230_READY:sensor")\r\n' +
+            ' except Exception as _e:\r\n' +
+            '  print("ERR:"+str(_e))';
+
+        // Capture one frame using whichever API was detected at init
+        const K230_CAP_SCRIPT =
+            'import binascii\r\n' +
+            'try:\r\n' +
+            ' if _k230api=="maix":\r\n' +
+            '  _i=_k230c.read()\r\n' +
+            '  try:\r\n   _b=bytes(_i.to_jpeg(65))\r\n' +
+            '  except:\r\n   _b=bytes(_i.compress(65))\r\n' +
+            ' else:\r\n' +
+            '  _i=_k230c.snapshot()\r\n' +
+            '  _i.compress(quality=65)\r\n' +
+            '  try:\r\n   _b=bytes(_i.bytearray())\r\n' +
+            '  except:\r\n   _b=bytes(_i)\r\n' +
+            ' print("F:"+binascii.b2a_base64(_b).decode().strip())\r\n' +
+            'except Exception as _e:\r\n' +
+            ' print("ERR:"+str(_e))';
+
+        async function startK230Cam(idx) {
+            if (!SERIAL_SUPPORTED) { alert('WebSerial requires Chrome / Edge v89+ on desktop.'); return; }
+            if (activeCamStream) { activeCamStream.getTracks().forEach(t => t.stop()); activeCamStream = null; activeCamIdx = null; }
+            try {
+                const p = await navigator.serial.requestPort();
+                await p.open({ baudRate: 921600, bufferSize: 65536 });
+                k230CamPort = p;
+                k230CamRdr = p.readable.getReader();
+                k230CamWtr = p.writable.getWriter();
+                k230CamOk = true;
+                k230CamRxPump();
+                await k230CamEnterREPL();
+                setStatus('K230: initializing camera...');
+                const initOut = await k230CamExec(K230_INIT_SCRIPT, 12000);
+                if (!initOut.includes('K230_READY')) {
+                    const detail = initOut || k230LastErr || '(no output — make sure K230 is at the >>> REPL prompt, not running a script)';
+                    throw new Error('Camera init failed:\n' + detail.slice(0, 300));
+                }
+                const apiUsed = initOut.includes(':sensor') ? 'sensor (OpenMV)' : 'maix';
+                setStatus(`K230 camera ready! [API: ${apiUsed}]`);
+                k230CamIdx = idx;
+                render();
+                await doK230Capture(idx);
+                k230CamLiveTimer = setInterval(() => doK230Capture(k230CamIdx), 2000);
+            } catch (e) {
+                console.error('K230 cam:', e);
+                alert('K230 Camera Error: ' + e.message);
+                await k230CamDisconnect();
+                k230CamIdx = null;
+            }
+        }
+
+        async function doK230Capture(idx) {
+            if (!k230CamOk || k230CamIdx === null || k230Capturing) return null;
+            k230Capturing = true;
+            try {
+                const out = await k230CamExec(K230_CAP_SCRIPT, 15000);
+                if (out.startsWith('ERR:')) { setStatus('K230 error: ' + out.slice(4, 120)); return null; }
+                const fi = out.indexOf('F:');
+                if (fi < 0) { setStatus('K230: no frame — ' + (k230LastErr || out).slice(0, 80)); return null; }
+                const b64 = out.slice(fi + 2).split(/[\r\n]/)[0].trim();
+                const dataUrl = 'data:image/jpeg;base64,' + b64;
+                const preview = document.getElementById('k230LivePreview');
+                if (preview) preview.src = dataUrl;
+                return dataUrl;
+            } catch (e) {
+                setStatus('K230 frame error: ' + e.message);
+                return null;
+            } finally {
+                k230Capturing = false;
+            }
+        }
+
+        async function captureK230Frame(idx) {
+            const dataUrl = await doK230Capture(idx);
+            if (!dataUrl) return;
+            const img = new Image();
+            img.onload = () => {
+                const c = prepareCanvas(img);
+                const url = c.toDataURL('image/jpeg', 0.8);
+                classes[idx].images.push({ url });
+                const thumbs = document.getElementById(`thumbs-${idx}`);
+                if (thumbs) {
+                    const ii = classes[idx].images.length - 1;
+                    const w = document.createElement('div'); w.className = 'thumb-wrap';
+                    w.innerHTML = `<img src="${url}" alt="sample"/><button class="thumb-del" onclick="removeImage(${idx},${ii})">✕</button>`;
+                    thumbs.appendChild(w);
+                }
+                const ce = document.getElementById(`count-${idx}`); if (ce) ce.textContent = `${classes[idx].images.length} samples`;
+                renderStats();
+            };
+            img.src = dataUrl;
+        }
+
+        function startK230Hold(idx) {
+            captureK230Frame(idx);
+            k230HoldTimer = setInterval(() => captureK230Frame(idx), 1500);
+        }
+        function stopK230Hold() { clearInterval(k230HoldTimer); k230HoldTimer = null; }
+
+        async function stopK230Cam() {
+            stopK230Hold();
+            clearInterval(k230CamLiveTimer); k230CamLiveTimer = null;
+            if (k230CamOk) { try { await k230CamWrite('\x02'); await sleep(200); } catch { } }
+            await k230CamDisconnect();
+            k230CamIdx = null;
+            render();
+            setStatus('K230 camera disconnected.');
+        }
+
+        // ══════════════════════════════════════════════════════════════
+        // TRAIN
+        // ══════════════════════════════════════════════════════════════
+        function setTrainState(html) { document.getElementById('trainStateBox').innerHTML = html; }
+
+        async function trainModel() {
+            if (classes.filter(c => c.images.length >= 2).length < 2) { alert('Add at least 2 images to each class'); return; }
+            document.getElementById('trainBtn').disabled = true;
+            trained = false; mobileNetV3 = null; headModel = null; classNamesCopy = [];
+            updateButtons();
+
+            const showProgress = (pct, msg) => {
+                setTrainState(`<div class="state-progress">
+            <div class="progress-pct">${pct}%</div>
+            <div class="progress-bar"><div class="progress-fill" style="width:${pct}%"></div></div>
+            <div class="progress-label">${msg}</div></div>`);
+                setStatus(msg);
+            };
+
+            try {
+                showProgress(0, 'Loading TensorFlow...'); await tf.ready();
+                showProgress(5, 'Loading MobileNet V3 from TF Hub...');
+                showProgress(6, 'This may take 15-30 seconds...');
+                mobileNetV3 = await tf.loadGraphModel(MOBILENET_V3_URL, { fromTFHub: true });
+
+                showProgress(12, 'Initializing V3 model...');
+                const tt = tf.zeros([1, 224, 224, 3]), to = mobileNetV3.execute(tt);
+                const featureSize = to.shape[to.shape.length - 1]; tt.dispose(); to.dispose();
+
+                showProgress(15, `Extracting features (crop: ${CROP_SIZE}px)...`);
+                const xs = [], ys = []; let done = 0;
+                const total = classes.reduce((s, c) => s + c.images.length, 0);
+                for (let ci = 0; ci < classes.length; ci++) for (const img of classes[ci].images) {
+                    await new Promise(resolve => {
+                        const el = new Image(); el.crossOrigin = 'anonymous';
+                        el.onload = async () => {
+                            try { const f = await extractFeaturesAsync(el); if (f) { xs.push(f); ys.push(ci); } }
+                            catch (err) { console.warn('Feature error:', err); }
+                            done++; showProgress(Math.round(15 + (done / total) * 35), `Extracting ${done}/${total}...`);
+                            resolve();
+                        };
+                        el.onerror = () => { done++; resolve(); }; el.src = img.url;
+                    });
+                }
+                if (xs.length === 0) throw new Error('No features extracted');
+
+                showProgress(52, 'Building classifier...');
+                const nc = classes.length, xsT = tf.stack(xs), ysT = tf.oneHot(tf.tensor1d(ys, 'int32'), nc);
+                xs.forEach(x => x.dispose());
+                headModel = tf.sequential({
+                    layers: [
+                        tf.layers.dense({ inputShape: [featureSize], units: 128, activation: 'relu' }),
+                        tf.layers.dropout({ rate: 0.3 }),
+                        tf.layers.dense({ units: 64, activation: 'relu' }),
+                        tf.layers.dense({ units: nc, activation: 'softmax' })
+                    ]
+                });
+                headModel.compile({ optimizer: tf.train.adam(0.0005), loss: 'categoricalCrossentropy', metrics: ['accuracy'] });
+
+                showProgress(55, 'Training...');
+                await headModel.fit(xsT, ysT, {
+                    epochs: 80, batchSize: 16, validationSplit: 0.1,
+                    callbacks: {
+                        onEpochEnd: (epoch, logs) => {
+                            const pct = 55 + Math.round(((epoch + 1) / 80) * 45);
+                            const acc = logs?.acc ? ` acc:${(logs.acc * 100).toFixed(0)}%` : '';
+                            const val = logs?.val_acc ? ` val:${(logs.val_acc * 100).toFixed(0)}%` : '';
+                            showProgress(pct, `Epoch ${epoch + 1}/80${acc}${val}`);
+                        }
+                    }
+                });
+                xsT.dispose(); ysT.dispose();
+                classNamesCopy = classes.map(c => c.name); trained = true;
+                showProgress(100, 'Training complete!');
+                setStatus(`Training complete! Crop: ${CROP_SIZE}px. Start webcam to preview.`);
+                const totalImages = classes.reduce((s, c) => s + c.images.length, 0);
+                setTrainState(`<div class="state-done"><div class="icon">✅</div><h3>Model Trained!</h3>
+            <p>${totalImages} images · ${classes.length} classes</p>
+            <p style="font-size:11px;color:#64748b;margin-top:2px;">Crop size used: <b>${CROP_SIZE}×${CROP_SIZE}px</b></p>
+            <p style="font-size:11px;background:linear-gradient(135deg,#7c3aed,#0ea5e9);
+                -webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-top:4px;font-weight:700;">
+                MobileNet V3 — best accuracy</p>
+            <button class="retrain-btn" onclick="resetTrain()">Retrain</button></div>`);
+                initOutputBars(); updateButtons();
+            } catch (e) {
+                console.error('Training error:', e); alert('Training Failed: ' + e.message); setStatus('Training failed: ' + e.message);
+                setTrainState(`<div class="state-ready"><div class="icon">🧠</div><h3>Ready to train.</h3>
+            <p>Add at least 2 images per class<br>then press Train.</p></div>`);
+            } finally { document.getElementById('trainBtn').disabled = false; }
+        }
+
+        function resetTrain() {
+            trained = false; mobileNetV3 = null; headModel = null; classNamesCopy = []; updateButtons();
+            setTrainState(`<div class="state-ready"><div class="icon">🧠</div><h3>Ready to train.</h3>
+        <p>Add at least 2 images per class<br>then press Train.</p></div>`);
+            setStatus(''); initOutputBars(); resetDetectStatus();
+        }
+
+        // ══════════════════════════════════════════════════════════════
+        // RESET PAGE
+        // ══════════════════════════════════════════════════════════════
+        function resetPage() {
+            if (!confirm('Reset everything? This clears all images, model, and classes.')) return;
+            stopCapture(); stopTestWebcam(); if (k230CamIdx !== null) stopK230Cam();
+            trained = false; mobileNetV3 = null; headModel = null; classNamesCopy = [];
+            classes = [{ id: 1, name: 'Class1', images: [], color: '#f54254' }, { id: 2, name: 'Class2', images: [], color: '#7c3aed' }];
+            nextClassId = 3; resetUsbPanel(); updateButtons();
+            setStatus('Page reset. Start fresh!');
+            setTrainState(`<div class="state-ready"><div class="icon">🧠</div><h3>Ready to train.</h3>
+        <p>Add at least 10 images per class<br>then press Train.</p></div>`);
+            render();
+        }
+
+        // ══════════════════════════════════════════════════════════════
+        // TEST WEBCAM
+        // ══════════════════════════════════════════════════════════════
+        async function toggleTestWebcam() {
+            if (testWebcamActive) { stopTestWebcam(); return; }
+            if (!trained || !mobileNetV3 || !headModel) { alert('Train first!'); return; }
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({ video: { width: 320, height: 320 } });
+                const video = document.getElementById('testVideo'), ph = document.getElementById('camPlaceholder');
+                video.srcObject = stream; video.style.display = 'block'; if (ph) ph.style.display = 'none';
+                await video.play(); testWebcamActive = true; document.getElementById('testBtn').textContent = '■ Stop';
+                testTimer = setInterval(async () => {
+                    const v = document.getElementById('testVideo');
+                    if (!v || v.readyState < 2 || !mobileNetV3 || !headModel) return;
+                    try { const p = await predictFromElement(v); if (p) updateOutputBars(p); }
+                    catch (err) { console.warn('Predict error:', err); }
+                }, 300);
+            } catch (e) { alert('Camera Error: ' + e.message); }
+        }
+
+        function stopTestWebcam() {
+            clearInterval(testTimer);
+            const video = document.getElementById('testVideo'), ph = document.getElementById('camPlaceholder');
+            if (video?.srcObject) { video.srcObject.getTracks().forEach(t => t.stop()); video.srcObject = null; video.style.display = 'none'; }
+            if (ph) ph.style.display = 'flex'; testWebcamActive = false;
+            document.getElementById('testBtn').textContent = 'Start Webcam'; resetDetectStatus();
+        }
+
+        // ══════════════════════════════════════════════════════════════
+        // DEPLOY TO BLOCKLY  (no alert — status bar + green flash)
+        // ══════════════════════════════════════════════════════════════
+        function deployToBlockly() {
+            if (!trained) { alert('Train first!'); return; }
+            const classNames = classes.filter(c => c.images.length > 0).map(c => c.name);
+            const payload = JSON.stringify({ type: 'AI_MODEL_TRAINED', classes: classNames });
+            window.parent?.postMessage(payload, '*');
+            window.opener?.postMessage(payload, '*');
+            if (window.ReactNativeWebView) window.ReactNativeWebView.postMessage(payload);
+            setStatus('✅ AI blocks deployed to Blockly! Classes: "' + classNames.join('", "') + '"');
+            ['deployHeaderBtn', 'deployCardBtn'].forEach(id => {
+                const btn = document.getElementById(id); if (!btn) return;
+                const orig = btn.textContent; btn.textContent = '✅ Deployed!'; btn.style.background = '#10b981';
+                setTimeout(() => { btn.textContent = orig; btn.style.background = ''; }, 2500);
+            });
+        }
+
+        // ══════════════════════════════════════════════════════════════
+        // DEPLOY TO K230
+        // ══════════════════════════════════════════════════════════════
+        async function deployToK230() {
+            if (!trained || !headModel) { alert('Train first!'); return; }
+
+            const method = document.getElementById('deployMethodInput').value;
+            const btn = document.getElementById('deployK230Btn');
+            const originalText = btn.innerHTML;
+
+            // ── USB: grab port NOW — must be first await to keep user gesture ──
+            let usbPort = null;
+            if (method === 'usb') {
+                if (!SERIAL_SUPPORTED) { alert('WebSerial requires Chrome / Edge v89+ on desktop.'); return; }
+                const baud = parseInt(document.getElementById('usbBaudSelect').value);
+                try {
+                    usbPort = await navigator.serial.requestPort(); // ← first await
+                    await usbPort.open({ baudRate: baud, bufferSize: 32768 });
+                } catch (e) {
+                    alert('Could not open port: ' + e.message);
+                    try { usbPort && await usbPort.close(); } catch { }
+                    return;
+                }
+            }
+
+            btn.disabled = true; btn.innerHTML = '<span class="spinner"></span>Deploying...';
+            setStatus('Converting model (this may take 1–2 minutes)...');
+
+            try {
+                // 1. Capture model artifacts
+                let savedArtifacts = null;
+                await headModel.save(tf.io.withSaveHandler(async artifacts => {
+                    savedArtifacts = artifacts;
+                    return { modelArtifactsInfo: { dateSaved: new Date() } };
+                }));
+                if (!savedArtifacts) throw new Error('Failed to capture artifacts');
+
+                const modelJson = {
+                    modelTopology: savedArtifacts.modelTopology,
+                    weightsManifest: [{ paths: ['weights.bin'], weights: savedArtifacts.weightSpecs }],
+                    format: 'layers-model', generatedBy: 'TensorFlow.js', convertedBy: null
+                };
+                const formData = new FormData();
+                formData.append('model_json', new Blob([JSON.stringify(modelJson)], { type: 'application/json' }), 'model.json');
+                formData.append('weights_bin', new Blob([savedArtifacts.weightData], { type: 'application/octet-stream' }), 'weights.bin');
+                formData.append('labels', JSON.stringify(classes.map(c => c.name)));
+
+                // 2. Compile on backend
+                setStatus('Compiling model on backend...');
+                const resp = await fetch(`${CONVERT_SERVER}/convert`, { method: 'POST', body: formData });
+                if (!resp.ok) throw new Error(`Server error ${resp.status}: ${await resp.text()}`);
+
+                setStatus('Unpacking compiled model...');
+                const zip = await JSZip.loadAsync(await resp.blob());
+                const kmodelFile = zip.file('model.kmodel'), labelsFile = zip.file('labels.txt');
+                if (!kmodelFile || !labelsFile) throw new Error('Invalid zip from server');
+                const kmodelBlob = await kmodelFile.async('blob');
+                const labelsBlob = await labelsFile.async('blob');
+
+                // 3a. Wi-Fi deploy
+                if (method === 'wifi') {
+                    const ip = document.getElementById('k230IpInput').value.trim() || '192.168.4.1';
+                    const pt = document.getElementById('k230PortInput').value.trim() || '8080';
+                    const url = `http://${ip}:${pt}/upload`;
+                    setStatus(`Pushing to K230 via Wi-Fi (${ip}:${pt})...`);
+                    try {
+                        const r1 = await fetch(url, { method: 'POST', headers: { 'X-Filename': 'model.kmodel' }, body: kmodelBlob });
+                        if (!r1.ok) throw new Error(`HTTP ${r1.status}`);
+                        await sleep(1500); // let MicroPython SD sync
+                        const r2 = await fetch(url, { method: 'POST', headers: { 'X-Filename': 'labels.txt' }, body: labelsBlob });
+                        if (!r2.ok) throw new Error(`HTTP ${r2.status}`);
+                    } catch (pushErr) {
+                        alert(`❌ Failed to connect to K230 at ${ip}:${pt}.\n\nEnsure:\n` +
+                            `1) Your PC is connected to YAHBOOM-K230 Wi-Fi\n` +
+                            `2) K230 is running k230_receive_server.py\n\nError: ${pushErr.message}`);
+                        setStatus('Deploy failed: K230 unreachable.'); return;
+                    }
+                    setStatus('Wi-Fi deployment complete!');
+                    alert(`✅ Successfully deployed to K230 via Wi-Fi (${ip})!\n\nFiles saved to /sdcard/kmodel`);
+
+                    // 3b. USB deploy
+                } else if (method === 'usb') {
+                    const baud = parseInt(document.getElementById('usbBaudSelect').value);
+                    resetUsbPanel(); showUsbPanel(true);
+
+                    // Wire pre-opened port into shared serial state
+                    port = usbPort; portReader = usbPort.readable.getReader();
+                    portWriter = usbPort.writable.getWriter(); connected = true; usbPort = null;
+
+                    rxPump(); // start background RX
+                    usbLog(`Port open @ ${baud} baud`, 'ok');
+
+                    try {
+                        setStatus('Entering raw REPL...');
+                        await enterRawREPL();
+
+                        const kmodelArr = new Uint8Array(await kmodelBlob.arrayBuffer());
+                        const labelsArr = new Uint8Array(await labelsBlob.arrayBuffer());
+
+                        setStatus('Creating /sdcard/kmodel/ ...');
+                        usbLog('Ensuring /sdcard/kmodel/ exists...', 'info');
+                        await ensureDir('/sdcard/kmodel/');
+                        usbLog('Directory ready', 'ok');
+
+                        const kmodelKB = (kmodelArr.length / 1024).toFixed(1);
+                        usbLog(`Sending model.kmodel — ${kmodelKB} KB`, 'info');
+                        await writeFileOnBoard('/sdcard/model.kmodel', kmodelArr, pct => {
+                            usbSetProgress(1, pct); setStatus(`model.kmodel: ${Math.round(pct * 100)}%`);
+                        });
+                        usbSetProgress(1, 1); usbLog('model.kmodel ✓', 'ok');
+
+                        usbLog('Sending labels.txt...', 'info');
+                        await writeFileOnBoard('/sdcard/labels.txt', labelsArr, pct => {
+                            usbSetProgress(2, pct); setStatus(`labels.txt: ${Math.round(pct * 100)}%`);
+                        });
+                        usbSetProgress(2, 1); usbLog('labels.txt ✓', 'ok');
+
+                        await exitRawREPL();
+                        usbLog('Done — exited raw REPL', 'ok');
+
+                    } finally {
+                        await cleanupPort(); // always release port
+                    }
+
+                    setStatus('USB deployment complete!');
+                    alert('✅ Successfully deployed to K230 via USB!\n\nFiles saved to /sdcard/kmodel/');
+                }
+
+            } catch (e) {
+                console.error('Deploy error:', e);
+                usbLog('Error: ' + e.message, 'err');
+                alert('Deploy Failed: ' + e.message);
+                setStatus('Deploy failed: ' + e.message);
+                if (connected) await cleanupPort();
+                if (usbPort) { try { await usbPort.close(); } catch { } usbPort = null; }
+            } finally {
+                btn.disabled = false; btn.innerHTML = originalText;
+            }
+        }
+
+        // ══════════════════════════════════════════════════════════════
+        // EXPORT .kmodel + labels.txt
+        // ══════════════════════════════════════════════════════════════
+        async function exportKmodel() {
+            if (!trained || !headModel) { alert('Train first!'); return; }
+            const btn = document.getElementById('exportBtn');
+            btn.disabled = true; btn.innerHTML = '<span class="spinner"></span>Exporting...';
+            setStatus('Exporting model...');
+            try {
+                let savedArtifacts = null;
+                await headModel.save(tf.io.withSaveHandler(async artifacts => {
+                    savedArtifacts = artifacts; return { modelArtifactsInfo: { dateSaved: new Date() } };
+                }));
+                if (!savedArtifacts) throw new Error('Failed to capture artifacts');
+                const modelJson = {
+                    modelTopology: savedArtifacts.modelTopology,
+                    weightsManifest: [{ paths: ['weights.bin'], weights: savedArtifacts.weightSpecs }],
+                    format: 'layers-model', generatedBy: 'TensorFlow.js', convertedBy: null
+                };
+                const formData = new FormData();
+                formData.append('model_json', new Blob([JSON.stringify(modelJson)], { type: 'application/json' }), 'model.json');
+                formData.append('weights_bin', new Blob([savedArtifacts.weightData], { type: 'application/octet-stream' }), 'weights.bin');
+                formData.append('labels', JSON.stringify(classes.map(c => c.name)));
+
+                setStatus('Sending to backend server...');
+                const resp = await fetch(`${CONVERT_SERVER}/convert`, { method: 'POST', body: formData });
+                if (!resp.ok) { const err = await resp.json().catch(() => ({ error: 'Server error' })); throw new Error(err.error || `Error ${resp.status}`); }
+
+                setStatus('Unpacking files...');
+                const zipBlob = await resp.blob(), ct = resp.headers.get('content-type') || '';
+                if (ct.includes('zip')) {
+                    const zip = await JSZip.loadAsync(zipBlob);
+                    const kf = zip.file('model.kmodel'); if (kf) downloadBlob(await kf.async('blob'), 'model.kmodel');
+                    await sleep(500);
+                    const lf = zip.file('labels.txt'); if (lf) downloadBlob(await lf.async('blob'), 'labels.txt');
+                } else {
+                    downloadBlob(zipBlob, 'model.kmodel'); await sleep(500);
+                    downloadBlob(new Blob([classes.map(c => c.name).join('\n')], { type: 'text/plain' }), 'labels.txt');
+                }
+                setStatus('model.kmodel and labels.txt downloaded!');
+                alert('✅ Two files downloaded:\n\n1. model.kmodel\n2. labels.txt\n\nCopy both to /sdcard/kmodel/ on K230.');
+            } catch (e) {
+                console.error('Export error:', e); alert('Export Failed: ' + e.message); setStatus('Export failed: ' + e.message);
+            } finally {
+                btn.disabled = false; btn.innerHTML = 'Export .kmodel (Local)';
+            }
+        }
+
+        // ══════════════════════════════════════════════════════════════
+        // NAVIGATION
+        // ══════════════════════════════════════════════════════════════
+        function goBack() {
+            stopCapture(); stopTestWebcam(); if (k230CamIdx !== null) stopK230Cam();
+            const payload = JSON.stringify({ type: 'CLOSE_AI_TRAIN' });
+            window.parent?.postMessage(payload, '*');
+            window.opener?.postMessage(payload, '*');
+            if (window.ReactNativeWebView) window.ReactNativeWebView.postMessage(payload);
+        }
+
+        // ══════════════════════════════════════════════════════════════
+        // INIT
+        // ══════════════════════════════════════════════════════════════
+        render();
+    </script>
+</body>
+
+</html>

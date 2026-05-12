@@ -1,0 +1,15 @@
+venv/
+__pycache__/
+datasets/
+models/*.onnx
+models/*.h5
+exports/
+.git/
+.vscode/
+*.pyc
+*.pyo
+*.pyd
+.env
+docker-compose.yml
+Dockerfile
+.dockerignore

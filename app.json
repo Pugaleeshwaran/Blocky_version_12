@@ -16,7 +16,9 @@
       "supportsTablet": true,
       "bundleIdentifier": "com.anonymous.blocklystemapp",
       "infoPlist": {
-        "NSBluetoothAlwaysUsageDescription": "Allow this app to connect to your STM32 Robot."
+        "NSBluetoothAlwaysUsageDescription": "Allow this app to connect to your STM32 Robot.",
+        "NSCameraUsageDescription": "Allow this app to use the camera for AI model training.",
+        "NSMicrophoneUsageDescription": "Allow this app to use the microphone."
       }
     },
     "android": {
@@ -31,7 +33,9 @@
         "BLUETOOTH_ADMIN",
         "BLUETOOTH_SCAN",
         "BLUETOOTH_CONNECT",
-        "ACCESS_FINE_LOCATION"
+        "ACCESS_FINE_LOCATION",
+        "CAMERA",
+        "RECORD_AUDIO"
       ]
     },
     "web": {

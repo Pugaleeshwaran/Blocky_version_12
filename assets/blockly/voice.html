@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Voice Train + Predict</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs"></script>
+</head>
+
+<body>
+
+    <h2>🎤 Voice Command Trainer</h2>
+
+    <button onclick="record('start')">Record START</button>
+    <button onclick="record('capture')">Record CAPTURE</button>
+    <button onclick="record('predict')">Record PREDICT</button>
+
+    <br><br>
+    <button onclick="trainModel()">Train Model</button>
+    <button onclick="testVoice()">Test Voice</button>
+
+    <p id="status"></p>
+
+    <script>
+        let audioData = [];
+        let labels = [];
+
+        let mediaRecorder;
+        let chunks = [];
+
+        // 🎤 Record voice
+        function record(label) {
+            navigator.mediaDevices.getUserMedia({ audio: true }).then(stream => {
+                mediaRecorder = new MediaRecorder(stream);
+
+                chunks = [];
+
+                mediaRecorder.ondataavailable = e => chunks.push(e.data);
+
+                mediaRecorder.onstop = async () => {
+                    const blob = new Blob(chunks);
+                    const arrayBuffer = await blob.arrayBuffer();
+
+                    // Convert to Float32
+                    const audioCtx = new AudioContext();
+                    const audioBuffer = await audioCtx.decodeAudioData(arrayBuffer);
+                    const data = audioBuffer.getChannelData(0);
+
+                    audioData.push(data);
+                    labels.push(label);
+
+                    document.getElementById("status").innerText =
+                        "Recorded: " + label + " (" + audioData.length + ")";
+                };
+
+                mediaRecorder.start();
+
+                setTimeout(() => mediaRecorder.stop(), 1000); // 1 sec recording
+            });
+        }
+
+        // 🧠 Train model
+        let model;
+
+        async function trainModel() {
+            const xs = audioData.map(d => tf.tensor(d.slice(0, 16000))); // 1 sec
+            const ys = labels.map(l => {
+                if (l === "start") return 0;
+                if (l === "capture") return 1;
+                if (l === "predict") return 2;
+            });
+
+            const xTensor = tf.stack(xs);
+            const yTensor = tf.tensor1d(ys, 'int32');
+
+            model = tf.sequential();
+            model.add(tf.layers.dense({ units: 32, activation: 'relu', inputShape: [16000] }));
+            model.add(tf.layers.dense({ units: 3, activation: 'softmax' }));
+
+            model.compile({
+                optimizer: 'adam',
+                loss: 'sparseCategoricalCrossentropy',
+                metrics: ['accuracy']
+            });
+
+            await model.fit(xTensor, yTensor, {
+                epochs: 10
+            });
+
+            document.getElementById("status").innerText = "Model Trained!";
+        }
+
+        // 🔮 Test voice
+        function testVoice() {
+            navigator.mediaDevices.getUserMedia({ audio: true }).then(stream => {
+                mediaRecorder = new MediaRecorder(stream);
+
+                chunks = [];
+
+                mediaRecorder.ondataavailable = e => chunks.push(e.data);
+
+                mediaRecorder.onstop = async () => {
+                    const blob = new Blob(chunks);
+                    const arrayBuffer = await blob.arrayBuffer();
+
+                    const audioCtx = new AudioContext();
+                    const audioBuffer = await audioCtx.decodeAudioData(arrayBuffer);
+                    const data = audioBuffer.getChannelData(0).slice(0, 16000);
+
+                    const input = tf.tensor(data).reshape([1, 16000]);
+
+                    const prediction = model.predict(input);
+                    const result = prediction.argMax(1).dataSync()[0];
+
+                    let command = ["start", "capture", "predict"][result];
+
+                    document.getElementById("status").innerText = "Predicted: " + command;
+
+                    speak(command);
+                };
+
+                mediaRecorder.start();
+                setTimeout(() => mediaRecorder.stop(), 1000);
+            });
+        }
+
+        // 🔊 Speak result
+        function speak(text) {
+            const speech = new SpeechSynthesisUtterance(text);
+            window.speechSynthesis.speak(speech);
+        }
+    </script>
+
+</body>
+
+</html>
